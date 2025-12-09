@@ -43,12 +43,25 @@
   - `${PROJECT_FRONTEND}` (Frontend/React)
   - `${PROJECT_CMS_API}` (CMS Backend)
   - `${PROJECT_DATA_API}` (Data Backend)
-  - [Future projects as workspace grows]
+  - [Other projects from configuration.md]
+
+- **Cross-Project Impact Analysis** (from `/system-architecture-agent` output):
+  1. **Read `${SYSTEM_ARCH_ROOT}/analysis/service-topology.json`**
+  2. For each identified project, check:
+     - Which services does it **call**? (downstream dependencies)
+     - Which services **call it**? (upstream consumers)
+  3. If cross-service dependencies exist:
+     - **Add those services to scope** (even if not initially identified)
+     - **Read `${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json`** for the specific API contracts
+  4. Document in Tech Spec under "Cross-Project Impact" section
+
 - **Project Selection Criteria**:
   - Frontend work (UI, forms, displays) → `${PROJECT_FRONTEND}`
   - CMS/Admin operations → `${PROJECT_CMS_API}`
   - Data processing, external APIs → `${PROJECT_DATA_API}`
   - Full-stack features → Multiple projects
+
+> **Note**: If `service-topology.json` doesn't exist, issue a warning: "Cross-project impact unknown. Run `/system-architecture-agent` for complete analysis."
 
 ### Step 3: Review Codebase Architecture (Per Project)
 For **each affected project**:

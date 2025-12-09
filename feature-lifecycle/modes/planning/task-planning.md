@@ -113,7 +113,21 @@ For **each layer** in order (Database → Service → API → Frontend → State
    - If migration: Copy migration description
    - Show before/after if MODIFY action
 
-3. **Extract from Tech Spec § 2**:
+3. **Cross-Service API Context** (from `/system-architecture-agent` output):
+   - **Read `${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json`**
+   - If this service CALLS another service:
+     - Copy the cross-service endpoint contract
+     - Include caller and callee project names
+   - If this service IS CALLED BY another service:
+     - Note which services depend on this endpoint (for impact awareness)
+
+4. **Canonical Entity Source** (from `/system-architecture-agent` output):
+   - **Read `${SYSTEM_ARCH_ROOT}/analysis/unified-domain-model.json`**
+   - If entity exists in multiple projects:
+     - Identify the canonical source
+     - Reference the canonical definition in task
+
+5. **Extract from Tech Spec § 2**:
    - Pattern to follow (e.g., "Following ${PROJECT_CMS_API} NestJS controller pattern")
    - Reference file (if pattern reuse mentioned)
 
