@@ -72,6 +72,11 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./feature-life
 | `${PROJECT_FRONTEND}` | wg-client | Frontend (React) | `./wg-client` |
 | `${PROJECT_CMS_API}` | wg-cms-api | CMS Backend | `./wg-cms-api` |
 | `${PROJECT_DATA_API}` | wg-data-api | Data Backend | `./wg-data-api` |
+| `${PROJECT_ANCILLARY_API}` | wg-ancillary-api | Ancillary Services | `./wg-ancillary-api` |
+| `${PROJECT_ORDERMANAGER_API}` | wg-ordermanager-api | Order Management | `./wg-ordermanager-api` |
+| `${PROJECT_PAYMENT_API}` | wg-payment-api | Payment Processing | `./wg-payment-api` |
+| `${PROJECT_SEARCH_API}` | wg-search-api | Search Services | `./wg-search-api` |
+| `${PROJECT_TRIPDETAILS_API}` | wg-tripdetails-api | Trip Details | `./wg-tripdetails-api` |
 
 > **Adding new projects**: Add a row to this table and update agent instructions that reference project roles.
 
@@ -82,6 +87,11 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./feature-life
 | Frontend work (UI, forms, displays) | `${PROJECT_FRONTEND}` |
 | CMS/Admin operations | `${PROJECT_CMS_API}` |
 | Data processing, external APIs | `${PROJECT_DATA_API}` |
+| Ancillary products & services | `${PROJECT_ANCILLARY_API}` |
+| Order processing & management | `${PROJECT_ORDERMANAGER_API}` |
+| Payment transactions & integration | `${PROJECT_PAYMENT_API}` |
+| Search functionality & indexing | `${PROJECT_SEARCH_API}` |
+| Trip details & itinerary service | `${PROJECT_TRIPDETAILS_API}` |
 | Full-stack features | Multiple projects |
 
 ### Per-Project Config Files
