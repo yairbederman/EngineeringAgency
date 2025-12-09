@@ -9,7 +9,7 @@
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `ARCHITECT_ROOT` | `c:\Users\YairBederman\.gemini\antigravity\global_workflows\architect\` | Base path for architect files |
+| `ARCHITECT_ROOT` | `./architect` | Base path for architect files (Relative to global_workflows root) |
 
 ### Phase Files (relative to ARCHITECT_ROOT)
 
@@ -36,6 +36,4 @@
 
 ## Installation
 
-After cloning, update `ARCHITECT_ROOT` to match your local path:
-- **Windows**: `c:\Users\{username}\.gemini\antigravity\global_workflows\architect\`
-- **Mac/Linux**: `~/.gemini/antigravity/global_workflows/architect/`
+After cloning, `ARCHITECT_ROOT` is configured to use relative paths (`./architect`) by default. No update is required if the standard directory structure is maintained.

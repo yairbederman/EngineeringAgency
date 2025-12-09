@@ -24,7 +24,7 @@ Entry conditions for **Implementation** and **BugFix** are defined in `core-rule
 
 **Read Configuration**: `${AGENT_ROOT}/configuration.md`
 
-Where `AGENT_ROOT` = `c:\Users\YairBederman\.gemini\antigravity\global_workflows\feature-lifecycle\`
+Where `AGENT_ROOT` = `./feature-lifecycle`
 
 Load from configuration.md:
 - `AGENT_ROOT` - Base path for all agent files

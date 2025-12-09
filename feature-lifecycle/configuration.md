@@ -7,9 +7,7 @@
 
 ## Installation
 
-After cloning, update `AGENT_ROOT` to match your local path:
-- **Windows**: `c:\Users\{username}\.gemini\antigravity\global_workflows\feature-lifecycle\`
-- **Mac/Linux**: `~/.gemini/antigravity/global_workflows/feature-lifecycle/`
+After cloning, `AGENT_ROOT` is configured to use relative paths (`./feature-lifecycle`) by default. No update is required if the standard directory structure is maintained.
 
 ---
 
@@ -17,7 +15,7 @@ After cloning, update `AGENT_ROOT` to match your local path:
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `AGENT_ROOT` | `c:\Users\YairBederman\.gemini\antigravity\global_workflows\feature-lifecycle\` | Base path for all agent files |
+| `AGENT_ROOT` | `./feature-lifecycle` | Base path for all agent files (Relative to global_workflows root) |
 
 ### Agent Files (relative to AGENT_ROOT)
 
