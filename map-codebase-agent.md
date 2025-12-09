@@ -20,7 +20,7 @@ Produces `${AI_INSTRUCTIONS_ROOT}` with full entity contracts, API definitions, 
 First, read the configuration file for path variables:
 **Read**: `${ARCHITECT_ROOT}/configuration.md`
 
-Where `ARCHITECT_ROOT` = `./architect`
+Where `ARCHITECT_ROOT` = `./mapcodebase`
 
 ---
 

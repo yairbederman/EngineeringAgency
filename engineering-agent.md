@@ -24,7 +24,7 @@ Entry conditions for **Implementation** and **BugFix** are defined in `core-rule
 
 **Read Configuration**: `${AGENT_ROOT}/configuration.md`
 
-Where `AGENT_ROOT` = `./feature-lifecycle`
+Where `AGENT_ROOT` = `./engineering`
 
 Load from configuration.md:
 - `AGENT_ROOT` - Base path for all agent files

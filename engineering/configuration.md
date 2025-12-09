@@ -7,7 +7,7 @@
 
 ## Installation
 
-After cloning, `AGENT_ROOT` is configured to use relative paths (`./feature-lifecycle`) by default. No update is required if the standard directory structure is maintained.
+After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`) by default. No update is required if the standard directory structure is maintained.
 
 ---
 
@@ -15,7 +15,7 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./feature-life
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `AGENT_ROOT` | `./feature-lifecycle` | Base path for all agent files (Relative to global_workflows root) |
+| `AGENT_ROOT` | `./engineering` | Base path for all agent files (Relative to global_workflows root) |
 
 ### Agent Files (relative to AGENT_ROOT)
 

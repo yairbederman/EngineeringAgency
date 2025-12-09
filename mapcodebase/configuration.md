@@ -9,7 +9,7 @@
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `ARCHITECT_ROOT` | `./architect` | Base path for architect files (Relative to global_workflows root) |
+| `ARCHITECT_ROOT` | `./mapcodebase` | Base path for mapcodebase files (Relative to global_workflows root) |
 
 ### Phase Files (relative to ARCHITECT_ROOT)
 
@@ -36,4 +36,4 @@
 
 ## Installation
 
-After cloning, `ARCHITECT_ROOT` is configured to use relative paths (`./architect`) by default. No update is required if the standard directory structure is maintained.
+After cloning, `ARCHITECT_ROOT` is configured to use relative paths (`./mapcodebase`) by default. No update is required if the standard directory structure is maintained.

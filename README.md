@@ -27,8 +27,8 @@ global_workflows/
 ├── engineering-agent.md          # Feature lifecycle workflow
 ├── map-codebase-agent.md         # Project AI instructions generator
 ├── system-architecture-agent.md  # Cross-project architecture generator
-├── architect/                    # Phase files for map-codebase-agent
-├── feature-lifecycle/            # Mode files for engineering-agent
+├── mapcodebase/                  # Phase files for map-codebase-agent
+├── engineering/                  # Mode files for engineering-agent
 └── system-architecture/          # Phase files for system-architecture-agent
 ```
 
