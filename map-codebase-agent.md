@@ -2,7 +2,7 @@
 description: Generate comprehensive AI instructions for any project type with deep engineering metadata extraction for Tech Spec readiness
 ---
 
-# Generate AI Instructions
+# Map Codebase Agent
 
 Produces `${AI_INSTRUCTIONS_ROOT}` with full entity contracts, API definitions, and dependency maps—enabling Tech Specs with zero `[TBD]` placeholders.
 
