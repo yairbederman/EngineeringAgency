@@ -1,5 +1,5 @@
 ---
-description: Activates the Lognet-Architect Role
+description: Activates the Engineering Agent Role
 ---
 
 ## Planning Phase Flow

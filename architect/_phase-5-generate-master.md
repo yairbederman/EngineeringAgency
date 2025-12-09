@@ -69,7 +69,7 @@ Create additional documentation files (see Output section).
 | 5 | After Layer 4 | redux-slices | After API client exists |
 | 6 | After Layer 5 | react-components | After state slice exists |
 
-**Purpose**: Enables /lognet TechSpec § 5.4 "Implementation Inventory" dependency ordering.
+**Purpose**: Enables /engineering-agent TechSpec § 5.4 "Implementation Inventory" dependency ordering.
 
 ### `copilot-instructions.md`
 ```markdown
@@ -127,7 +127,7 @@ Create additional documentation files (see Output section).
 - [component-registry.md](./deep-dive/component-registry.md)
 - [testing-strategy.md](./deep-dive/testing-strategy.md)
 
-## Feature Patterns (MANDATORY for /lognet Pattern Matching)
+## Feature Patterns (MANDATORY for /engineering-agent Pattern Matching)
 
 > **⛔ BLOCKING**: This section MUST be populated. Empty or placeholder Feature Patterns table blocks validation.
 
@@ -154,7 +154,7 @@ Group related code by feature domain to enable "similar feature to mimic" lookup
 | Order Process | OrderForm, OrderSummary | useOrderProcess | PaymentApiClient | orderSlice |
 | Deal Page | DealPage, DealDetails | useDealPage | DealApiClient | dealSlice |
 
-**Purpose**: Enables /lognet TechSpec § 2 "Pattern Reuse" to find similar existing features.
+**Purpose**: Enables /engineering-agent TechSpec § 2 "Pattern Reuse" to find similar existing features.
 
 ## Key Domain Types
 | Type | File | Purpose |

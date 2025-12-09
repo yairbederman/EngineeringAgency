@@ -59,7 +59,7 @@ If an API client file would have `endpoints: []`:
 - Response type → cross-reference with `entity-contracts.json`
 - Query parameters
 
-### 3.5 Extract Validation Rules (MANDATORY for /lognet TaskPlanning)
+### 3.5 Extract Validation Rules (MANDATORY for /engineering-agent TaskPlanning)
 
 > **⛔ BLOCKING**: Every `requestFields` entry MUST include a `validation` object. Omission blocks Phase 4.5 gate.
 
@@ -155,7 +155,7 @@ Count API directories and files documented.
 
 ## Cross-Project API Owner Tracking (For Multi-Repo Projects)
 
-> **Purpose**: Enables /lognet TechSpec to identify which backend project owns each API endpoint.
+> **Purpose**: Enables /engineering-agent TechSpec to identify which backend project owns each API endpoint.
 
 For **frontend projects** that call external backend APIs:
 1. Identify the backend base URL (from `baseRequest`, axios config, or environment variables)

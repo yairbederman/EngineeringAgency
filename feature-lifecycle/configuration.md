@@ -1,4 +1,4 @@
-# Lognet Agent Configuration
+# Engineering Agent Configuration
 
 > **Purpose**: Single source of truth for all environment-specific configuration.
 > When migrating to a new environment, update the paths in this file only.

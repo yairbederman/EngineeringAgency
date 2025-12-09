@@ -126,7 +126,7 @@ Document at least ONE call chain for each detected flow:
 }
 ```
 
-### Entity Usage Map (MANDATORY for /lognet TechSpec)
+### Entity Usage Map (MANDATORY for /engineering-agent TechSpec)
 
 > **⛔ BLOCKING**: `_entityUsage` section MUST be present in `function-registry.json`. Omission is a Phase 4.5 gate failure.
 
@@ -148,7 +148,7 @@ Build `_entityUsage` by cross-referencing:
 }
 ```
 
-**Purpose**: Enables /lognet to trace data flow from DB → API → State → UI for TechSpec § 5.4
+**Purpose**: Enables /engineering-agent to trace data flow from DB → API → State → UI for TechSpec § 5.4
 
 ### `deep-dive/dependency-chains.md`
 ```markdown
