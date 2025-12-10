@@ -10,6 +10,7 @@
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `ARCHITECT_ROOT` | `./mapcodebase` | Base path for mapcodebase files (Relative to global_workflows root) |
+| `GLOBAL_WORKFLOWS_ROOT` | `.` | Root path for global_workflows directory (parent of this config) |
 
 ### Phase Files (relative to ARCHITECT_ROOT)
 

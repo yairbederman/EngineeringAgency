@@ -5,21 +5,33 @@
 
 ---
 
+## Configuration
+
+> [!IMPORTANT]
+> **Team Setup Required**: Each team member must set `WORKSPACE_ROOT` to their local projects directory.
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `${WORKSPACE_ROOT}` | Root directory containing all WG3 projects | `C:\My Projects\WG3` (Windows) or `/Users/dev/WG3` (Mac) |
+| `${GLOBAL_WORKFLOWS_ROOT}` | Path to global_workflows directory | Resolved automatically when using agents |
+
+---
+
 ## Registered Projects
 
 | Variable | Name | Type | Role | Path |
 |----------|------|------|------|------|
-| `${PROJECT_FRONTEND}` | wg-client | Frontend | Next.js web application | `C:\My Projects\WG3\wg-client` |
-| `${PROJECT_CMS_API}` | wg-cms-api | Backend | CMS content management | `C:\My Projects\WG3\wg-cms-api` |
-| `${PROJECT_DATA_API}` | wg-data-api | Backend | Site data and configuration | `C:\My Projects\WG3\wg-data-api` |
-| `${PROJECT_ANCILLARY_API}` | wg-ancillary-api | Backend | Ancillary products & services | `C:\My Projects\WG3\wg-ancillary-api` |
-| `${PROJECT_ORDERMANAGER_API}` | wg-ordermanager-api | Backend | Order processing & management | `C:\My Projects\WG3\wg-ordermanager-api` |
-| `${PROJECT_PAYMENT_API}` | wg-payment-api | Backend | Payment transactions | `C:\My Projects\WG3\wg-payment-api` |
-| `${PROJECT_SEARCH_API}` | wg-search-api | Backend | Search functionality | `C:\My Projects\WG3\wg-search-api` |
-| `${PROJECT_TRIPDETAILS_API}` | wg-tripdetails-api | Backend | Trip details & itinerary | `C:\My Projects\WG3\wg-tripdetails-api` |
-| `${PROJECT_BOOKING_API}` | wg-booking-api | Backend | Booking processing & management | `C:\My Projects\WG3\wg-booking-api` |
-| `${PROJECT_EMAIL_API}` | wg-email-api | Backend | Email notifications & templates | `C:\My Projects\WG3\wg-email-api` |
-| `${PROJECT_INVOICE_API}` | wg-invoice-api | Backend | Invoice generation & management | `C:\My Projects\WG3\wg-invoice-api` |
+| `${PROJECT_FRONTEND}` | wg-client | Frontend | Next.js web application | `${WORKSPACE_ROOT}/wg-client` |
+| `${PROJECT_CMS_API}` | wg-cms-api | Backend | CMS content management | `${WORKSPACE_ROOT}/wg-cms-api` |
+| `${PROJECT_DATA_API}` | wg-data-api | Backend | Site data and configuration | `${WORKSPACE_ROOT}/wg-data-api` |
+| `${PROJECT_ANCILLARY_API}` | wg-ancillary-api | Backend | Ancillary products & services | `${WORKSPACE_ROOT}/wg-ancillary-api` |
+| `${PROJECT_ORDERMANAGER_API}` | wg-ordermanager-api | Backend | Order processing & management | `${WORKSPACE_ROOT}/wg-ordermanager-api` |
+| `${PROJECT_PAYMENT_API}` | wg-payment-api | Backend | Payment transactions | `${WORKSPACE_ROOT}/wg-payment-api` |
+| `${PROJECT_SEARCH_API}` | wg-search-api | Backend | Search functionality | `${WORKSPACE_ROOT}/wg-search-api` |
+| `${PROJECT_TRIPDETAILS_API}` | wg-tripdetails-api | Backend | Trip details & itinerary | `${WORKSPACE_ROOT}/wg-tripdetails-api` |
+| `${PROJECT_BOOKING_API}` | wg-booking-api | Backend | Booking processing & management | `${WORKSPACE_ROOT}/wg-booking-api` |
+| `${PROJECT_EMAIL_API}` | wg-email-api | Backend | Email notifications & templates | `${WORKSPACE_ROOT}/wg-email-api` |
+| `${PROJECT_INVOICE_API}` | wg-invoice-api | Backend | Invoice generation & management | `${WORKSPACE_ROOT}/wg-invoice-api` |
 
 ---
 

@@ -18,7 +18,7 @@
 
 ### Step 1: Read Configuration
 
-Load the project registry from `${SYSTEM_ARCH_ROOT}/configuration.md`.
+Load the project registry from `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md`.
 
 ### Step 2: Scan Each Project
 

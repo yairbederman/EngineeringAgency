@@ -27,9 +27,11 @@
 
 | Variable | Path | Description |
 |----------|------|-------------|
-| `${OUTPUT_ROOT}` | `C:\My Projects\WG3\system-architecture\` | Root for all generated system documentation |
+| `${OUTPUT_ROOT}` | `${WORKSPACE_ROOT}/system-architecture` | Root for all generated system documentation |
 | `${ANALYSIS_DIR}` | `${OUTPUT_ROOT}/analysis/` | JSON analysis files |
 | `${DEEP_DIVE_DIR}` | `${OUTPUT_ROOT}/deep-dive/` | Detailed documentation |
+
+> **Note**: `${WORKSPACE_ROOT}` is defined in [shared/projects.md](../shared/projects.md).
 
 > [!IMPORTANT]
 > **Path Synchronization Required**  

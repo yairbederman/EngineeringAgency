@@ -7,8 +7,8 @@ AI agent workflows for code generation, architecture extraction, and feature lif
 | Workflow | Description | Trigger |
 |----------|-------------|---------|
 | `/engineering-agent` | Feature lifecycle: ProductSpecReview → FeaturePlanning → TechSpec → Implementation | Start of any feature work |
-| `/map-codebase-agent` | Extract AI instructions from a single project | Before `/engineering-agent` can work on a project |
-| `/system-architecture-agent` | Generate cross-project architecture documentation | After all projects have AI instructions |
+| `/map-codebase-agent` | Extract AI instructions from a single project | When project structure changes significantly |
+| `/system-architecture-agent` | Generate cross-project architecture documentation | When adding new projects or major API changes |
 
 ## Workflow Hierarchy
 
@@ -20,6 +20,25 @@ AI agent workflows for code generation, architecture extraction, and feature lif
 /engineering-agent            # Feature work (uses all above)
 ```
 
+---
+
+## New Developer Setup
+
+### Prerequisites
+
+- VS Code with GitHub Copilot or compatible AI assistant
+- Atlassian MCP authentication configured
+
+### Setup Checklist
+
+- [ ] Clone this repository to `~/.gemini/antigravity/global_workflows`
+- [ ] Clone all WG3 project repositories to the same parent directory
+- [ ] Open a VS Code workspace containing all WG3 projects
+
+> **That's it!** All configuration (Atlassian, project paths) is shared org-wide. The `${WORKSPACE_ROOT}` variable resolves automatically from your VS Code workspace.
+
+---
+
 ## Directory Structure
 
 ```
@@ -27,33 +46,39 @@ global_workflows/
 ├── engineering-agent.md          # Feature lifecycle workflow
 ├── map-codebase-agent.md         # Project AI instructions generator
 ├── system-architecture-agent.md  # Cross-project architecture generator
+├── shared/
+│   └── projects.md               # Project registry (single source of truth)
 ├── mapcodebase/                  # Phase files for map-codebase-agent
 ├── engineering/                  # Mode files for engineering-agent
 └── system-architecture/          # Phase files for system-architecture-agent
 ```
 
+---
+
 ## Quick Start
 
-### 1. Generate Per-Project AI Instructions
-```
-/map-codebase-agent
-```
-Run on each project to generate `.ai-instructions/`.
-
-### 2. Generate System Architecture
-```
-/system-architecture-agent
-```
-Run once after all projects have AI instructions. Outputs to `C:\My Projects\WG3\system-architecture\`.
-
-### 3. Develop Features
+### 1. Develop Features
 ```
 /engineering-agent
 ```
 Use for ProductSpecReview, FeaturePlanning, TechSpec, and Implementation.
 
+### 2. Update Project AI Instructions (When Needed)
+```
+/map-codebase-agent
+```
+Run when a project's structure changes significantly.
+
+### 3. Update System Architecture (When Needed)
+```
+/system-architecture-agent
+```
+Run when adding new projects or after major API changes.
+
+---
+
 ## Adding New Projects
 
-1. Add project to `system-architecture/configuration.md`
+1. Add project to [`shared/projects.md`](shared/projects.md)
 2. Run `/map-codebase-agent` on the new project
 3. Re-run `/system-architecture-agent` to update cross-project docs
