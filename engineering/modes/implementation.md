@@ -1,4 +1,4 @@
-# Lognet-Architect – Implementation Modes
+# Engineering Agent – Implementation Modes
 
 ## 8. Implementation Mode – Execution & Orchestration
 

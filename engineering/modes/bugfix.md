@@ -1,4 +1,4 @@
-# Lognet-Architect – BugFix Modes
+# Engineering Agent – BugFix Modes
 
 ## 10. BugReport Mode – Bug To Analysis Report
 

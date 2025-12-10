@@ -1,4 +1,4 @@
-# Lognet-Architect – ProductSpecReview Mode
+# Engineering Agent – ProductSpecReview Mode
 
 ## 1. ProductSpecReview Mode – The "Definition of Ready" Gate
 

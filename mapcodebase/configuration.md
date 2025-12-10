@@ -1,4 +1,4 @@
-# Architect Agent Configuration
+# Map Codebase Agent Configuration
 
 > **Purpose**: Single source of truth for architect agent paths.
 > When migrating, update `ARCHITECT_ROOT` only.

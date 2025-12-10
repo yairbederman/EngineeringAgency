@@ -64,3 +64,78 @@ During TechSpec, use `service-topology.json` to identify:
 1. Which services the feature touches (`callsServices`)
 2. Which services might break if APIs change (`calledBy`)
 3. Add ALL impacted projects to the Tech Spec's "Implementation Inventory"
+
+---
+
+## Auto-Detection Rule
+
+Cross-project mode is automatically activated when **any** of these conditions are met:
+
+| Condition | Detection |
+|-----------|-----------|
+| Epic mentions multiple projects | e.g., "wg-client" AND "wg-data-api" in description |
+| TechSpec identifies 2+ project roots | Step 2 returns multiple `${PROJECT_*}` variables |
+| Feature involves both Frontend + Backend | Any UI change + API change |
+| Service topology shows dependencies | `callsServices` or `calledBy` is non-empty for affected service |
+
+---
+
+## TaskPlanning Integration
+
+When creating tasks for cross-project features:
+
+### Step 1: Read Cross-Service APIs
+```
+Read: ${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json
+```
+
+Extract the API contract for service-to-service calls involved in this feature.
+
+### Step 2: Inject API Context into Tasks
+
+For backend tasks that expose APIs consumed by other projects:
+```markdown
+### Cross-Service API Contract
+- **Endpoint**: `POST /api/v1/orders`
+- **Consumed By**: `wg-client`, `wg-payment-api`
+- **Contract Source**: `cross-service-apis.json` → `wg-ordermanager-api.exposedApis[0]`
+```
+
+For frontend tasks that call backend APIs:
+```markdown
+### Backend API to Call
+- **Endpoint**: `GET /api/v1/trips/{tripId}`
+- **Owner**: `wg-tripdetails-api`
+- **Contract Source**: `cross-service-apis.json` → `wg-tripdetails-api.exposedApis[2]`
+```
+
+### Step 3: Set Task Dependencies
+
+Use the Layer system to set Jira task links:
+- Layer 0 tasks: No dependencies (first)
+- Layer 1+ tasks: Link "Depends On" to all lower-layer tasks
+
+---
+
+## Example: Reading cross-service-apis.json
+
+```json
+// From cross-service-apis.json
+{
+  "wg-data-api": {
+    "exposedApis": [
+      {
+        "endpoint": "GET /api/v1/sites/{siteId}",
+        "consumedBy": ["wg-client", "wg-search-api"],
+        "requestType": "SiteRequest",
+        "responseType": "SiteResponse"
+      }
+    ]
+  }
+}
+```
+
+**Inject into Task**:
+- For `wg-data-api` task: Document that this endpoint is consumed by 2 services
+- For `wg-client` task: Include the full Request/Response types from the contract
+

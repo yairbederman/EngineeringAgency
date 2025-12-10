@@ -1,4 +1,4 @@
-# Lognet-Architect – TechSpec Mode
+# Engineering Agent – TechSpec Mode
 
 ## 3. TechSpec Mode – Epic to Implementation Plan
 

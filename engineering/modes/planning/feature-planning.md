@@ -1,4 +1,4 @@
-# Lognet-Architect – FeaturePlanning Mode
+# Engineering Agent – FeaturePlanning Mode
 
 ## 2. FeaturePlanning Mode – Spec To Epic
 

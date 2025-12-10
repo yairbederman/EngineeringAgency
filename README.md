@@ -32,10 +32,11 @@ AI agent workflows for code generation, architecture extraction, and feature lif
 ### Setup Checklist
 
 - [ ] Clone this repository to `~/.gemini/antigravity/global_workflows`
-- [ ] Clone all WG3 project repositories to the same parent directory
+- [ ] Clone all WG3 project repositories to the same parent directory (e.g., `C:\My Projects\WG3` or `/Users/dev/WG3`)
 - [ ] Open a VS Code workspace containing all WG3 projects
+- [ ] Verify all projects appear as workspace folders in VS Code's Explorer sidebar
 
-> **That's it!** All configuration (Atlassian, project paths) is shared org-wide. The `${WORKSPACE_ROOT}` variable resolves automatically from your VS Code workspace.
+> **Note**: The `${WORKSPACE_ROOT}` variable references the parent directory containing all projects. Ensure all WG3 projects are in the same parent directory and added to your VS Code workspace.
 
 ---
 

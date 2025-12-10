@@ -1,4 +1,4 @@
-# Lognet-Architect – TaskPlanning Mode
+# Engineering Agent – TaskPlanning Mode
 
 ## 4. TaskPlanning Mode – Tech Spec to Atomic Tasks
 
