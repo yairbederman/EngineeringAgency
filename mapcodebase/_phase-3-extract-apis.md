@@ -106,6 +106,56 @@ For EACH request field, extract validation metadata:
 3. If no `?:` in TypeScript → `required: true` (inferred)
 4. If completely unresolvable → Mark `validation: { "inferred": true, "_unresolved": true }` AND log in `_unresolved.validations`
 
+### 3.6 Type Semantic Annotations (For Feature Capability Discovery)
+
+> **Purpose**: Enable `/engineering-agent` to answer "does this API support X?" without manual code search.
+
+For request/response fields that are **List**, **Enum**, or **polymorphic** types, infer usage semantics by analyzing the service code.
+
+**Step 1: Identify Target Fields**
+
+| Field Type Pattern | Example |
+|--------------------|---------|
+| `List<T>` / `T[]` | `transitions: List<TransitionRequest>` |
+| `Enum` / union type | `moduleType: 'flights' \| 'package'` |
+| `Optional<T>` / `T?` | `returnDate?: string` |
+
+**Step 2: Analyze Usage in Service Code**
+
+Grep the handler function and related service files for usage patterns:
+
+| Code Pattern | Inferred Semantic |
+|--------------|-------------------|
+| `for (T item : list)` or `.forEach()` | `usagePattern: "iteration"` → multiple items handled |
+| `list.get(0)` only | `usagePattern: "first-only"` → only primary item used |
+| `list.size()` in conditions | Validates list supports variable count |
+| `if (list.size() > 1)` | `cardinality: "1..N"` (multi-item supported) |
+| `switch (enum)` covering all values | All enum values are supported |
+
+**Step 3: Add `semantics` Object**
+
+```json
+{
+  "transitions": {
+    "type": "List<TransitionRequest>",
+    "validation": { "required": true },
+    "semantics": {
+      "cardinality": "1..N",
+      "usagePattern": "iteration",
+      "inferredFrom": "SearchVacationService.java:76 - for-loop over transitions"
+    }
+  }
+}
+```
+
+**Cardinality Values**:
+- `"exactly-1"` - Always single item (list.get(0) only)
+- `"0..1"` - Optional single item
+- `"1..N"` - One or more items (multi-item supported)
+- `"0..N"` - Zero or more items
+
+**If unresolvable**: Omit `semantics` object (don't guess).
+
 ### 4. Track Coverage
 Count API directories and files documented.
 
@@ -124,7 +174,15 @@ Count API directories and files documented.
         "handler": "[function name]",
         "requestType": "[type name]",
         "requestFields": {
-          "[field]": "[type with description]"
+          "[field]": {
+            "type": "[type]",
+            "validation": { "required": true },
+            "semantics": {
+              "cardinality": "1..N",
+              "usagePattern": "iteration",
+              "inferredFrom": "[file:line - evidence]"
+            }
+          }
         },
         "responseType": "[type name]",
         "responseFields": {
@@ -158,19 +216,21 @@ Count API directories and files documented.
 > **Purpose**: Enables /engineering-agent TechSpec to identify which backend project owns each API endpoint.
 
 For **frontend projects** that call external backend APIs:
-1. Identify the backend base URL (from `baseRequest`, axios config, or environment variables)
-2. Map each endpoint to its owner project:
-   - `/api/cms/*` → `PROJECT_CMS_API`
-   - `/api/data/*` → `PROJECT_DATA_API`
-   - `/api/*` → Infer from path or config
+1. **Read `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md`** to get registered project list
+2. Identify the backend base URL (from `baseRequest`, axios config, or environment variables)
+3. Match URL patterns to registered projects by their `apiBasePath` or name
+4. If no match found, log in `_unresolved.backendOwners`
+
+**DO NOT hardcode project names** - always reference the registry.
 
 **Output format**:
 ```json
 {
   "SearchApiClient": {
     "endpoints": [...],
-    "backendOwner": "PROJECT_DATA_API",
-    "baseUrl": "${DATA_API_URL}/api/search"
+    "backendOwner": "[matched project from registry]",
+    "baseUrl": "${[PROJECT]_URL}/api/search",
+    "matchedBy": "urlPattern" | "config" | "inferred"
   }
 }
 ```
@@ -186,3 +246,4 @@ For **frontend projects** that call external backend APIs:
 4. **Cross-reference**: Types should link to `entity-contracts.json`
 5. **Validation required**: Every `requestFields` entry MUST include `validation` object
 6. **No invalid skip reasons**: "Pending", "not fully extracted" BLOCK Phase 5
+7. **Semantics on collections**: List/Enum fields SHOULD include `semantics` object when usage patterns are detectable
