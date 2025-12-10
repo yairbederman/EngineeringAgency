@@ -43,6 +43,40 @@ Analyze each project to determine what it CALLS:
 - Look for external service URLs in configuration files
 - Check for `@FeignClient` or similar annotations
 
+### Step 2.5: Verify Dependencies Against Code (MANDATORY)
+
+> [!IMPORTANT]
+> AI instructions may contain stale or inaccurate dependencies.
+> You MUST verify each claimed dependency against actual source code.
+
+**For each backend project**, verify external service calls exist in code:
+
+1. **Search for BaseUrl patterns**:
+   ```bash
+   grep_search("api.*BaseUrl", "${PROJECT_PATH}/src/main/java")
+   ```
+   
+2. **Match claimed vs actual**:
+   | Claimed in AI Instructions | grep Result | Status |
+   |---------------------------|-------------|--------|
+   | `apiCmsBaseUrl` | Found / Not Found | ✅ / ❌ |
+   | `apiDataBaseUrl` | Found / Not Found | ✅ / ❌ |
+
+3. **Only include verified dependencies**:
+   - If grep finds the BaseUrl → Include in `callsServices`
+   - If grep does NOT find it → **Exclude** and add to `_warnings`
+
+**Warning entry format**:
+```json
+{
+  "type": "unverified-dependency",
+  "project": "wg-booking-api",
+  "claimed": "wg-cms-api",
+  "source": "copilot-instructions.md",
+  "reason": "No apiCmsBaseUrl found in project config files"
+}
+```
+
 ### Step 3: Build Dependency Graph
 
 Create edges representing runtime calls:
@@ -156,6 +190,8 @@ These may be:
 | All ready projects included | Count matches Phase 1 ready count |
 | No unresolved references | All `callsServices` entries exist in `services` |
 | Layers assigned | Every service has a layer |
+| Dependencies verified | All dependencies confirmed via grep search |
+| Unverified flagged | Any unverified deps documented in `_warnings` |
 
 ---
 
