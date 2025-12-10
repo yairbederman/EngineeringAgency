@@ -17,6 +17,9 @@
 | `${PROJECT_PAYMENT_API}` | wg-payment-api | Backend | Payment transactions | `C:\My Projects\WG3\wg-payment-api` |
 | `${PROJECT_SEARCH_API}` | wg-search-api | Backend | Search functionality | `C:\My Projects\WG3\wg-search-api` |
 | `${PROJECT_TRIPDETAILS_API}` | wg-tripdetails-api | Backend | Trip details & itinerary | `C:\My Projects\WG3\wg-tripdetails-api` |
+| `${PROJECT_BOOKING_API}` | wg-booking-api | Backend | Booking processing & management | `C:\My Projects\WG3\wg-booking-api` |
+| `${PROJECT_EMAIL_API}` | wg-email-api | Backend | Email notifications & templates | `C:\My Projects\WG3\wg-email-api` |
+| `${PROJECT_INVOICE_API}` | wg-invoice-api | Backend | Invoice generation & management | `C:\My Projects\WG3\wg-invoice-api` |
 
 ---
 
@@ -40,6 +43,9 @@
 | Payment transactions & integration | `${PROJECT_PAYMENT_API}` |
 | Search functionality & indexing | `${PROJECT_SEARCH_API}` |
 | Trip details & itinerary service | `${PROJECT_TRIPDETAILS_API}` |
+| Booking processing & management | `${PROJECT_BOOKING_API}` |
+| Email notifications & templates | `${PROJECT_EMAIL_API}` |
+| Invoice generation & management | `${PROJECT_INVOICE_API}` |
 | Full-stack features | Multiple projects |
 
 ---
