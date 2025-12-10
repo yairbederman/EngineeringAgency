@@ -24,6 +24,21 @@ Where `ARCHITECT_ROOT` = `./mapcodebase`
 
 ---
 
+## Project Validation (Prerequisite)
+
+Before running any phases, validate the target project:
+
+1. **Read** `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md`
+2. **Check**: Is the target project listed in the Registered Projects table?
+   - **If YES**: Proceed to Execution
+   - **If NO**: 
+     - **STOP**: "Project not registered. Add it to `shared/projects.md` first."
+     - Provide guidance on how to add the project
+
+> **Why**: Ensures all analyzed projects are tracked centrally, enabling `/system-architecture-agent` to discover them.
+
+---
+
 ## Execution
 
 Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the target project.

@@ -56,14 +56,16 @@ Create edges representing runtime calls:
       "type": "Frontend",
       "role": "Next.js web application",
       "exposedEndpoints": 0,
-      "callsServices": ["wg-data-api", "wg-search-api", "wg-ordermanager-api", "wg-payment-api"]
+      "callsServices": ["wg-data-api", "wg-search-api", "wg-ordermanager-api", "wg-payment-api"],
+      "calledBy": []
     },
     {
       "name": "wg-data-api",
       "type": "Backend",
       "role": "Site data and configuration",
       "exposedEndpoints": 48,
-      "callsServices": ["wg-cms-api"]
+      "callsServices": ["wg-cms-api"],
+      "calledBy": ["wg-client"]
     }
   ],
   "dependencies": [
@@ -87,6 +89,17 @@ Create edges representing runtime calls:
   }
 }
 ```
+
+### Step 3.5: Compute Reverse Dependencies (calledBy)
+
+For each service, compute which services call it:
+
+1. Initialize empty `calledBy` array for each service
+2. For each dependency edge (from → to):
+   - Add `from` to `to.calledBy`
+3. This enables **impact analysis**: When modifying a service, check `calledBy` to find affected consumers
+
+**Purpose**: Enables `/engineering-agent` to answer "If I change this API, what breaks?"
 
 ### Step 4: Detect Circular Dependencies
 

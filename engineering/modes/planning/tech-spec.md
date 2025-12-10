@@ -39,21 +39,28 @@
   - Extract **Figma Links** (if present for UI work)
 
 ### Step 2: Identify Affected Projects
-- **Determine Project Scope**: Based on Epic requirements, identify which workspace project(s) are impacted:
+
+> **⛔ CRITICAL**: Read system architecture files BEFORE finalizing project scope to discover transitive dependencies.
+
+**Step 2.1: Read System Topology FIRST** (from `/system-architecture-agent` output):
+1. **Read `${SYSTEM_ARCH_ROOT}/analysis/service-topology.json`**
+2. Review all services and their `callsServices` + `calledBy` relationships
+3. This context informs project identification below
+
+**Step 2.2: Determine Initial Project Scope**: Based on Epic requirements, identify which workspace project(s) are directly impacted:
   - `${PROJECT_FRONTEND}` (Frontend/React)
   - `${PROJECT_CMS_API}` (CMS Backend)
   - `${PROJECT_DATA_API}` (Data Backend)
   - [Other projects from configuration.md]
 
-- **Cross-Project Impact Analysis** (from `/system-architecture-agent` output):
-  1. **Read `${SYSTEM_ARCH_ROOT}/analysis/service-topology.json`**
-  2. For each identified project, check:
-     - Which services does it **call**? (downstream dependencies)
-     - Which services **call it**? (upstream consumers)
-  3. If cross-service dependencies exist:
+**Step 2.3: Expand Scope via Cross-Project Impact Analysis**:
+  1. For each identified project, check in `service-topology.json`:
+     - Which services does it **call**? (`callsServices` - downstream dependencies)
+     - Which services **call it**? (`calledBy` - upstream consumers that may be affected)
+  2. If cross-service dependencies exist:
      - **Add those services to scope** (even if not initially identified)
      - **Read `${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json`** for the specific API contracts
-  4. Document in Tech Spec under "Cross-Project Impact" section
+  3. Document in Tech Spec under "Cross-Project Impact" section
 
 - **Project Selection Criteria**:
   - Frontend work (UI, forms, displays) → `${PROJECT_FRONTEND}`
@@ -61,7 +68,12 @@
   - Data processing, external APIs → `${PROJECT_DATA_API}`
   - Full-stack features → Multiple projects
 
-> **Note**: If `service-topology.json` doesn't exist, issue a warning: "Cross-project impact unknown. Run `/system-architecture-agent` for complete analysis."
+> [!IMPORTANT]
+> **If `service-topology.json` doesn't exist**:
+> 1. **RECOMMEND**: "Run `/system-architecture-agent` first for complete cross-project visibility"
+> 2. **IF PROCEEDING**: Document ALL assumed cross-project impacts in "Assumptions" section
+> 3. **ADD LABEL**: Add `needs-system-architecture` label to Epic
+> 4. **RISK**: Cross-project API changes may break consumers without proper impact analysis
 
 ### Step 3: Review Codebase Architecture (Per Project)
 For **each affected project**:

@@ -31,22 +31,18 @@
 | `${ANALYSIS_DIR}` | `${OUTPUT_ROOT}/analysis/` | JSON analysis files |
 | `${DEEP_DIVE_DIR}` | `${OUTPUT_ROOT}/deep-dive/` | Detailed documentation |
 
+> [!IMPORTANT]
+> **Path Synchronization Required**  
+> The `OUTPUT_ROOT` path **MUST** match `${SYSTEM_ARCH_ROOT}` in `/engineering-agent`'s configuration (`engineering/configuration.md`).  
+> When updating this path, also update the corresponding path in engineering configuration.
+
 ---
 
 ## Project Registry
 
-> **IMPORTANT**: All projects listed here will be scanned. Add new projects as rows.
-
-| Variable | Name | Type | Role | Path |
-|----------|------|------|------|------|
-| `${PROJECT_FRONTEND}` | wg-client | Frontend | Next.js web application | `C:\My Projects\WG3\wg-client` |
-| `${PROJECT_CMS_API}` | wg-cms-api | Backend | CMS content management | `C:\My Projects\WG3\wg-cms-api` |
-| `${PROJECT_DATA_API}` | wg-data-api | Backend | Site data and configuration | `C:\My Projects\WG3\wg-data-api` |
-| `${PROJECT_ANCILLARY_API}` | wg-ancillary-api | Backend | Ancillary products & services | `C:\My Projects\WG3\wg-ancillary-api` |
-| `${PROJECT_ORDERMANAGER_API}` | wg-ordermanager-api | Backend | Order processing & management | `C:\My Projects\WG3\wg-ordermanager-api` |
-| `${PROJECT_PAYMENT_API}` | wg-payment-api | Backend | Payment transactions | `C:\My Projects\WG3\wg-payment-api` |
-| `${PROJECT_SEARCH_API}` | wg-search-api | Backend | Search functionality | `C:\My Projects\WG3\wg-search-api` |
-| `${PROJECT_TRIPDETAILS_API}` | wg-tripdetails-api | Backend | Trip details & itinerary | `C:\My Projects\WG3\wg-tripdetails-api` |
+> **📁 Source**: [shared/projects.md](../shared/projects.md) – Single source of truth for all agents.
+>
+> This agent will scan all projects listed in the shared projects file.
 
 ### Per-Project Required Files
 

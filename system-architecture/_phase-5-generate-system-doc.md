@@ -136,12 +136,28 @@ Analyze projects for:
 
 ## How to Use This Document
 
-### For /engineering-agent
-When planning multi-project features:
-1. Check Service Topology for impacted services
-2. Review Cross-Service APIs for integration points
-3. Consult Domain Model for entity definitions
-4. Verify Cross-Cutting Concerns for consistency
+### Integration with /engineering-agent
+
+| Engineering Mode | System Architecture File | When to Read | Purpose |
+|-----------------|-------------------------|--------------|---------|
+| **TechSpec Step 2** | `service-topology.json` | BEFORE identifying projects | Discover all upstream/downstream dependencies |
+| **TechSpec Step 2** | `service-topology.json` → `calledBy` | After identifying scope | Find consumers affected by changes |
+| **TechSpec § 5.2** | `unified-domain-model.json` | When defining entities | Use canonical entity definitions |
+| **TechSpec § 5.3** | `cross-service-apis.json` | When defining API contracts | Get existing cross-service signatures |
+| **TaskPlanning** | `cross-service-apis.json` | Context injection step | Inject cross-service API context into tasks |
+| **BugReport Step 6** | `service-topology.json` | Cross-repo analysis | Trace service chain for bug isolation |
+| **BugFix Step 2** | `cross-service-apis.json` | Impact assessment | Verify fix doesn't break callers |
+
+### Quick Reference for Multi-Project Features
+
+1. **Before TechSpec**: Read `service-topology.json`
+   - Check both `callsServices` AND `calledBy` for each service in scope
+   - Add transitively affected services to Epic scope
+2. **During TechSpec**: Read `unified-domain-model.json`
+   - Use `canonicalSource` for entity definitions
+   - Flag any `conflicting` fields
+3. **During TaskPlanning**: Read `cross-service-apis.json`
+   - Copy endpoint contracts into cross-service tasks
 
 ### Updating This Document
 Run `/system-architecture-agent` after:
