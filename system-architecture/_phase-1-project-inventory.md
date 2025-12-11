@@ -56,58 +56,55 @@ For each project in the registry:
 
 ```json
 {
-  "generatedAt": "ISO timestamp",
-  "totalProjects": 8,
-  "readyProjects": 7,
-  "incompleteProjects": 1,
+  "generatedAt": "<ISO-8601 timestamp>",
+  "totalProjects": "<count from registry>",
+  "readyProjects": "<count with status=ready>",
+  "incompleteProjects": "<count with status=incomplete>",
   "projects": [
     {
-      "name": "wg-client",
-      "type": "Frontend",
-      "role": "Next.js web application",
-      "path": "C:\\My Projects\\WG3\\wg-client",
-      "status": "ready",
-      "summary": "Frontend application built with Next.js 14...",
+      "name": "<project-name>",
+      "type": "<Frontend | Backend>",
+      "role": "<from projects.md registry>",
+      "path": "<full filesystem path>",
+      "status": "<ready | incomplete | missing>",
+      "summary": "<extracted from copilot-instructions.md>",
       "techStack": {
-        "framework": "Next.js 14",
-        "language": "TypeScript",
-        "stateManagement": "Zustand",
-        "styling": "Tailwind CSS"
+        "framework": "<detected framework>",
+        "language": "<primary language>",
+        "database": "<if applicable>",
+        "stateManagement": "<if frontend>",
+        "styling": "<if frontend>"
       },
-      "aiInstructionsPath": ".ai-instructions/",
-      "files": {
-        "copilotInstructions": true,
-        "entityContracts": true,
-        "apiContracts": true,
-        "fileCategorization": true
-      }
-    },
-    {
-      "name": "wg-data-api",
-      "type": "Backend",
-      "role": "Site data and configuration",
-      "path": "C:\\My Projects\\WG3\\wg-data-api",
-      "status": "ready",
-      "summary": "Spring Boot 3.0 REST API...",
-      "techStack": {
-        "framework": "Spring Boot 3.0",
-        "language": "Java 17",
-        "database": "PostgreSQL"
+      "aiInstructions": {
+        "root": "<absolute path to .ai-instructions/>",
+        "copilotInstructions": "<absolute path to copilot-instructions.md>",
+        "entityContracts": "<absolute path to entity-contracts.json>",
+        "apiContracts": "<absolute path to api-contracts.json>"
       },
       "files": {
-        "copilotInstructions": true,
-        "entityContracts": true,
-        "apiContracts": true
+        "copilotInstructions": "<boolean>",
+        "entityContracts": "<boolean>",
+        "apiContracts": "<boolean>",
+        "fileCategorization": "<boolean, frontend only>"
       }
     }
+    // ... one entry per project in registry
   ],
   "_issues": [
     {
-      "project": "new-project",
-      "status": "missing",
-      "message": "Run /map-codebase-agent on this project first"
+      "project": "<project-name>",
+      "status": "<incomplete | missing>",
+      "message": "<actionable guidance>"
     }
-  ]
+    // ... only populated if problems exist
+  ],
+  "_coverage": {
+    "registeredProjects": "<count from projects.md>",
+    "scannedProjects": "<count actually checked>",
+    "readyProjects": "<count with status=ready>",
+    "incompleteProjects": "<count with status=incomplete>",
+    "missingProjects": "<count with status=missing>"
+  }
 }
 ```
 

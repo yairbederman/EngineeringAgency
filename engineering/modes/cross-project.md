@@ -8,7 +8,7 @@
 
 ## Prerequisites
 
-1. **System Architecture Must Exist**: Verify `${SYSTEM_ARCH_ROOT}/analysis/service-topology.json` exists
+1. **System Architecture Must Exist**: Verify `${SYSTEM_ARCH_OUTPUT}/analysis/service-topology.json` exists
 2. **If Missing**: Recommend running `/system-architecture-agent` first
 
 ---
@@ -86,7 +86,7 @@ When creating tasks for cross-project features:
 
 ### Step 1: Read Cross-Service APIs
 ```
-Read: ${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json
+Read: ${SYSTEM_ARCH_OUTPUT}/analysis/cross-service-apis.json
 ```
 
 Extract the API contract for service-to-service calls involved in this feature.
@@ -96,17 +96,17 @@ Extract the API contract for service-to-service calls involved in this feature.
 For backend tasks that expose APIs consumed by other projects:
 ```markdown
 ### Cross-Service API Contract
-- **Endpoint**: `POST /api/v1/orders`
-- **Consumed By**: `wg-client`, `wg-payment-api`
-- **Contract Source**: `cross-service-apis.json` → `wg-ordermanager-api.exposedApis[0]`
+- **Endpoint**: `<METHOD> <path>`
+- **Consumed By**: `<list of caller services>`
+- **Contract Source**: `cross-service-apis.json` → `crossServiceCalls` where `callee` = `<this-service>`
 ```
 
 For frontend tasks that call backend APIs:
 ```markdown
 ### Backend API to Call
-- **Endpoint**: `GET /api/v1/trips/{tripId}`
-- **Owner**: `wg-tripdetails-api`
-- **Contract Source**: `cross-service-apis.json` → `wg-tripdetails-api.exposedApis[2]`
+- **Endpoint**: `<METHOD> <path>`
+- **Owner**: `<callee-service>`
+- **Contract Source**: `cross-service-apis.json` → `crossServiceCalls` where `caller` = `<this-service>`
 ```
 
 ### Step 3: Set Task Dependencies
@@ -120,22 +120,38 @@ Use the Layer system to set Jira task links:
 ## Example: Reading cross-service-apis.json
 
 ```json
-// From cross-service-apis.json
+// From cross-service-apis.json (actual schema from Phase 3)
 {
-  "wg-data-api": {
-    "exposedApis": [
-      {
-        "endpoint": "GET /api/v1/sites/{siteId}",
-        "consumedBy": ["wg-client", "wg-search-api"],
-        "requestType": "SiteRequest",
-        "responseType": "SiteResponse"
-      }
-    ]
-  }
+  "crossServiceCalls": [
+    {
+      "id": "<unique-call-id>",
+      "caller": "<caller-service>",
+      "callee": "<callee-service>",
+      "endpoint": {
+        "method": "<HTTP method>",
+        "path": "<endpoint path>"
+      },
+      "request": {
+        "type": "<RequestDTO>",
+        "definedIn": "<owning project>",
+        "fields": {}
+      },
+      "response": {
+        "type": "<ResponseDTO>",
+        "definedIn": "<owning project>"
+      },
+      "usedBy": ["<list of components/modules using this call>"]
+    }
+  ],
+  "sharedTypes": [...]
 }
 ```
 
+**How to Find APIs for a Service**:
+1. Filter `crossServiceCalls` where `callee` equals the target service → APIs it **exposes**
+2. Filter `crossServiceCalls` where `caller` equals the target service → APIs it **consumes**
+
 **Inject into Task**:
-- For `wg-data-api` task: Document that this endpoint is consumed by 2 services
-- For `wg-client` task: Include the full Request/Response types from the contract
+- For backend task (service is `callee`): List all `caller` services that consume the endpoint
+- For frontend task (service is `caller`): Include the `request`/`response` types from the contract
 

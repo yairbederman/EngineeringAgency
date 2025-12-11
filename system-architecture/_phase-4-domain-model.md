@@ -28,10 +28,10 @@ For each `ready` project:
 Group entities that share the same name across projects:
 
 ```
-BookingData:
-  - wg-ordermanager-api/BookingData (12 fields)
-  - wg-payment-api/BookingData (8 fields)
-  - wg-tripdetails-api/BookingData (10 fields)
+<EntityName>:
+  - <project-a>/<EntityName> (<N> fields)
+  - <project-b>/<EntityName> (<M> fields)
+  - <project-c>/<EntityName> (<P> fields)
 ```
 
 ### Step 3: Identify Canonical Definitions
@@ -70,68 +70,61 @@ For each canonical entity:
 
 ```json
 {
-  "generatedAt": "ISO timestamp",
+  "generatedAt": "<ISO-8601 timestamp>",
   "entities": [
     {
-      "name": "BookingData",
-      "classification": "duplicated",
+      "name": "<EntityName>",
+      "classification": "<canonical | shared | duplicated | conflicting>",
       "canonicalSource": {
-        "project": "wg-ordermanager-api",
-        "file": "src/main/java/.../BookingData.java",
-        "reason": "Contains all fields, manages booking lifecycle"
+        "project": "<owning project>",
+        "file": "<relative path to source>",
+        "reason": "<why this is the canonical source>"
       },
       "unifiedFields": [
         {
-          "name": "bookingId",
-          "type": "String",
-          "definedIn": ["wg-ordermanager-api", "wg-payment-api", "wg-tripdetails-api"],
-          "status": "consistent"
+          "name": "<fieldName>",
+          "type": "<type>",
+          "definedIn": ["<list of projects defining this field>"],
+          "status": "<consistent | conflicting>"
         },
         {
-          "name": "totalPrice",
-          "type": "BigDecimal",
-          "definedIn": ["wg-ordermanager-api", "wg-payment-api"],
+          "name": "<anotherField>",
+          "type": "<type>",
+          "definedIn": ["<project-a>", "<project-b>"],
           "conflict": {
-            "wg-ordermanager-api": "BigDecimal",
-            "wg-tripdetails-api": "Double"
+            "<project-a>": "<type-in-a>",
+            "<project-c>": "<type-in-c>"
           },
           "status": "conflicting"
         }
       ],
-      "usedIn": ["wg-client", "wg-payment-api", "wg-tripdetails-api"]
+      "usedIn": ["<list of projects using this entity>"]
     }
+    // ... one entry per canonical entity
   ],
   "domainAreas": [
     {
-      "name": "Booking",
-      "entities": ["BookingData", "BookingRequest", "BookingResponse"],
-      "ownedBy": "wg-ordermanager-api"
-    },
-    {
-      "name": "Payment",
-      "entities": ["PaymentData", "PaymentRequest", "PaymentResponse"],
-      "ownedBy": "wg-payment-api"
-    },
-    {
-      "name": "Search",
-      "entities": ["SearchRequest", "SearchResponse", "PackageData"],
-      "ownedBy": "wg-search-api"
+      "name": "<DomainArea>",
+      "entities": ["<list of entities in this domain>"],
+      "ownedBy": "<owning project>"
     }
+    // ... one entry per domain area
   ],
   "_conflicts": [
     {
-      "entity": "BookingData",
-      "field": "totalPrice",
-      "issue": "Type mismatch: BigDecimal vs Double",
-      "recommendation": "Standardize to BigDecimal for currency precision"
+      "entity": "<EntityName>",
+      "field": "<fieldName>",
+      "issue": "<description of the conflict>",
+      "recommendation": "<how to resolve>"
     }
+    // ... only populated if conflicts exist
   ],
   "_coverage": {
-    "projectsAnalyzed": 8,
-    "entitiesFound": 156,
-    "canonicalEntities": 45,
-    "duplicatedEntities": 12,
-    "conflictingFields": 3
+    "projectsAnalyzed": "<count>",
+    "entitiesFound": "<count>",
+    "canonicalEntities": "<count>",
+    "duplicatedEntities": "<count>",
+    "conflictingFields": "<count>"
   }
 }
 ```

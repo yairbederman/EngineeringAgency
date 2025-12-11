@@ -114,7 +114,7 @@ For **each layer** in order (Database → Service → API → Frontend → State
    - Show before/after if MODIFY action
 
 3. **Cross-Service API Context** (from `/system-architecture-agent` output):
-   - **Read `${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json`**
+   - **Read `${SYSTEM_ARCH_OUTPUT}/analysis/cross-service-apis.json`**
    - If this service CALLS another service:
      - Copy the cross-service endpoint contract
      - Include caller and callee project names
@@ -122,7 +122,7 @@ For **each layer** in order (Database → Service → API → Frontend → State
      - Note which services depend on this endpoint (for impact awareness)
 
 4. **Canonical Entity Source** (from `/system-architecture-agent` output):
-   - **Read `${SYSTEM_ARCH_ROOT}/analysis/unified-domain-model.json`**
+   - **Read `${SYSTEM_ARCH_OUTPUT}/analysis/unified-domain-model.json`**
    - If entity exists in multiple projects:
      - Identify the canonical source
      - Reference the canonical definition in task

@@ -28,48 +28,41 @@ Create a Mermaid diagram showing all services and dependencies:
 ```mermaid
 graph TB
     subgraph Presentation
-        CLIENT[wg-client<br/>Next.js Frontend]
+        CLIENT["<frontend-project><br/>Frontend App"]
     end
     
     subgraph API Layer
-        DATA[wg-data-api<br/>Site Data]
-        SEARCH[wg-search-api<br/>Search]
-        ORDER[wg-ordermanager-api<br/>Orders]
-        PAYMENT[wg-payment-api<br/>Payment]
-        TRIP[wg-tripdetails-api<br/>Trip Details]
-        ANCILLARY[wg-ancillary-api<br/>Ancillary]
+        SVC1["<backend-service-1><br/>Description"]
+        SVC2["<backend-service-2><br/>Description"]
+        SVC3["<backend-service-3><br/>Description"]
     end
     
     subgraph Integration
-        CMS[wg-cms-api<br/>CMS]
+        EXT["<integration-service><br/>External/CMS"]
     end
     
-    CLIENT --> DATA
-    CLIENT --> SEARCH
-    CLIENT --> ORDER
-    CLIENT --> PAYMENT
-    CLIENT --> TRIP
-    CLIENT --> ANCILLARY
-    DATA --> CMS
+    CLIENT --> SVC1
+    CLIENT --> SVC2
+    CLIENT --> SVC3
+    SVC1 --> EXT
 ```
 
 ### Step 2: Generate Project Responsibilities Table
 
 | Project | Type | Role | Endpoints | Key Entities |
 |---------|------|------|-----------|--------------|
-| wg-client | Frontend | Web application | N/A | Views all entities |
-| wg-data-api | Backend | Site configuration | 48 | SiteConfig, EngineData |
+| <project-name> | <Frontend/Backend> | <role from inventory> | <count> | <key entities> |
 | ... | ... | ... | ... | ... |
 
 ### Step 3: Generate Cross-Service API Reference
 
 For each service pair:
 
-#### wg-client → wg-data-api
+#### <caller-service> → <callee-service>
 
 | Endpoint | Method | Request | Response | Used By |
 |----------|--------|---------|----------|---------|
-| `/site/getEngineData` | POST | EngineDataRequest | EngineDataResponse | SearchWidget |
+| `<path>` | <METHOD> | <RequestDTO> | <ResponseDTO> | <components> |
 | ... | ... | ... | ... | ... |
 
 ### Step 4: Generate Domain Model Summary
@@ -78,9 +71,8 @@ For each service pair:
 
 | Area | Owner | Key Entities |
 |------|-------|--------------|
-| Booking | wg-ordermanager-api | BookingData, BookingRequest |
-| Payment | wg-payment-api | PaymentData, PaymentRequest |
-| Search | wg-search-api | SearchRequest, PackageData |
+| <DomainArea> | <owning-project> | <EntityA>, <EntityB> |
+| ... | ... | ... |
 
 #### Canonical Entities
 
@@ -92,17 +84,17 @@ Analyze projects for:
 
 | Concern | Pattern | Projects |
 |---------|---------|----------|
-| Authentication | JWT Bearer | All |
-| Error Handling | ErrorResponse DTO | All backends |
-| Logging | Structured JSON | All backends |
-| Caching | Redis | wg-data-api, wg-search-api |
+| Authentication | <pattern> | <projects> |
+| Error Handling | <pattern> | <projects> |
+| Logging | <pattern> | <projects> |
+| Caching | <pattern> | <projects> |
 
 ---
 
 ## system-architecture.md Template
 
 ```markdown
-# WG3 System Architecture
+# System Architecture
 
 > Generated: {timestamp}
 > Projects: {count}
@@ -159,6 +151,13 @@ Analyze projects for:
 3. **During TaskPlanning**: Read `cross-service-apis.json`
    - Copy endpoint contracts into cross-service tasks
 
+### Prerequisites (Data Source)
+This document aggregates data from projects processed by `/map-codebase-agent`.
+
+If project AI instructions are stale, re-run:
+1. `/map-codebase-agent` on affected project(s)
+2. `/system-architecture-agent` to refresh this document
+
 ### Updating This Document
 Run `/system-architecture-agent` after:
 - Adding a new project
@@ -175,20 +174,19 @@ Generate `end-to-end-flows.md` with:
 ### Flow Template
 
 ```markdown
-## Flow: Search to Booking
+## Flow: <Flow Name>
 
 ### Overview
-User searches for packages and completes a booking.
+<Brief description of what this flow accomplishes>
 
 ### Service Chain
-wg-client → wg-search-api → wg-ordermanager-api → wg-payment-api
+<service-a> → <service-b> → <service-c> → <service-d>
 
 ### Sequence
-1. **wg-client**: User enters search criteria
-2. **wg-search-api**: `POST /search/packages` returns available packages
-3. **wg-client**: User selects package
-4. **wg-ordermanager-api**: `POST /order/create` creates booking
-5. **wg-payment-api**: `POST /payment/process` handles payment
+1. **<service-a>**: <user action or trigger>
+2. **<service-b>**: `<METHOD> <endpoint>` <what it does>
+3. **<service-c>**: `<METHOD> <endpoint>` <what it does>
+4. **<service-d>**: `<METHOD> <endpoint>` <what it does>
 
 ### Data Flow
 {Mermaid sequence diagram}

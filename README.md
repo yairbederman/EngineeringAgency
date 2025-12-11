@@ -2,84 +2,218 @@
 
 AI agent workflows for code generation, architecture extraction, and feature lifecycle management.
 
-## Available Workflows
-
-| Workflow | Description | Trigger |
-|----------|-------------|---------|
-| `/engineering-agent` | Feature lifecycle: ProductSpecReview → FeaturePlanning → TechSpec → Implementation | Start of any feature work |
-| `/map-codebase-agent` | Extract AI instructions from a single project | When project structure changes significantly |
-| `/system-architecture-agent` | Generate cross-project architecture documentation | When adding new projects or major API changes |
-
-## Workflow Hierarchy
-
-```
-/map-codebase-agent           # Per-project (run on each)
-         ↓
-/system-architecture-agent    # Cross-project (run once)
-         ↓
-/engineering-agent            # Feature work (uses all above)
-```
-
 ---
 
-## New Developer Setup
+## 🚀 New Developer Setup
 
 ### Prerequisites
 
-- VS Code with GitHub Copilot or compatible AI assistant
-- Atlassian MCP authentication configured
+- [ ] VS Code installed with GitHub Copilot extension
+- [ ] Access to WG3 project repositories
+- [ ] Atlassian account (for Jira/Confluence integration)
+- [ ] Figma account (for design token extraction)
 
-### Setup Checklist
+### Step 0: Configure MCP Servers
 
-- [ ] Clone this repository to `~/.gemini/antigravity/global_workflows`
-- [ ] Clone all WG3 project repositories to the same parent directory (e.g., `C:\My Projects\WG3` or `/Users/dev/WG3`)
-- [ ] Open a VS Code workspace containing all WG3 projects
-- [ ] Verify all projects appear as workspace folders in VS Code's Explorer sidebar
+The agents require two MCP (Model Context Protocol) servers for full functionality:
 
-> **Note**: The `${WORKSPACE_ROOT}` variable references the parent directory containing all projects. Ensure all WG3 projects are in the same parent directory and added to your VS Code workspace.
+#### Atlassian MCP Server (Required)
+
+Provides Jira and Confluence integration for epics, tasks, and specs.
+
+- [ ] Install the Atlassian MCP server extension
+- [ ] Configure authentication with your Atlassian account
+- [ ] Verify access to the WG3 Jira project (`W0`)
+- [ ] Verify access to Confluence space (`WGPro30`)
+
+**Test**: Run `mcp_atlassian-mcp-server_atlassianUserInfo` to verify your connection.
+
+#### Figma MCP Server (Optional - Required for Frontend Tasks)
+
+Provides design token extraction for pixel-perfect UI implementation.
+
+- [ ] Install the Figma MCP server extension
+- [ ] Configure authentication with your Figma account
+- [ ] Verify access to WG3 design files
+
+**Test**: Use `mcp_figma-dev-mode-mcp-server_get_design_context` on a Figma link to verify.
+
+> [!TIP]
+> MCP servers are configured in your VS Code settings or `.vscode/mcp.json`.
+> Ask your team lead for the MCP server configuration files.
+
+### Step 1: Clone Repositories
+
+```bash
+# 1. Create your workspace directory
+mkdir "C:\My Projects\WG3"   # Windows
+# OR
+mkdir ~/WG3                   # Mac/Linux
+
+# 2. Clone all WG3 project repositories into this directory
+cd "C:\My Projects\WG3"       # or ~/WG3
+git clone <wg-client-repo>
+git clone <wg-cms-api-repo>
+git clone <wg-data-api-repo>
+# ... clone all projects listed in shared/projects.md
+
+# 3. Clone this workflows repository
+git clone <this-repo> ~/.gemini/antigravity/global_workflows
+```
+
+### Step 2: Configure Workspace Root
+
+- [ ] Open [`shared/projects.md`](shared/projects.md)
+- [ ] Note down your local projects directory (this is your `WORKSPACE_ROOT`)
+
+| Platform | Example `WORKSPACE_ROOT` |
+|----------|-------------------------|
+| Windows | `C:\My Projects\WG3` |
+| macOS | `/Users/yourname/WG3` |
+| Linux | `/home/yourname/WG3` |
+
+> [!NOTE]
+> All paths in the agents use variable substitution (e.g., `${WORKSPACE_ROOT}/wg-client`).
+> The agents resolve these at runtime based on your VS Code workspace.
+
+### Step 3: VS Code Workspace Setup
+
+- [ ] Open VS Code
+- [ ] **File → Add Folder to Workspace...** for each project:
+  - `wg-client`
+  - `wg-cms-api`
+  - `wg-data-api`
+  - `wg-ancillary-api`
+  - `wg-ordermanager-api`
+  - `wg-payment-api`
+  - `wg-search-api`
+  - `wg-tripdetails-api`
+  - `wg-booking-api`
+  - `wg-email-api`
+  - `wg-invoice-api`
+- [ ] **File → Save Workspace As...** → Save as `WG3.code-workspace`
+
+### Step 4: Verify Setup
+
+Run this quick verification:
+
+- [ ] All 11 projects visible in VS Code Explorer sidebar
+- [ ] Each project has `.ai-instructions/` folder (if previously mapped)
+- [ ] Type `/engineering-agent` in Copilot chat to test
 
 ---
 
-## Directory Structure
+## 📁 Directory Structure
 
 ```
 global_workflows/
-├── engineering-agent.md          # Feature lifecycle workflow
-├── map-codebase-agent.md         # Project AI instructions generator
-├── system-architecture-agent.md  # Cross-project architecture generator
+├── README.md                         # This file
 ├── shared/
-│   └── projects.md               # Project registry (single source of truth)
-├── mapcodebase/                  # Phase files for map-codebase-agent
-├── engineering/                  # Mode files for engineering-agent
-└── system-architecture/          # Phase files for system-architecture-agent
+│   └── projects.md                   # 🔑 Project registry (SINGLE SOURCE OF TRUTH)
+│
+├── engineering-agent.md              # Feature lifecycle workflow
+├── engineering/                      # Configuration & mode files
+│   ├── configuration.md              # 🔧 Atlassian config (Jira/Confluence)
+│   ├── core-rules.md                 # Agent behavior rules
+│   ├── modes/                        # Mode-specific instructions
+│   └── templates/                    # Epic, Tech Spec, Task templates
+│
+├── map-codebase-agent.md             # Project AI instructions generator
+├── mapcodebase/                      # Phase files for extraction
+│   └── configuration.md              # Output paths
+│
+├── system-architecture-agent.md      # Cross-project architecture generator
+└── system-architecture/              # Phase files for system docs
+    └── configuration.md              # Output paths
 ```
 
 ---
 
-## Quick Start
+## 🔧 Configuration Values
 
-### 1. Develop Features
+### Files You May Need to Update
+
+| File | What to Configure | When |
+|------|-------------------|------|
+| [`shared/projects.md`](shared/projects.md) | Add/remove projects | When new projects are added to the team |
+| [`engineering/configuration.md`](engineering/configuration.md) | Jira/Confluence settings | If Atlassian instance changes |
+
+### Atlassian Configuration (engineering/configuration.md)
+
+Current values (update only if your Atlassian instance differs):
+
+| Setting | Current Value |
+|---------|--------------|
+| Atlassian Cloud ID | `lognetsystems.atlassian.net` |
+| Jira Project Key | `W0` |
+| Confluence Space Key | `WGPro30` |
+| Product Specs Folder ID | `260177923` |
+| Tech Specs Folder ID | `259883024` |
+
+---
+
+## 🔄 Workflow Hierarchy
+
+```
+┌─────────────────────────┐
+│  /map-codebase-agent    │  ← Run per project (generates .ai-instructions/)
+└───────────┬─────────────┘
+            ↓
+┌─────────────────────────┐
+│/system-architecture-agent│ ← Run once (aggregates all projects)
+└───────────┬─────────────┘
+            ↓
+┌─────────────────────────┐
+│   /engineering-agent    │  ← Daily feature work (uses all above)
+└─────────────────────────┘
+```
+
+### When to Run Each Workflow
+
+| Workflow | Trigger | Output |
+|----------|---------|--------|
+| `/map-codebase-agent` | Project structure changes significantly | `.ai-instructions/` in project |
+| `/system-architecture-agent` | New project added or major API changes | `system-architecture/` docs |
+| `/engineering-agent` | Any feature work, bug fixes | Jira tasks, code, tests |
+
+---
+
+## ✅ Quick Start (Daily Use)
+
+### Start Feature Work
 ```
 /engineering-agent
 ```
-Use for ProductSpecReview, FeaturePlanning, TechSpec, and Implementation.
+Guides you through: ProductSpecReview → FeaturePlanning → TechSpec → Implementation
 
-### 2. Update Project AI Instructions (When Needed)
+### Refresh Project Knowledge (When Needed)
 ```
 /map-codebase-agent
 ```
-Run when a project's structure changes significantly.
+Run on a specific project when its structure changes.
 
-### 3. Update System Architecture (When Needed)
+### Refresh System Architecture (When Needed)
 ```
 /system-architecture-agent
 ```
-Run when adding new projects or after major API changes.
+Run after adding new projects or major cross-service changes.
 
 ---
 
-## Adding New Projects
+## ➕ Adding New Projects
 
-1. Add project to [`shared/projects.md`](shared/projects.md)
-2. Run `/map-codebase-agent` on the new project
-3. Re-run `/system-architecture-agent` to update cross-project docs
+- [ ] Add project row to [`shared/projects.md`](shared/projects.md)
+- [ ] Run `/map-codebase-agent` on the new project
+- [ ] Run `/system-architecture-agent` to update cross-project docs
+- [ ] Add project folder to VS Code workspace
+
+---
+
+## 🆘 Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Agent can't find project | Verify project is in `shared/projects.md` and added to VS Code workspace |
+| `.ai-instructions/` not found | Run `/map-codebase-agent` on the project first |
+| Cross-project context missing | Run `/system-architecture-agent` to generate `system-architecture/` |
+| Jira/Confluence errors | Check `engineering/configuration.md` for correct Atlassian settings |

@@ -87,11 +87,11 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 
 | Variable | Path | Description |
 |----------|------|-------------|
-| `${SYSTEM_ARCH_ROOT}` | `${WORKSPACE_ROOT}/system-architecture` | Root for cross-project docs |
-| `${SERVICE_TOPOLOGY_PATH}` | `${SYSTEM_ARCH_ROOT}/analysis/service-topology.json` | Service dependencies |
-| `${CROSS_SERVICE_APIS_PATH}` | `${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json` | Inter-service API contracts |
-| `${UNIFIED_DOMAIN_MODEL_PATH}` | `${SYSTEM_ARCH_ROOT}/analysis/unified-domain-model.json` | Canonical entities |
-| `${SYSTEM_ARCH_DOC_PATH}` | `${SYSTEM_ARCH_ROOT}/system-architecture.md` | Master system doc |
+| `${SYSTEM_ARCH_OUTPUT}` | `${WORKSPACE_ROOT}/system-architecture` | Root for generated cross-project docs |
+| `${SERVICE_TOPOLOGY_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/service-topology.json` | Service dependencies |
+| `${CROSS_SERVICE_APIS_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/cross-service-apis.json` | Inter-service API contracts |
+| `${UNIFIED_DOMAIN_MODEL_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/unified-domain-model.json` | Canonical entities |
+| `${SYSTEM_ARCH_DOC_PATH}` | `${SYSTEM_ARCH_OUTPUT}/system-architecture.md` | Master system doc |
 
 > **Note**: `${WORKSPACE_ROOT}` is defined in [shared/projects.md](../shared/projects.md).
 

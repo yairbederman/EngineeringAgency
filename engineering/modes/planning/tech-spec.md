@@ -43,7 +43,7 @@
 > **⛔ CRITICAL**: Read system architecture files BEFORE finalizing project scope to discover transitive dependencies.
 
 **Step 2.1: Read System Topology FIRST** (from `/system-architecture-agent` output):
-1. **Read `${SYSTEM_ARCH_ROOT}/analysis/service-topology.json`**
+1. **Read `${SYSTEM_ARCH_OUTPUT}/analysis/service-topology.json`**
 2. Review all services and their `callsServices` + `calledBy` relationships
 3. This context informs project identification below
 
@@ -59,7 +59,7 @@
      - Which services **call it**? (`calledBy` - upstream consumers that may be affected)
   2. If cross-service dependencies exist:
      - **Add those services to scope** (even if not initially identified)
-     - **Read `${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json`** for the specific API contracts
+     - **Read `${SYSTEM_ARCH_OUTPUT}/analysis/cross-service-apis.json`** for the specific API contracts
   3. Document in Tech Spec under "Cross-Project Impact" section
 
 - **Project Selection Criteria**:

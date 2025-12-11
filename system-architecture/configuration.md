@@ -41,7 +41,7 @@
 
 > [!IMPORTANT]
 > **Path Synchronization Required**  
-> The `OUTPUT_ROOT` path **MUST** match `${SYSTEM_ARCH_ROOT}` in `/engineering-agent`'s configuration (`engineering/configuration.md`).  
+> The `OUTPUT_ROOT` path **MUST** match `${SYSTEM_ARCH_OUTPUT}` in `/engineering-agent`'s configuration (`engineering/configuration.md`).  
 > When updating this path, also update the corresponding path in engineering configuration.
 
 ---

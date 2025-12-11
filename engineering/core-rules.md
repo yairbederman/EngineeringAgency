@@ -97,10 +97,10 @@ On any MCP/tool failure (timeout, auth error, tool not found):
 **Key Files** (from `/system-architecture-agent` output):
 | File | Purpose | When to Use |
 |------|---------|-------------|
-| `${SYSTEM_ARCH_ROOT}/analysis/service-topology.json` | Service dependencies | TechSpec Step 2 (identify impacted services) |
-| `${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json` | Inter-service API contracts | TaskPlanning (populate API context) |
-| `${SYSTEM_ARCH_ROOT}/analysis/unified-domain-model.json` | Canonical entity sources | TechSpec § 5.2 (entity definitions) |
-| `${SYSTEM_ARCH_ROOT}/system-architecture.md` | Overview with diagrams | Initial context gathering |
+| `${SYSTEM_ARCH_OUTPUT}/analysis/service-topology.json` | Service dependencies | TechSpec Step 2 (identify impacted services) |
+| `${SYSTEM_ARCH_OUTPUT}/analysis/cross-service-apis.json` | Inter-service API contracts | TaskPlanning (populate API context) |
+| `${SYSTEM_ARCH_OUTPUT}/analysis/unified-domain-model.json` | Canonical entity sources | TechSpec § 5.2 (entity definitions) |
+| `${SYSTEM_ARCH_OUTPUT}/system-architecture.md` | Overview with diagrams | Initial context gathering |
 
 **Cross-Project Impact Protocol**:
 1. **Read `service-topology.json`** to understand which services call which

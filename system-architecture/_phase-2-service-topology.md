@@ -70,10 +70,10 @@ Analyze each project to determine what it CALLS:
 ```json
 {
   "type": "unverified-dependency",
-  "project": "wg-booking-api",
-  "claimed": "wg-cms-api",
+  "project": "<project-name>",
+  "claimed": "<claimed-dependency>",
   "source": "copilot-instructions.md",
-  "reason": "No apiCmsBaseUrl found in project config files"
+  "reason": "<why dependency could not be verified>"
 }
 ```
 
@@ -83,43 +83,32 @@ Create edges representing runtime calls:
 
 ```json
 {
-  "generatedAt": "ISO timestamp",
+  "generatedAt": "<ISO-8601 timestamp>",
   "services": [
     {
-      "name": "wg-client",
-      "type": "Frontend",
-      "role": "Next.js web application",
-      "exposedEndpoints": 0,
-      "callsServices": ["wg-data-api", "wg-search-api", "wg-ordermanager-api", "wg-payment-api"],
-      "calledBy": []
-    },
-    {
-      "name": "wg-data-api",
-      "type": "Backend",
-      "role": "Site data and configuration",
-      "exposedEndpoints": 48,
-      "callsServices": ["wg-cms-api"],
-      "calledBy": ["wg-client"]
+      "name": "<service-name>",
+      "type": "<Frontend | Backend | Data Service | Shared Library>",
+      "role": "<from project-inventory.json>",
+      "exposedEndpoints": "<count from api-contracts.json>",
+      "callsServices": ["<list of service names this calls>"],
+      "calledBy": ["<computed in Step 3.5>"]
     }
+    // ... one entry per ready project
   ],
   "dependencies": [
     {
-      "from": "wg-client",
-      "to": "wg-data-api",
-      "type": "http",
-      "description": "Frontend fetches site configuration"
-    },
-    {
-      "from": "wg-client",
-      "to": "wg-search-api",
-      "type": "http",
-      "description": "Frontend searches for packages"
+      "from": "<calling-service>",
+      "to": "<called-service>",
+      "type": "<http | grpc | message-queue>",
+      "description": "<why this dependency exists>"
     }
+    // ... one entry per dependency edge
   ],
   "layers": {
-    "presentation": ["wg-client"],
-    "api": ["wg-data-api", "wg-search-api", "wg-ordermanager-api", "wg-payment-api", "wg-tripdetails-api", "wg-ancillary-api"],
-    "integration": ["wg-cms-api"]
+    "presentation": ["<frontend services>"],
+    "api": ["<backend API services>"],
+    "integration": ["<external/CMS services>"],
+    "data": ["<database-focused services>"]
   }
 }
 ```

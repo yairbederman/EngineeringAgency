@@ -70,9 +70,9 @@ Flow:
    - Understand cross-layer dependencies
    - Assess blast radius of potential fix
    - **Cross-Repository Check** (Multi-Workspace):
-     - **Read `${SYSTEM_ARCH_ROOT}/analysis/service-topology.json`** to understand the full service chain
+     - **Read `${SYSTEM_ARCH_OUTPUT}/analysis/service-topology.json`** to understand the full service chain
      - Use `callsServices` and `calledBy` to trace the data path
-     - If bug involves API calls, check `${SYSTEM_ARCH_ROOT}/analysis/cross-service-apis.json` for the exact endpoint contract
+     - If bug involves API calls, check `${SYSTEM_ARCH_OUTPUT}/analysis/cross-service-apis.json` for the exact endpoint contract
      - Determine if issue is in client (`${PROJECT_FRONTEND}`) or server (`${PROJECT_CMS_API}`, `${PROJECT_DATA_API}`)
      - Use network traces to identify which layer is returning incorrect data
      - Check if upstream/downstream services might be contributing to the issue

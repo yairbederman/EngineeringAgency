@@ -22,7 +22,7 @@
 For each dependency edge from Phase 2:
 
 ```
-wg-client → wg-data-api
+<caller-service> → <callee-service>
 ```
 
 Find the specific endpoints called.
@@ -50,27 +50,25 @@ For each cross-service call:
 Example:
 ```json
 {
-  "caller": "wg-client",
-  "callee": "wg-data-api",
+  "caller": "<caller-service>",
+  "callee": "<callee-service>",
   "endpoint": {
-    "method": "POST",
-    "path": "/site/getEngineData",
-    "fullPath": "/api/data-api/site/getEngineData"
+    "method": "<HTTP method>",
+    "path": "<endpoint path>",
+    "fullPath": "<full proxied path if frontend>"
   },
   "request": {
-    "type": "EngineDataRequest",
-    "definedIn": "wg-data-api",
-    "file": "src/main/java/com/lognet/wg/api/rest/dto/EngineDataRequest.java",
+    "type": "<RequestDTO name>",
+    "definedIn": "<project that defines this type>",
+    "file": "<relative path to source file>",
     "fields": {
-      "siteId": { "type": "String", "required": true },
-      "locale": { "type": "String", "required": false },
-      "packageSubType": { "type": "String", "required": false }
+      "<fieldName>": { "type": "<type>", "required": "<boolean>" }
     }
   },
   "response": {
-    "type": "EngineDataResponse",
-    "definedIn": "wg-data-api",
-    "file": "src/main/java/com/lognet/wg/api/rest/dto/EngineDataResponse.java"
+    "type": "<ResponseDTO name>",
+    "definedIn": "<project that defines this type>",
+    "file": "<relative path to source file>"
   }
 }
 ```
@@ -81,18 +79,18 @@ Some services proxy to others. Document the full chain:
 
 ```json
 {
-  "chain": ["wg-client", "wg-data-api", "wg-cms-api"],
-  "originEndpoint": "/promotions/list",
+  "chain": ["<origin-service>", "<intermediate-service>", "<final-service>"],
+  "originEndpoint": "<first endpoint in chain>",
   "intermediates": [
     {
-      "service": "wg-data-api",
-      "endpoint": "/data/getComponentData",
-      "transforms": "Aggregates and compresses response"
+      "service": "<intermediate-service>",
+      "endpoint": "<intermediate endpoint>",
+      "transforms": "<what this service does to the data>"
     }
   ],
   "finalEndpoint": {
-    "service": "wg-cms-api",
-    "endpoint": "/promotions/data"
+    "service": "<final-service>",
+    "endpoint": "<final endpoint>"
   }
 }
 ```
@@ -103,42 +101,44 @@ Some services proxy to others. Document the full chain:
 
 ```json
 {
-  "generatedAt": "ISO timestamp",
+  "generatedAt": "<ISO-8601 timestamp>",
   "crossServiceCalls": [
     {
-      "id": "client-to-data-001",
-      "caller": "wg-client",
-      "callee": "wg-data-api",
+      "id": "<unique-call-id>",
+      "caller": "<caller-service>",
+      "callee": "<callee-service>",
       "endpoint": {
-        "method": "POST",
-        "path": "/site/getEngineData"
+        "method": "<HTTP method>",
+        "path": "<endpoint path>"
       },
       "request": {
-        "type": "EngineDataRequest",
-        "definedIn": "wg-data-api",
+        "type": "<RequestDTO>",
+        "definedIn": "<owning project>",
         "fields": {}
       },
       "response": {
-        "type": "EngineDataResponse",
-        "definedIn": "wg-data-api"
+        "type": "<ResponseDTO>",
+        "definedIn": "<owning project>"
       },
-      "usedBy": ["SearchWidget", "EngineDataProvider"]
+      "usedBy": ["<list of components/modules using this call>"]
     }
+    // ... one entry per cross-service call
   ],
   "sharedTypes": [
     {
-      "name": "BookingData",
+      "name": "<TypeName>",
       "canonicalDefinition": {
-        "project": "wg-ordermanager-api",
-        "file": "src/main/java/.../BookingData.java"
+        "project": "<owning project>",
+        "file": "<relative path to source>"
       },
-      "usedIn": ["wg-client", "wg-payment-api", "wg-tripdetails-api"]
+      "usedIn": ["<list of projects using this type>"]
     }
+    // ... one entry per shared type
   ],
   "_coverage": {
-    "dependenciesAnalyzed": 12,
-    "endpointsDocumented": 45,
-    "sharedTypesFound": 8
+    "dependenciesAnalyzed": "<count>",
+    "endpointsDocumented": "<count>",
+    "sharedTypesFound": "<count>"
   }
 }
 ```
@@ -159,17 +159,17 @@ Some services proxy to others. Document the full chain:
 
 ### Frontend API Client Pattern
 ```typescript
-// wg-client/src/sdk/api/dataApi.ts
-export const getEngineData = (request: EngineDataRequest) =>
-  api.post<EngineDataResponse>('/api/data-api/site/getEngineData', request);
+// <frontend-project>/src/sdk/api/<serviceApi>.ts
+export const <methodName> = (request: <RequestType>) =>
+  api.post<<ResponseType>>('<proxied-endpoint-path>', request);
 ```
 
 ### Backend-to-Backend Pattern
 ```java
-// In wg-data-api calling wg-cms-api
-@FeignClient(name = "cms-service")
-public interface CmsClient {
-    @GetMapping("/promotions/{id}")
-    PromotionData getPromotion(@PathVariable String id);
+// In <caller-service> calling <callee-service>
+@FeignClient(name = "<service-name>")
+public interface <ServiceClient> {
+    @GetMapping("/<resource>/{id}")
+    <ResponseType> get<Resource>(@PathVariable String id);
 }
 ```
