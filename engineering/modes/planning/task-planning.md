@@ -16,7 +16,7 @@
 - Figma (for Frontend tasks)
 
 **Output**:
-- A list of **Tasks** using the `task.md` template
+- A list of **Tasks** using `task-backend.md` or `task-frontend.md` templates
 - **Jira Tasks**: Created in Epic, all linked to Tech Spec
 - **Task List**: Summary of created task keys
 
@@ -202,7 +202,12 @@ For **each layer** in order (Database → Service → API → Frontend → State
 - Assign order number: Task 1, Task 2, etc.
 
 ### Step 5: Populate Task Template
-For each task, fill `task.md` template with all extracted context:
+
+For each task, select and fill the appropriate template:
+- **Backend tasks** (Database, Service, API): Use `task-backend.md`
+- **Frontend tasks** (Frontend, State): Use `task-frontend.md`
+
+Fill with extracted context:
 - **Layer** and **Category** from Tech Spec § 5.4
 - **Target Files** with Action (NEW/MODIFY)
 - **Pattern Context** from Tech Spec § 2
@@ -234,7 +239,7 @@ Before publishing, verify EVERY task has:
   - `issueTypeName`: "Task" or "Story"
   - `parent`: Epic key (to link tasks to Epic)
   - `summary`: Task title (e.g., "Layer: Create FeatureService.ts")
-  - `description`: Fully populated task.md content
+  - `description`: Fully populated task template content (backend or frontend)
 - Add Tech Spec Confluence link to each task description
 
 ### Step 8: Verify Links

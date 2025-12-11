@@ -214,7 +214,7 @@ Maintain **Bidirectional Traceability** between Product Spec, Epic, and Tech Spe
 
 ## Figma Token Extraction (Frontend Tasks)
 
-**Read**: `${AGENT_ROOT}/modes/figma-automation.md`
+**Read**: `${AGENT_ROOT}/design/figma-automation.md`
 
 Ensures all Frontend tasks have pixel-perfect implementation guides by extracting design tokens from Figma before task creation.
 

@@ -72,7 +72,78 @@
         - Test failure details
         - Attempted fixes summary
         - Request: *"I've tried 3 approaches but tests still fail. Should I continue, try a different approach, or escalate?"*
-    - (Frontend Only) **Visual Verification**: Use `browser_subagent` to verify component renders correctly and matches the "Tree" described in the Task.
+    - (Frontend Only) **Visual Verification** (MANDATORY):
+    
+      #### Step 6A: Launch Component in Browser
+      
+      Use `browser_subagent` to:
+      1. Start dev server if not running: `npm run dev`
+      2. Navigate to component URL (Storybook, dev page, or isolated route)
+      3. Wait for component to fully render
+      
+      #### Step 6B: Capture Screenshots
+      
+      **For walkthrough documentation:**
+      - Use `browser_subagent` with recording to capture the implementation
+      - Save recordings to artifacts directory
+      - Name format: `[TaskKey]_component_demo`
+      
+      **Screenshot checklist:**
+      - [ ] Default state
+      - [ ] Hover state (if applicable)
+      - [ ] Focused state (if applicable)
+      - [ ] Disabled state (if applicable)
+      - [ ] Mobile viewport (if responsive)
+      
+      #### Step 6C: Visual Comparison Checklist
+      
+      Compare implementation against UI Implementation Guide from task:
+      
+      | Check | Source | Tolerance | Status |
+      |-------|--------|-----------|--------|
+      | Component tree structure | Figma tree vs DOM | Exact nesting | ✅/❌ |
+      | Spacing (gap, padding) | Layout Properties table | ±2px | ✅/❌ |
+      | Colors (bg, text, border) | Token Mapping table | Exact match | ✅/❌ |
+      | Typography | Token Mapping table | Exact match | ✅/❌ |
+      | Component reuse | Component Instances list | All reused | ✅/❌ |
+      | Interactive states | Interactive States table | Visual match | ✅/❌ |
+      
+      #### Step 6D: Deviation Handling
+      
+      **If implementation differs from Figma:**
+      
+      1. **Document in comparison table:**
+         ```markdown
+         | Colors | bg-brand-500 expected | bg-blue-500 used | ⚠️ Token missing |
+         ```
+      
+      2. **Add deviation note to commit message:**
+         ```
+         [W0-123] Implement SearchWidget
+         
+         Deviations from Figma:
+         - Used bg-blue-500 (closest match for #1E40AF not in design-tokens)
+         - Spacing 13px rounded to gap-3 (12px)
+         ```
+      
+      3. **Flag for design review if blocking:**
+         - Add label `needs-design-review` to Jira task
+         - Comment with specific deviation details
+      
+      #### Step 6E: Record for Walkthrough (Optional)
+      
+      For significant UI implementations, create demo recording:
+      
+      ```
+      browser_subagent:
+        Task: "Navigate to [URL], demonstrate [user flow], capture recording"
+        RecordingName: "[taskkey]_user_flow"
+      ```
+      
+      Recording should demonstrate:
+      - Initial component render
+      - Interactive behaviors (hover, click, input)
+      - Loading/success/error states if applicable
 
 ### Phase 3: Completion & Transition
 7. **Regression Check** (BOUNDED):

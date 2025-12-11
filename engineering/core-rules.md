@@ -68,6 +68,41 @@ Rules:
 - If designs are missing: Use `[TBD – Design]` placeholders.
 - **Strict Rule**: Do not invent UI. If layout is unknown, implement a semantic skeleton (stack/group) without specific spacing/colors.
 
+### 0.3.1 Component-First Development Protocol
+
+> **Principle**: Reuse > Recreate. Before implementing any UI element, verify it doesn't already exist.
+
+**Workflow**:
+
+1. **Extract Component Instances from Figma**:
+   - When `mcp1_get_design_context` returns component instances, extract their names
+   - Common patterns: `Button/Primary`, `Icon/Search`, `Avatar/Medium`, `Card/Default`
+
+2. **Cross-Reference with Project Component Registry**:
+   - Check `${FILE_CATEGORIZATION_PATH}` for `react-components` category
+   - Match Figma component names to existing project components:
+   
+   | Figma Instance Name | Project Component | Props to Pass |
+   |---------------------|-------------------|---------------|
+   | `Button/Primary` | `<Button variant="primary">` | `variant="primary"` |
+   | `Icon/Search` | `<Icon name="search">` | `name="search"` |
+   | `Avatar/Medium` | `<Avatar size="md">` | `size="md"` |
+
+3. **Implementation Decision Tree**:
+   ```
+   Is there an exact match in project components?
+   ├── YES → Use existing component, pass appropriate props
+   └── NO
+       └── Is there a partial match (similar component)?
+           ├── YES → Extend existing component with new variant
+           └── NO → Create NEW component following project patterns
+   ```
+
+4. **Documentation Requirement**:
+   - **MANDATORY**: Every Frontend task MUST include "Component Instances" section
+   - Missing this section = Task is NOT implementation-ready
+   - Each instance must specify: Figma name → Project component → Import path
+
 ### 0.4 Tool Failure & Safety
 
 On any MCP/tool failure (timeout, auth error, tool not found):

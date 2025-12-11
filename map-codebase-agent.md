@@ -67,6 +67,21 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 - Every skipped directory logged with reason
 - Cross-reference types with entity-contracts
 
+### Phase 3.5: Extract Design Tokens (Frontend Only)
+**Read**: `${ARCHITECT_ROOT}/_phase-3.5-extract-design-tokens.md`
+**Output**: `analysis/design-tokens.json`
+- **Trigger**: Only for Frontend projects with Tailwind/CSS variables
+- Extract colors, spacing, fontSize, fontWeight, borderRadius, boxShadow
+- Used by `/engineering-agent` for Figma-to-code token mapping
+
+### Phase 3.6: Extract Component Registry (Frontend Only)
+**Read**: `${ARCHITECT_ROOT}/_phase-3.6-extract-component-registry.md`
+**Output**: `analysis/component-registry.json`
+- **Trigger**: Only for Frontend projects with React/Vue/Angular/Svelte
+- Extract component props, variants, and import paths
+- Generate Figma-to-component mappings automatically
+- Used by `/engineering-agent` for component instance matching
+
 ### Phase 4: Map Dependencies
 **Read**: `${ARCHITECT_ROOT}/_phase-4-map-dependencies.md`
 **Output**: `analysis/function-registry.json`, `deep-dive/dependency-chains.md`
@@ -127,7 +142,8 @@ After successful execution, the following files should exist in `${AI_INSTRUCTIO
 │   ├── entity-contracts.json   # Type definitions with fields
 │   ├── api-contracts.json      # REST endpoints with validation
 │   ├── function-registry.json  # Service dependencies
-│   └── file-categorization.json # Files grouped by layer
+│   ├── file-categorization.json # Files grouped by layer
+│   └── design-tokens.json      # (Frontend only) Colors, spacing, typography for Figma mapping
 └── deep-dive/
     └── dependency-chains.md    # Controller → Service → External chains
 ```

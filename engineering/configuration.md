@@ -35,7 +35,8 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 | **Templates** | |
 | Epic Template | `templates/epic.md` |
 | Tech Spec Template | `templates/tech-spec.md` |
-| Task Template | `templates/task.md` |
+| Task Template (Backend) | `templates/task-backend.md` |
+| Task Template (Frontend) | `templates/task-frontend.md` |
 
 ---
 
