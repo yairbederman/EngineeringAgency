@@ -399,6 +399,79 @@ If Figma MCP can't access image data:
 > ⚠️ Image fill detected but cannot be auto-extracted. Designer must export from Figma.
 ```
 
+#### 2G. Extract Figma Variables (Token Priority)
+
+> **Purpose**: Figma Variables represent designer-defined semantic tokens. When available, they provide the most accurate source for token mapping.
+
+**Step 2G.1: Call Variable Extraction**
+
+After extracting design context, call `mcp1_get_variable_defs` with the same node ID:
+
+```
+mcp1_get_variable_defs(nodeId: "[node-id]")
+```
+
+**Step 2G.2: Parse Variable Response**
+
+Expected response structure:
+```json
+{
+  "variables": {
+    "color/primary/500": "#3B82F6",
+    "color/neutral/100": "#F3F4F6",
+    "spacing/md": "16px",
+    "radius/lg": "8px"
+  }
+}
+```
+
+**Step 2G.3: Variable-to-Token Mapping**
+
+| Figma Variable Pattern | Maps To | Example |
+|------------------------|---------|---------|
+| `color/{category}/{shade}` | `{category}-{shade}` | `color/primary/500` → `primary-500` |
+| `color/{name}` | Direct name | `color/danger` → `danger` |
+| `spacing/{size}` | Spacing scale | `spacing/md` → `4` (16px) |
+| `radius/{size}` | Border radius | `radius/lg` → `rounded-lg` |
+| `font/{property}/{value}` | Typography | `font/size/lg` → `text-lg` |
+
+**Step 2G.4: Token Resolution Priority**
+
+When mapping Figma values to project tokens, use this priority order:
+
+| Priority | Source | Confidence | Annotation |
+|----------|--------|------------|------------|
+| 1 | Figma Variable (from 2G) | ✅ High | None needed |
+| 2 | Figma Style Name (from 2C) | ✅ High | None needed |
+| 3 | `design-tokens.json` match | ⚡ Medium | None if exact |
+| 4 | Algorithmic closest match | ⚠️ Low | Add `⚠️ (closest match)` |
+
+**Step 2G.5: Merge Variable Data**
+
+Enhance the Token Mapping table with variable source:
+
+```markdown
+**Token Mapping** (Figma → Project):
+| Category | Figma Value | Variable | Project Token |
+|----------|-------------|----------|---------------|
+| Background | #3B82F6 | color/primary/500 | bg-primary-500 |
+| Text | #111827 | color/neutral/900 | text-gray-900 |
+| Spacing | 16px | spacing/md | gap-4 |
+| Background | #F0F1F3 | - | bg-gray-100 ⚠️ (no variable) |
+```
+
+**Step 2G.6: Handle Variable Unavailability**
+
+| Scenario | Action |
+|----------|--------|
+| `mcp1_get_variable_defs` fails | Proceed with Style Names and algorithmic matching |
+| No variables defined in Figma | Note: "Figma Variables not configured" |
+| Partial variables | Use available, fallback for rest |
+
+```markdown
+> ℹ️ **Figma Variables**: Not configured for this file. Using style names and algorithmic matching.
+```
+
 ### Step 3: Map to Project Design System
 
 > **MANDATORY**: Use [`token-mapping-rules.md`](./token-mapping-rules.md) for all token conversions.

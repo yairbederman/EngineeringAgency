@@ -8,14 +8,19 @@
 
 **ALWAYS resolve tokens in this order**:
 
-1. **Project Design Tokens** (highest priority)
-   - Read from: `${PROJECT_ROOT}/.ai-instructions/analysis/design-tokens.json`
-   - Contains: Project's actual colors, spacing, typography extracted during codebase analysis
-   
+1. **Figma Variables** (highest priority)
+   - Source: `mcp1_get_variable_defs` response
+   - If element has a linked variable (e.g., `color/primary/500`), use directly
+   - See: `figma-automation.md` Step 2G
+
 2. **Figma Style Name** (if available)
    - If Figma element has a linked style (e.g., `Primary/500`), match to project token by name
    
-3. **Algorithmic Matching** (fallback)
+3. **Project Design Tokens**
+   - Read from: `${PROJECT_ROOT}/.ai-instructions/analysis/design-tokens.json`
+   - Contains: Project's actual colors, spacing, typography extracted during codebase analysis
+   
+4. **Algorithmic Matching** (fallback)
    - Use algorithms below when no exact match exists
    - Always annotate with `⚠️ (closest match)`
 

@@ -55,11 +55,13 @@ Rules:
 
 **Translation Protocol (The "Design-to-Code" Bridge)**:
 1.  **Extract, Don't Guess**: Use Figma MCP to read the frame properties.
-2.  **Map to Tokens (CRITICAL)**:
+2.  **Extract Variables First**: Call `mcp1_get_variable_defs` to get designer-defined semantic tokens (highest priority).
+3.  **Map to Tokens (CRITICAL)**:
     - *Do not* use raw values (e.g., `#1D4ED8`, `16px`) unless they are one-off overrides.
+    - *Priority*: Figma Variables > Style Names > `design-tokens.json` match > Algorithmic closest match
     - *Do*: Map Figma values to the project's Design System found in `${COPILOT_INSTRUCTIONS_PATH}` or `${DESIGN_TOKENS_PATH}`.
-    - *Example*: Figma `Fill: #EF4444` → Project Token: `bg-red-500` or `var(--color-danger)`.
-3.  **Component Identification**:
+    - *Example*: Figma Variable `color/primary/500` → Project Token: `bg-primary-500`.
+4.  **Component Identification**:
     - Identify repeating UI patterns in Figma that match existing components in `${FILE_CATEGORIZATION_PATH}`.
     - *Instruction*: "Reuse `<Button variant='primary'>` instead of building a rectangle with text."
 

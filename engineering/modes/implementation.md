@@ -54,6 +54,31 @@
     - **Git Action**: 
         - **Branch Name**: `feature/[TaskKey]-[Short-Summary]` (e.g., `feature/PROJ-123-user-login`).
         - **Command**: `git checkout -b [BranchName]` (if new) or `git checkout [BranchName]`.
+
+3.5 **Capture Figma Reference** (Frontend Only - MANDATORY):
+    > **Purpose**: Save the design reference BEFORE implementation for accurate visual comparison.
+    
+    - **Step A: Extract Figma Node ID**
+      - Parse from UI Implementation Guide's "Figma Reference" field
+      - Example: `https://figma.com/design/abc123/File?node-id=1-234` → nodeId: `1-234`
+    
+    - **Step B: Capture Design Screenshot**
+      ```
+      mcp1_get_screenshot(nodeId: "[node-id]")
+      ```
+      - Save to artifacts: `[TaskKey]_figma_reference.png`
+    
+    - **Step C: Extract Design Dimensions**
+      - Note the bounding box from `mcp1_get_design_context`:
+        - Width: `[X]px`
+        - Height: `[Y]px`
+      - This sets the expected viewport for browser comparison
+    
+    - **Fallback**: If `mcp1_get_screenshot` fails, note in walkthrough:
+      ```markdown
+      > ⚠️ Figma screenshot unavailable. Visual comparison based on Token Mapping table only.
+      ```
+    
 4. **Test-First (TDD)**:
     - Create/Update test files.
 5. **Implement**:
@@ -81,32 +106,51 @@
       2. Navigate to component URL (Storybook, dev page, or isolated route)
       3. Wait for component to fully render
       
-      #### Step 6B: Capture Screenshots
+      #### Step 6B: Capture Implementation Screenshots
       
       **For walkthrough documentation:**
       - Use `browser_subagent` with recording to capture the implementation
       - Save recordings to artifacts directory
-      - Name format: `[TaskKey]_component_demo`
+      - Name format: `[TaskKey]_implementation.png`
       
       **Screenshot checklist:**
-      - [ ] Default state
-      - [ ] Hover state (if applicable)
+      - [ ] Default state → `[TaskKey]_impl_default.png`
+      - [ ] Hover state (if applicable) → `[TaskKey]_impl_hover.png`
       - [ ] Focused state (if applicable)
       - [ ] Disabled state (if applicable)
       - [ ] Mobile viewport (if responsive)
       
-      #### Step 6C: Visual Comparison Checklist
+      #### Step 6C: Side-by-Side Comparison (MANDATORY for Frontend)
       
-      Compare implementation against UI Implementation Guide from task:
+      **Compare Figma reference (from Step 3.5) with browser implementation:**
       
-      | Check | Source | Tolerance | Status |
-      |-------|--------|-----------|--------|
-      | Component tree structure | Figma tree vs DOM | Exact nesting | ✅/❌ |
-      | Spacing (gap, padding) | Layout Properties table | ±2px | ✅/❌ |
-      | Colors (bg, text, border) | Token Mapping table | Exact match | ✅/❌ |
-      | Typography | Token Mapping table | Exact match | ✅/❌ |
-      | Component reuse | Component Instances list | All reused | ✅/❌ |
-      | Interactive states | Interactive States table | Visual match | ✅/❌ |
+      1. **Load both images:**
+         - Figma: `[TaskKey]_figma_reference.png` (captured in Step 3.5)
+         - Browser: `[TaskKey]_impl_default.png` (captured above)
+      
+      2. **Generate comparison carousel for walkthrough:**
+         ```markdown
+         ````carousel
+         ![Figma Design](/path/to/[TaskKey]_figma_reference.png)
+         <!-- slide -->
+         ![Implementation](/path/to/[TaskKey]_impl_default.png)
+         ````
+         ```
+      
+      3. **Visual Comparison Checklist:**
+      
+      | Check | Figma Reference | Implementation | Tolerance | Status |
+      |-------|-----------------|----------------|-----------|--------|
+      | Overall layout | Screenshot | Browser | Visual match | ✅/❌ |
+      | Component tree structure | Figma tree vs DOM | - | Exact nesting | ✅/❌ |
+      | Spacing (gap, padding) | Layout Properties table | Computed styles | ±2px | ✅/❌ |
+      | Colors (bg, text, border) | Token Mapping table | Applied classes | Exact match | ✅/❌ |
+      | Typography | Token Mapping table | Applied classes | Exact match | ✅/❌ |
+      | Component reuse | Component Instances list | Imports used | All reused | ✅/❌ |
+      | Interactive states | Interactive States table | Browser behavior | Visual match | ✅/❌ |
+      
+      > **Key Insight**: The Figma screenshot provides the definitive visual target. 
+      > Token tables validate semantics; screenshots validate appearance.
       
       #### Step 6D: Deviation Handling
       
