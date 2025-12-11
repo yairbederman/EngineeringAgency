@@ -41,6 +41,9 @@ Before running any phases, validate the target project:
 
 ## Execution
 
+> [!IMPORTANT]
+> **Always regenerate ALL artifacts fresh**, even if the `.ai-instructions/` folder already exists. Do NOT skip phases just because files are present – the goal is to produce updated artifacts with current timestamps.
+
 Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the target project.
 
 ### Phase 1: Detect Stack
@@ -66,19 +69,26 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 
 ### Phase 4: Map Dependencies
 **Read**: `${ARCHITECT_ROOT}/_phase-4-map-dependencies.md`
-**Output**: `analysis/function-registry.json`, `deep-dive/dependency-chains.md`, `deep-dive/data-flow.md`
-- Dynamic state detection (works for any library)
-- **Exhaustive**: All hooks/services documented (≥80% coverage)
-- Minimum 3 call-chain diagrams
+**Output**: `analysis/function-registry.json`, `deep-dive/dependency-chains.md`
+- Map service → service dependencies
+- Map controller → service → external service chains
+- Document cross-project dependencies (calls to other APIs)
 
 ### Phase 4.5: Enforcement Gate (BLOCKING)
-**Before proceeding to Phase 5**, check coverage thresholds:
+**Before proceeding to Phase 5**, check coverage thresholds based on project type:
 
+**For Backend APIs (JVM/Spring Boot):**
 | Category | Source Count | Extracted Count | Required |
 |----------|-------------|-----------------|----------|
-| Classes | `source-structure.json.fileCount.classes` | `entity-contracts` with `kind: "class"` | ≥70% |
+| Controllers | `source-structure.json.fileCount.controllers` | `api-contracts` controller count | 100% |
+| Services | `source-structure.json.fileCount.services` | `function-registry.services` count | ≥50% |
+| Classes | `source-structure.json.fileCount.classes` | `entity-contracts` with `kind: "class"` | ≥30% |
+
+**For Frontend (Node/TypeScript):**
+| Category | Source Count | Extracted Count | Required |
+|----------|-------------|-----------------|----------|
 | Hooks | `source-structure.json.fileCount.hooks.total` | `function-registry.hooks` count | ≥80% |
-| APIs | `source-structure.json.fileCount.apis` | `api-contracts` non-empty clients | 100% |
+| Components | `source-structure.json.fileCount.components` | `api-contracts` pages/components | ≥70% |
 | State | `source-structure.json.fileCount.state.slices` | `function-registry.stateModules` | 100% |
 
 **If ANY threshold not met**:
@@ -91,10 +101,11 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 
 ### Phase 5: Generate Master
 **Read**: `${ARCHITECT_ROOT}/_phase-5-generate-master.md`
-**Output**: `copilot-instructions.md`, `analysis/file-categorization.json`, `deep-dive/component-registry.md`, `deep-dive/testing-strategy.md`, `deep-dive/debugging-guide.md`
+**Output**: `copilot-instructions.md`, `analysis/file-categorization.json`
 - Include Coverage Summary section
 - Surface all unresolved items
-- Pattern enforcement rules
+- Pattern enforcement rules (MUST/NEVER)
+- Architecture diagrams
 
 ### Validation
 **Read**: `${ARCHITECT_ROOT}/_validation-rules.md`
@@ -103,13 +114,34 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 
 ---
 
+## Generated Artifacts Summary
+
+After successful execution, the following files should exist in `${AI_INSTRUCTIONS_ROOT}`:
+
+```
+.ai-instructions/
+├── copilot-instructions.md     # Master AI instructions (entry point)
+├── analysis/
+│   ├── techstack.md            # Stack detection results
+│   ├── source-structure.json   # Discovered locations + file counts
+│   ├── entity-contracts.json   # Type definitions with fields
+│   ├── api-contracts.json      # REST endpoints with validation
+│   ├── function-registry.json  # Service dependencies
+│   └── file-categorization.json # Files grouped by layer
+└── deep-dive/
+    └── dependency-chains.md    # Controller → Service → External chains
+```
+
+---
+
 ## Success Criteria
 
 - [ ] `source-structure.json` has exhaustive `discoveredLocations`
 - [ ] `entity-contracts.json` has full field definitions + `_coverage`
-- [ ] `api-contracts.json` documents ALL directories + `_coverage`
-- [ ] `function-registry.json` has ALL hooks/state + `_coverage`
-- [ ] `copilot-instructions.md` has Coverage Summary section
+- [ ] `api-contracts.json` documents ALL controllers + `_coverage`
+- [ ] `function-registry.json` has ALL services/dependencies + `_coverage`
+- [ ] `copilot-instructions.md` has Architecture Diagram + Critical Rules
+- [ ] `file-categorization.json` groups files by layer/category
+- [ ] `deep-dive/dependency-chains.md` has controller→service chains
 - [ ] No `"type": "any"` without `_unresolved` entry
-- [ ] **Validation passes with coverage thresholds met** (Hooks ≥80%, Classes ≥70%, State 100%, APIs 100%)
-- [ ] **All 5 deep-dive files present**: `dependency-chains.md`, `data-flow.md`, `component-registry.md`, `testing-strategy.md`, `debugging-guide.md`
+- [ ] **Coverage thresholds met** (Controllers 100%, Services ≥50%)
