@@ -72,6 +72,18 @@ Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
 - Surface unified domain model
 - List cross-cutting concerns (auth, error handling, etc.)
 
+### Phase 6: Generate Interactive Diagram Viewer
+**Template**: `${SYSTEM_ARCH_ROOT}/WG3-Architecture-Interactive.html`
+**Output**: `WG3-Architecture-Interactive.html` (updated in place)
+- Update the embedded Mermaid diagrams in the HTML viewer to reflect the latest architecture
+- Ensure all projects from `project-inventory.json` are represented as clickable nodes in the System Overview diagram
+- Validate that drill-down navigation links correctly to subsystem-specific diagrams
+- The viewer provides:
+  - Interactive pan/zoom for all diagrams
+  - Breadcrumb navigation (System Overview > Subsystem)
+  - Real-time sidebar search
+  - Collapsible sidebar for full-screen viewing
+
 ---
 
 ## Success Criteria
@@ -86,3 +98,4 @@ Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
   - Cross-service API reference
   - Domain model summary
 - [ ] All projects with missing AI instructions are flagged (not silently skipped)
+- [ ] `WG3-Architecture-Interactive.html` renders all diagrams with working navigation and zoom
