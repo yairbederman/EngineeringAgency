@@ -65,6 +65,33 @@ files in discoveredLocations.state
 2. **Hook → State**: All state reads in `function-registry.json` reference valid state modules
 3. **Hook → API**: All API calls in hooks reference documented API clients
 
+## Code Evidence Requirement (For Cross-Service Accuracy)
+
+> [!IMPORTANT]
+> **Every external call and cross-service dependency MUST have code evidence.**
+> This prevents assumption-based documentation that leads to incorrect Tech Specs.
+
+**Every `calls.external` entry MUST have:**
+1. **Client Name**: Which API client class is used
+2. **Method Name**: Specific method being called
+3. **Verification Reference**: Link to `api-contracts.json` entry
+4. **Code Evidence**: File and line number where the call is made
+
+**Invalid Outputs (BLOCKING)**:
+| Pattern | Why Invalid | Resolution |
+|---------|-------------|------------|
+| `calls.external: ["<ApiName>"]` | No method specified | Extract specific method names |
+| Missing `verifiedIn` field | Not cross-referenced | Verify against api-contracts.json |
+| Missing `codeEvidence` field | No code location | Grep for actual call site |
+| Assumed dependencies | Not verified in code | Search codebase for actual usage |
+
+**Validation Check** (add to Phase 4.5 gate):
+```bash
+# Every external call should have verifiedIn field
+grep -A3 '"external"' function-registry.json | grep -c 'verifiedIn'
+```
+If count doesn't match external calls count → FAIL
+
 ## Cross-Phase Consistency Check (Required)
 
 Compare `source-structure.json` counts against extraction results:

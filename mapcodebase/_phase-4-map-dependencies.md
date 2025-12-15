@@ -66,6 +66,48 @@ Document at least ONE call chain for each detected flow:
 - **Auth flow** (if applicable)
 - **Payment/Transaction flow** (if applicable)
 
+### 3.5: Cross-Verify External Calls (BLOCKING)
+
+> [!IMPORTANT]
+> Every `calls.external` entry MUST be verified against `api-contracts.json`.
+> This ensures consistency between dependency mapping and API contract documentation.
+
+**For each hook/service with `calls.external`:**
+1. Look up the called API client in `api-contracts.json`
+2. Verify the specific method/endpoint exists in that client's `endpoints[]`
+3. If not found:
+   - Search the codebase for the actual call location
+   - Update `api-contracts.json` if endpoint was missed in Phase 3
+   - OR mark as `_unresolved.externalCalls` with actionable reason
+
+**Output Requirement** (enhanced `calls.external` format):
+```json
+"calls": {
+  "external": [
+    {
+      "client": "<ApiClientName>",
+      "method": "<methodName>",
+      "verifiedIn": "api-contracts.json#<ClientName>[<endpointIndex>]",
+      "codeEvidence": "<file>:<line>"
+    }
+  ]
+}
+```
+
+**If verification fails**:
+```json
+"_unresolved": {
+  "externalCalls": [
+    {
+      "hook": "<hookName>",
+      "claimed": "<ClientName>.<methodName>",
+      "reason": "Method not found in api-contracts.json - may need Phase 3 re-extraction"
+    }
+  ]
+}
+```
+
+
 ## Output
 
 ### `analysis/function-registry.json`

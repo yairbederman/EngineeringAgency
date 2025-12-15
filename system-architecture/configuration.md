@@ -10,8 +10,8 @@
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `SYSTEM_ARCH_ROOT` | `./system-architecture` | Base path for agent files (relative to `global_workflows` root) |
-| `SYSTEM_NAME` | `WG3` | System name prefix for generated files |
-| `TEMPLATE_FILE` | `${SYSTEM_NAME}-Architecture-template.html` | Interactive viewer HTML template |
+| `SYSTEM_NAME` | `WG3` | System name prefix for generated files (also replaced in template placeholders) |
+| `TEMPLATE_FILE` | `Architecture-template.html` | Interactive viewer HTML template (contains `{{SYSTEM_NAME}}` placeholders) |
 | `OUTPUT_FILE` | `${SYSTEM_NAME}-Architecture-Interactive.html` | Generated interactive viewer output |
 
 ### Phase Files (relative to SYSTEM_ARCH_ROOT)

@@ -228,6 +228,13 @@ Run `/system-architecture-agent` after:
 
 ## Deep-Dive: End-to-End Flows
 
+> [!CAUTION]
+> **Every flow step MUST be verified against actual code.**
+> - Each "Service X calls Service Y" MUST have a matching entry in `cross-service-apis.json`
+> - If no matching entry exists, the flow step is UNVERIFIED and must be flagged
+> - Do NOT infer intermediate services from documentation - verify them in code
+> - Do NOT assume direct calls exist - verify caller has API client for callee
+
 Generate `end-to-end-flows.md` with:
 
 ### Flow Template
@@ -241,15 +248,44 @@ Generate `end-to-end-flows.md` with:
 ### Service Chain
 <service-a> → <service-b> → <service-c> → <service-d>
 
+### Verification (MANDATORY)
+| Step | From | To | Verified In `cross-service-apis.json` | Code Evidence |
+|------|------|----|---------------------------------------|---------------|
+| 1 | <service-a> | <service-b> | ✅ Call ID: <call-id> | `<ApiClient>.ts:L<line>` |
+| 2 | <service-b> | <service-c> | ✅ Call ID: <call-id> | `<Service>.java:L<line>` |
+
+> **Validation Rule**: If ANY step cannot be verified against `cross-service-apis.json`, 
+> mark it with ⚠️ UNVERIFIED and add to `_warnings` in JSON outputs.
+
 ### Sequence
 1. **<service-a>**: <user action or trigger>
 2. **<service-b>**: `<METHOD> <endpoint>` <what it does>
+   - **Code Evidence**: `<file>:<line>` - `<method signature or call snippet>`
 3. **<service-c>**: `<METHOD> <endpoint>` <what it does>
+   - **Code Evidence**: `<file>:<line>` - `<method signature or call snippet>`
 4. **<service-d>**: `<METHOD> <endpoint>` <what it does>
+   - **Code Evidence**: `<file>:<line>` - `<method signature or call snippet>`
 
 ### Data Flow
-{Mermaid sequence diagram}
+{Mermaid sequence diagram - edges MUST match Verification table above}
 ```
+
+### Flow Verification Gate (BLOCKING)
+
+Before generating any flow in `end-to-end-flows.md`:
+
+1. **For each step `A → B`**:
+   - Search `cross-service-apis.json` for entry with `caller: A` and `callee: B`
+   - If NOT found → **DO NOT document as direct call**
+   - Check if `A → X → B` exists (intermediate service)
+
+2. **Evidence Requirements**:
+   - Every step MUST cite specific file and line number
+   - Evidence must come from actual codebase grep/view, not from AI instructions
+
+3. **Unverified Steps**:
+   - If code evidence cannot be found, mark step as `⚠️ UNVERIFIED`
+   - Add to `_warnings[]` in system documentation outputs
 
 ---
 

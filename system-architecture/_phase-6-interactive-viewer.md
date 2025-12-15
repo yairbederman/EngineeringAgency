@@ -195,9 +195,13 @@ const diagrams = [
 
 ### Step 5: Generate HTML Output
 
-1. **Copy** `${TEMPLATE_FILE}` to output location
-2. **Replace** the placeholder `const diagrams = [...]` section with the generated diagrams array
-3. **Update** the page title to match the system name
+1. **Read** `${SYSTEM_NAME}` from `configuration.md`
+2. **Copy** `${TEMPLATE_FILE}` to output location as `${OUTPUT_FILE}`
+3. **Replace placeholders** in the template:
+   - Replace all `{{SYSTEM_NAME}}` with the value from `configuration.md`
+   - Replace `{{ DIAGRAMS_DATA }}` with the generated diagrams array from Step 4
+   - Replace `{{GENERATED_DATE}}` with current ISO timestamp
+4. **Validate** the output HTML renders correctly
 
 ---
 

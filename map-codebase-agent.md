@@ -41,8 +41,45 @@ Before running any phases, validate the target project:
 
 ## Execution
 
+> [!CAUTION]
+> **⛔ BLOCKING: Phase 0 MUST be executed first.** Do NOT proceed to any other phase until the `.ai-instructions/` folder has been deleted.
+
+---
+
+### Phase 0: Clean Slate (BLOCKING GATE)
+
+> [!WARNING]
+> **THIS PHASE IS NOT OPTIONAL.** Skipping this phase will result in stale files remaining. The agent MUST execute the delete command before any analysis.
+
+**Step 1: Delete existing artifacts**
+
+For EACH target project, execute:
+
+```bash
+# Delete the entire .ai-instructions folder
+rm -rf ${PROJECT_ROOT}/.ai-instructions/
+```
+
+**Step 2: Verify deletion**
+
+After executing the delete command, verify the folder no longer exists:
+
+```bash
+# Verify deletion (should return "not found" or empty)
+ls ${PROJECT_ROOT}/.ai-instructions/ 2>&1 || echo "Folder deleted successfully"
+```
+
+**Step 3: Confirmation gate**
+
 > [!IMPORTANT]
-> **Always regenerate ALL artifacts fresh**, even if the `.ai-instructions/` folder already exists. Do NOT skip phases just because files are present – the goal is to produce updated artifacts with current timestamps.
+> **DO NOT PROCEED** to Phase 1 until:
+> - [ ] Delete command executed for ALL target projects
+> - [ ] Verification confirms folders are deleted
+> - [ ] If any folder still exists, re-execute delete
+
+**Why this matters**: Old files that are no longer applicable will remain and cause confusion. Fresh regeneration ensures all artifacts are current and consistent.
+
+---
 
 Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the target project.
 
@@ -84,10 +121,11 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 
 ### Phase 4: Map Dependencies
 **Read**: `${ARCHITECT_ROOT}/_phase-4-map-dependencies.md`
-**Output**: `analysis/function-registry.json`, `deep-dive/dependency-chains.md`
+**Output**: `analysis/function-registry.json`, `deep-dive/*` (all deep-dive files)
 - Map service → service dependencies
 - Map controller → service → external service chains
 - Document cross-project dependencies (calls to other APIs)
+- Generate ALL deep-dive documentation files
 
 ### Phase 4.5: Enforcement Gate (BLOCKING)
 **Before proceeding to Phase 5**, check coverage thresholds based on project type:
@@ -122,6 +160,52 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 - Pattern enforcement rules (MUST/NEVER)
 - Architecture diagrams
 
+### Phase 6: Final Verification (BLOCKING GATE)
+
+> [!WARNING]
+> **THIS PHASE IS NOT OPTIONAL.** Do NOT report completion until all verification steps pass.
+
+**Step 1: List all generated files**
+
+For EACH target project, list the contents of `.ai-instructions/`:
+
+```bash
+find ${PROJECT_ROOT}/.ai-instructions/ -type f
+```
+
+**Step 2: Verify Required Files Exist**
+
+Check EACH required file (see "Generated Artifacts Summary" below):
+
+| File | Status |
+|------|--------|
+| `copilot-instructions.md` | [ ] Exists |
+| `analysis/techstack.md` | [ ] Exists |
+| `analysis/source-structure.json` | [ ] Exists |
+| `analysis/entity-contracts.json` | [ ] Exists |
+| `analysis/api-contracts.json` | [ ] Exists |
+| `analysis/function-registry.json` | [ ] Exists |
+| `analysis/file-categorization.json` | [ ] Exists |
+| `deep-dive/dependency-chains.md` | [ ] Exists |
+| `deep-dive/data-flow.md` | [ ] Exists |
+
+**Step 3: Check for stale files**
+
+If ANY file exists in `.ai-instructions/` that is NOT in the required or conditional lists:
+- **Option A**: Regenerate it with current content
+- **Option B**: Delete it (and document why in summary)
+
+> [!IMPORTANT]
+> **Since Phase 0 deleted all files**, there should be NO stale files. If stale files exist, Phase 0 was not executed correctly. Re-run from Phase 0.
+
+**Step 4: Confirm completion**
+
+> [!CAUTION]
+> **DO NOT mark workflow complete** until:
+> - [ ] All required files exist for ALL target projects
+> - [ ] No stale files remain
+> - [ ] Coverage thresholds were met (Phase 4.5)
+
 ### Validation
 **Read**: `${ARCHITECT_ROOT}/_validation-rules.md`
 - Run completeness checks
@@ -131,22 +215,44 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 
 ## Generated Artifacts Summary
 
-After successful execution, the following files should exist in `${AI_INSTRUCTIONS_ROOT}`:
+After successful execution, the following files **MUST** exist in `${AI_INSTRUCTIONS_ROOT}`:
+
+### Required Files (Always Generated)
 
 ```
 .ai-instructions/
-├── copilot-instructions.md     # Master AI instructions (entry point)
+├── copilot-instructions.md       # Master AI instructions (entry point)
 ├── analysis/
-│   ├── techstack.md            # Stack detection results
-│   ├── source-structure.json   # Discovered locations + file counts
-│   ├── entity-contracts.json   # Type definitions with fields
-│   ├── api-contracts.json      # REST endpoints with validation
-│   ├── function-registry.json  # Service dependencies
-│   ├── file-categorization.json # Files grouped by layer
-│   └── design-tokens.json      # (Frontend only) Colors, spacing, typography for Figma mapping
+│   ├── techstack.md              # Stack detection results
+│   ├── source-structure.json     # Discovered locations + file counts
+│   ├── entity-contracts.json     # Type definitions with fields
+│   ├── api-contracts.json        # REST endpoints with validation
+│   ├── function-registry.json    # Service dependencies
+│   └── file-categorization.json  # Files grouped by layer
 └── deep-dive/
-    └── dependency-chains.md    # Controller → Service → External chains
+    ├── dependency-chains.md      # Controller → Service → External chains
+    └── data-flow.md              # Data object transformations
 ```
+
+### Conditional Files (Generated When Applicable)
+
+```
+.ai-instructions/
+├── analysis/
+│   ├── design-tokens.json        # (Frontend only) CSS/Tailwind tokens
+│   └── component-registry.json   # (Frontend only) React/Vue components
+└── deep-dive/
+    ├── component-registry.md     # (Frontend only) Component documentation
+    ├── debugging-guide.md        # (If complex error handling exists)
+    └── testing-strategy.md       # (If test files exist)
+```
+
+### Regeneration Rule
+
+> [!WARNING]
+> If ANY file in `.ai-instructions/` exists but is NOT in the lists above, either:
+> 1. **Regenerate it** with fresh content and timestamp, OR
+> 2. **Delete it** if no longer applicable (explain why)
 
 ---
 
@@ -159,5 +265,8 @@ After successful execution, the following files should exist in `${AI_INSTRUCTIO
 - [ ] `copilot-instructions.md` has Architecture Diagram + Critical Rules
 - [ ] `file-categorization.json` groups files by layer/category
 - [ ] `deep-dive/dependency-chains.md` has controller→service chains
+- [ ] `deep-dive/data-flow.md` has data object transformations
+- [ ] ALL existing files in `.ai-instructions/` have been regenerated
 - [ ] No `"type": "any"` without `_unresolved` entry
 - [ ] **Coverage thresholds met** (Controllers 100%, Services ≥50%)
+

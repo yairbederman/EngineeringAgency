@@ -74,8 +74,8 @@ Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
 
 ### Phase 6: Generate Interactive Diagram Viewer
 **Read**: `${SYSTEM_ARCH_ROOT}/_phase-6-interactive-viewer.md`
-**Template**: `${SYSTEM_ARCH_ROOT}/WG3-Architecture-template.html`
-**Output**: `WG3-Architecture-Interactive.html`
+**Template**: `${SYSTEM_ARCH_ROOT}/${TEMPLATE_FILE}` (contains `{{SYSTEM_NAME}}` placeholders)
+**Output**: `${OUTPUT_FILE}`
 - Update the embedded Mermaid diagrams in the HTML viewer to reflect the latest architecture
 - Ensure all projects from `project-inventory.json` are represented as clickable nodes in the System Overview diagram
 - Validate that drill-down navigation links correctly to subsystem-specific diagrams
@@ -99,4 +99,4 @@ Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
   - Cross-service API reference
   - Domain model summary
 - [ ] All projects with missing AI instructions are flagged (not silently skipped)
-- [ ] `WG3-Architecture-Interactive.html` renders all diagrams with working navigation and zoom
+- [ ] `${OUTPUT_FILE}` renders all diagrams with working navigation and zoom

@@ -95,6 +95,36 @@ Some services proxy to others. Document the full chain:
 }
 ```
 
+### Step 4.5: Verify No False Direct Dependencies (BLOCKING)
+
+> [!CAUTION]
+> **Transitive vs Direct Call Verification**
+>
+> Before documenting any `A → C` dependency, you MUST verify that A calls C **directly** by checking:
+> 1. Does Service A have an API client for Service C in its codebase?
+> 2. Is that client **actively USED** (not just configured/imported)?
+> 3. Or does A actually call B, and B calls C?
+>
+> **If A → B → C is the actual path, do NOT document A → C as a direct call.**
+
+**Verification Steps**:
+1. For each potential `caller → callee` edge:
+   - Search caller's codebase for imports/usage of callee's API client class
+   - Verify at least one method from that client is invoked
+   - If not found: The dependency does NOT exist
+2. If caller uses IntermediaryClient which calls callee:
+   - Document as: `caller → intermediary` and `intermediary → callee`
+   - Document the intermediary in `chain[]` format above
+3. Flag any corrected assumptions in `_warnings`:
+   ```json
+   {
+     "type": "false-direct-dependency",
+     "claimed": "<service-a> → <service-c>",
+     "actual": "<service-a> → <service-b> → <service-c>",
+     "evidence": "No <ServiceCClient> usage found in <service-a> codebase"
+   }
+   ```
+
 ---
 
 ## Output Schema
