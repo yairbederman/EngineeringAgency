@@ -32,6 +32,7 @@
 | `${PROJECT_BOOKING_API}` | wg-booking-api | Backend | Booking processing & management | `${WORKSPACE_ROOT}/wg-booking-api` |
 | `${PROJECT_EMAIL_API}` | wg-email-api | Backend | Email notifications & templates | `${WORKSPACE_ROOT}/wg-email-api` |
 | `${PROJECT_INVOICE_API}` | wg-invoice-api | Backend | Invoice generation & management | `${WORKSPACE_ROOT}/wg-invoice-api` |
+| `${PROJECT_PREORDER_API}` | wg-preorder-api | Backend | Pre-order processing & management | `${WORKSPACE_ROOT}/wg-preorder-api` |
 | `${PROJECT_LTS_CORE}` | lts-core | Library | Core shared utilities & integrations | `${WORKSPACE_ROOT}/lts-core` |
 
 ---

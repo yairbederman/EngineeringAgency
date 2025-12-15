@@ -214,8 +214,10 @@ When user hovers over a node:
 **Implementation**:
 - Add `mouseenter`/`mouseleave` listeners to all `.node` elements
 - Build adjacency map from `dependencies` array
-- On hover: add `.dimmed` class to non-connected, `.highlighted` to connected
-- On leave: remove all highlight classes
+- On hover: add `.dimmed` class to non-connected, `.active` to connected
+- On leave: remove all highlight classes **after a 150-200ms delay** (Debounce)
+  - This prevents flickering when moving between nodes
+  - If a new `mouseenter` occurs during the delay, cancel the clear timer
 
 **CSS Classes**:
 ```css

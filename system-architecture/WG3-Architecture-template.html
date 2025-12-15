@@ -428,22 +428,41 @@
             transition: opacity 0.3s;
         }
 
-        .diagram-container.interacting .node.active,
-        .diagram-container.interacting .edgePath .path.active {
-            opacity: 1;
+        /* Highlighted Nodes - Stable */
+        .diagram-container.interacting .cluster {
+            opacity: 0.2;
+            transform: scale(0.99);
+            transition: all 0.3s;
+        }
+
+        .diagram-container.interacting .edgeLabel {
+            opacity: 0.1;
+            transition: opacity 0.3s;
+        }
+
+        .diagram-container.interacting .node.active {
+            opacity: 1 !important;
+            transform: scale(1.05);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
+            z-index: 10;
         }
 
         .diagram-container.interacting .node.active rect,
+        .diagram-container.interacting .node.active polygon,
         .diagram-container.interacting .node.active circle,
-        .diagram-container.interacting .node.active polygon {
-            stroke: var(--primary) !important;
+        .diagram-container.interacting .node.active ellipse {
+            stroke: #4f46e5 !important;
             stroke-width: 3px !important;
-            filter: drop-shadow(0 0 8px rgba(99, 102, 241, 0.4));
+            filter: drop-shadow(0 0 4px rgba(79, 70, 229, 0.4));
         }
 
-        .diagram-container.interacting .edgePath .path.active {
-            stroke: var(--primary) !important;
+        /* Active Edges - Fixed Selector */
+        .diagram-container.interacting .edgePath.active .path {
+            stroke: #4f46e5 !important;
             stroke-width: 3px !important;
+            opacity: 1 !important;
+            filter: drop-shadow(0 0 4px rgba(79, 70, 229, 0.4));
+            transition: stroke 0.2s, stroke-width 0.2s, opacity 0.2s;
         }
     </style>
 </head>
@@ -664,6 +683,113 @@
         // END TEMPLATE CONFIGURATION
         // ============================================================
 
+        // Data Placeholders (to be populated by generation script)
+        const projectPaths = {};
+        const adjacencyMap = {};
+
+        // Build reverse adjacency for incoming edges
+        const reverseAdjacency = {};
+        // Note: active adjacency logic requires populated adjacencyMap
+
+        // Enhanced hover handlers for path highlighting
+        function setupPathHighlighting(container) {
+            const nodes = container.querySelectorAll('.node');
+            const edges = container.querySelectorAll('.edgePath');
+            const tooltip = document.getElementById('tooltip');
+            let cleanupTimer = null;
+
+            const clearHighlights = (keepInteracting = false) => {
+                if (!keepInteracting) {
+                    container.classList.remove('interacting');
+                }
+                nodes.forEach(n => n.classList.remove('active', 'source'));
+                edges.forEach(e => e.classList.remove('active'));
+                tooltip.classList.remove('visible');
+            };
+
+            // Initialize reverse adjacency map if empty and adjacencyMap is populated
+            if (Object.keys(reverseAdjacency).length === 0 && Object.keys(adjacencyMap).length > 0) {
+                Object.keys(adjacencyMap).forEach(from => {
+                    adjacencyMap[from].forEach(to => {
+                        if (!reverseAdjacency[to]) reverseAdjacency[to] = [];
+                        reverseAdjacency[to].push(from);
+                    });
+                });
+            }
+
+            nodes.forEach(node => {
+                node.addEventListener('mouseenter', (e) => {
+                    if (cleanupTimer) {
+                        clearTimeout(cleanupTimer);
+                        cleanupTimer = null;
+                    }
+
+                    const nodeId = node.id?.replace('flowchart-', '').replace(/-\d+$/, '');
+                    if (!nodeId) return;
+
+                    // Clean previous highlights but maintain "interacting" state to prevent flicker
+                    clearHighlights(true);
+
+                    container.classList.add('interacting');
+                    node.classList.add('active', 'source');
+
+                    // Highlight outgoing connections
+                    const outgoing = adjacencyMap[nodeId] || [];
+                    const incoming = reverseAdjacency[nodeId] || [];
+                    const connected = [...outgoing, ...incoming];
+
+                    nodes.forEach(n => {
+                        const nId = n.id?.replace('flowchart-', '').replace(/-\d+$/, '');
+                        if (connected.includes(nId)) {
+                            n.classList.add('active');
+                        }
+                    });
+
+                    // Highlight connected edges
+                    edges.forEach(edge => {
+                        const edgeClasses = edge.className.baseVal || '';
+                        const matchesOut = outgoing.some(t => edgeClasses.includes(t));
+                        const matchesIn = incoming.some(t => edgeClasses.includes(t));
+                        if (edgeClasses.includes(nodeId) || matchesOut || matchesIn) {
+                            edge.classList.add('active');
+                        }
+                    });
+
+                    // Show tooltip
+                    const label = node.querySelector('.nodeLabel')?.textContent || nodeId;
+                    tooltip.innerHTML = label.replace('<br/>', ' - ');
+                    tooltip.classList.add('visible');
+                    tooltip.style.left = (e.pageX + 15) + 'px';
+                    tooltip.style.top = (e.pageY - 10) + 'px';
+                });
+
+                node.addEventListener('mouseleave', () => {
+                    // Full clear after delay
+                    cleanupTimer = setTimeout(() => clearHighlights(false), 200);
+                });
+
+                node.addEventListener('mousemove', (e) => {
+                    tooltip.style.left = (e.pageX + 15) + 'px';
+                    tooltip.style.top = (e.pageY - 10) + 'px';
+                });
+
+                // Click to navigate
+                node.addEventListener('click', () => {
+                    const nodeId = node.id?.replace('flowchart-', '').replace(/-\d+$/, '');
+                    if (!nodeId) return;
+
+                    // Try to map node ID to project ID if possible, or use nodeId as diagram ID
+                    // In real gen, we might have a nodeToProject map
+                    if (diagrams.find(d => d.id === nodeId)) {
+                        navigateTo(nodeId);
+                    } else if (projectPaths[nodeId] || diagrams.find(d => d.title.includes(nodeId))) {
+                        // Fallback logic could go here
+                    }
+                });
+            });
+        }
+
+
         // State
         let currentDiagramId = 'system-overview';
         let history = ['system-overview'];
@@ -762,12 +888,19 @@
                                     controlIconsEnabled: false,
                                     fit: true,
                                     center: true,
-                                    minZoom: 0.3,
+                                    contain: false,
+                                    minZoom: 0.1,
                                     maxZoom: 5,
                                     zoomScaleSensitivity: 0.3
                                 });
-                                panZoomInstances[id].zoom(0.85);
+                                // Adaptive zoom
+                                const nodeCount = container.querySelectorAll('.node').length;
+                                const adaptiveZoom = nodeCount > 12 ? 0.65 : nodeCount > 8 ? 0.75 : 0.85;
+                                panZoomInstances[id].zoom(adaptiveZoom);
                                 panZoomInstances[id].center();
+
+                                // Initialize highlighting
+                                setupPathHighlighting(container);
                             }
                         }, 100);
                     } catch (e) {

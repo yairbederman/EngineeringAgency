@@ -257,6 +257,55 @@ Generate `end-to-end-flows.md` with:
 
 Generate `cross-cutting-concerns.md` documenting shared patterns.
 
+## Step 6: Update ALL Existing Output Files (MANDATORY)
+
+> [!IMPORTANT]
+> **Before completing Phase 5, you MUST enumerate and update ALL existing files in `${OUTPUT_ROOT}`.**
+> This includes the root directory AND all subdirectories (analysis/, deep-dive/, etc.).
+> Do NOT assume you know what files exist - always enumerate dynamically.
+
+### 6.1 Enumerate Entire Output Directory Tree
+
+```
+list_dir("${OUTPUT_ROOT}")
+```
+
+For each subdirectory found (e.g., `analysis/`, `deep-dive/`):
+```
+list_dir("${OUTPUT_ROOT}/<subdirectory>")
+```
+
+### 6.2 Process Each File Found
+
+**For EVERY `.md`, `.json`, and `.html` file found:**
+
+1. **Read the file** to understand its structure
+2. **Identify project-related content**:
+   - Project lists or counts
+   - Service names in diagrams, tables, or code
+   - Dependency lists
+   - Coverage statistics
+3. **Update with new project information** where applicable
+4. **Update timestamps** if the file has a `generatedAt` field
+
+### 6.3 Common Patterns to Check
+
+| File Type | What to Update |
+|-----------|----------------|
+| `*.json` (analysis/) | Project counts, service arrays, coverage stats |
+| `*.md` (root, deep-dive/) | Mermaid diagrams, project tables, service lists |
+| `*.html` (viewers) | Embedded diagrams, navigation items |
+
+### 6.4 Validation Checklist
+
+Before marking Phase 5 complete:
+
+- [ ] `list_dir("${OUTPUT_ROOT}")` executed
+- [ ] `list_dir()` executed on EACH subdirectory
+- [ ] **Every file** in the directory tree was read
+- [ ] New project added to all relevant sections
+- [ ] No file or directory was skipped
+
 ---
 
 ## Validation
@@ -267,3 +316,6 @@ Generate `cross-cutting-concerns.md` documenting shared patterns.
 | All services included | Count matches project inventory |
 | Links valid | All entity/API references resolvable |
 | Sections complete | No empty tables or placeholders |
+| **Full tree enumerated** | `list_dir()` on root AND all subdirectories |
+| **All files processed** | Every file in tree was read and updated if needed |
+| **Counts consistent** | Project counts match across all JSON/MD files |
