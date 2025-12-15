@@ -29,6 +29,43 @@ For each `ready` project from Phase 1:
 | **Data Service** | Primarily database operations, rarely calls other services |
 | **Shared Library** | No runtime, provides types/utilities |
 
+### Step 1.5: Enumerate Internal Submodules (MANDATORY)
+
+> [!IMPORTANT]
+> **Do NOT rely solely on AI instructions for submodule lists.**
+> You MUST enumerate submodules by scanning the actual project directory structure.
+
+**For each project**, detect submodules by:
+
+1. **Run `list_dir` on project root**:
+   - Identify directories that represent submodules (code modules, not build artifacts)
+   - Exclude non-code directories: `.git`, `.gradle`, `.idea`, `node_modules`, `build`, `dist`, `bin`, `out`, `target`
+
+2. **Classify submodule types by naming convention**:
+   | Pattern | Type |
+   |---------|------|
+   | Contains `util`, `common`, `shared` | Core/Utility |
+   | Contains `client`, `ws`, `api`, `sdk` | Service Client |
+   | Contains `web`, `rest`, `controller` | Web/API Module |
+   | Contains `external`, `integration`, `connector` | External Integration |
+   | Other code directories | Application Module |
+
+3. **Document in service entry**:
+   ```json
+   {
+     "name": "<project-name>",
+     "type": "<type>",
+     "internalModules": [
+       { "name": "<submodule-dir-name>", "type": "<inferred-type>" }
+     ]
+   }
+   ```
+
+**For Library/Monorepo Projects (CRITICAL)**:
+- These often have MANY submodules (10+)
+- You MUST enumerate ALL code directories at the project root
+- Cross-reference with build config (`settings.gradle`, `package.json` workspaces, `pom.xml` modules) if available
+
 ### Step 2: Detect Dependencies
 
 Analyze each project to determine what it CALLS:
@@ -46,34 +83,34 @@ Analyze each project to determine what it CALLS:
 ### Step 2.5: Verify Dependencies Against Code (MANDATORY)
 
 > [!IMPORTANT]
-> AI instructions may contain stale or inaccurate dependencies.
-> You MUST verify each claimed dependency against actual source code.
+> AI instructions may contain stale or inaccurate dependencies. 
+> **Finding a configuration key is NOT enough.** You must verify it is **USED** in active code.
 
-**For each backend project**, verify external service calls exist in code:
+**For each potential dependency**, perform a Two-Step Verification:
 
-1. **Search for BaseUrl patterns**:
-   ```bash
-   grep_search("api.*BaseUrl", "${PROJECT_PATH}/src/main/java")
-   ```
-   
-2. **Match claimed vs actual**:
-   | Claimed in AI Instructions | grep Result | Status |
-   |---------------------------|-------------|--------|
-   | `apiCmsBaseUrl` | Found / Not Found | ✅ / ❌ |
-   | `apiDataBaseUrl` | Found / Not Found | ✅ / ❌ |
+1. **Verify Configuration Existence**:
+   - Search for the BaseUrl/ServiceUrl key in config files.
+   - *Example*: `grep_search("api.*BaseUrl", "${PROJECT_PATH}")`
+
+2. **Verify Active Code Usage (CRITICAL)**:
+   - If a URL key exists (e.g., `apiTargetServiceBaseUrl`), you **MUST** search for usages of that variable in the codebase.
+   - **Rule**: If a URL is defined but NOT used in any Client/Service class, it is a **Dormant Dependency**. Do NOT include it in the graph.
+   - **Rule**: Distinguish **Transitive vs Direct**.
+     - *Case*: Service A calls Service B. Service B calls Service C.
+     - *Check*: Does Service A have a `ServiceCApiClient` that uses `apiTargetServiceBaseUrl`?
+     - *Result*: If NO, then Service A -> Service C is **FALSE**. Only Service A -> Service B is TRUE.
 
 3. **Only include verified dependencies**:
-   - If grep finds the BaseUrl → Include in `callsServices`
-   - If grep does NOT find it → **Exclude** and add to `_warnings`
+   - If config exists AND key is used in code → Include in `callsServices`
+   - If config missing OR key unused → **Exclude** and add to `_warnings`
 
 **Warning entry format**:
 ```json
 {
-  "type": "unverified-dependency",
+  "type": "dormant-dependency",
   "project": "<project-name>",
-  "claimed": "<claimed-dependency>",
-  "source": "copilot-instructions.md",
-  "reason": "<why dependency could not be verified>"
+  "claimed": "<claimed-target-service>",
+  "reason": "Config key found but no active code usage detected"
 }
 ```
 
@@ -206,6 +243,23 @@ const client = new SomeServiceClient()
 ```yaml
 # application.yml, .env, etc.
 services:
-  data-api:
-    url: http://wg-data-api:8080
+  target-service:
+    url: http://<service-name>:<port>
+```
+
+### Dormant Dependency Detection
+
+**False Positive Example (Do NOT map):**
+```typescript
+// urls.ts
+export const apiTargetServiceBaseUrl = process.env.TARGET_SERVICE_URL; // Defined here
+// BUT... never imported or used in any ApiClient.ts file
+```
+
+**True Positive Example (Map this):**
+```typescript
+// ServiceApiClient.ts
+import { apiTargetServiceBaseUrl } from './urls'; // Imported
+// ...
+return fetch(`${apiTargetServiceBaseUrl}/endpoint`); // Used!
 ```

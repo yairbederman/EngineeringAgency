@@ -47,6 +47,65 @@ graph TB
     SVC1 --> EXT
 ```
 
+> [!CAUTION]
+> **Diagram Edges MUST Match service-topology.json**
+> - **ONLY** draw edges that exist in the `dependencies[]` array from Phase 2
+> - Do **NOT** infer additional connections based on assumptions or documentation
+> - Each edge in the diagram **MUST** have a corresponding entry in `dependencies[]`
+> - If a connection is missing from `dependencies[]`, it means it was NOT verified against code and should NOT appear in the diagram
+
+### Step 1.5: Validate Mermaid Diagram Against Source Data
+
+Before finalizing the diagram, perform these checks:
+
+| Check | Source | Diagram Requirement |
+|-------|--------|---------------------|
+| **Node Count** | `services.length` from `service-topology.json` | Must match node count (excluding subgraph labels) |
+| **Edge Count** | `dependencies.length` from `service-topology.json` | Must match edge count exactly |
+| **All Projects** | `project-inventory.json` (status=ready) | Every ready project must appear as a node |
+| **No Phantom Edges** | `dependencies[]` array | Every `A --> B` must have `{from: A, to: B}` entry |
+
+**Validation Procedure:**
+1. For each edge `A --> B` you plan to draw:
+   - Search `dependencies[]` for `{from: "A", to: "B"}`
+   - If NOT found → **DO NOT draw this edge**
+2. For each entry in `dependencies[]`:
+   - Verify it appears as an edge in your diagram
+   - If missing → **Add the edge**
+3. Count nodes vs `services.length` - must match
+4. Count edges vs `dependencies.length` - must match
+
+**If validation fails**: Do NOT generate the diagram. Report the discrepancy.
+
+### Step 1.6: Generate Per-Project Submodule Diagrams (MANDATORY for Libraries)
+
+> [!IMPORTANT]
+> **For projects with `internalModules[]` in `service-topology.json`, you MUST generate a detailed submodule diagram.**
+
+For each project where `internalModules.length > 0`:
+
+1. **Read `internalModules[]` from `service-topology.json`**
+2. **Group modules by type** (Core, Client, Integration, etc.)
+3. **Generate Mermaid subgraph**:
+
+```mermaid
+graph TB
+    subgraph Modules["Submodules"]
+        MOD1["<module-name-1>"]
+        MOD2["<module-name-2>"]
+        %% Include ALL modules from internalModules[]
+    end
+    
+    subgraph Integrations["External Integrations"]
+        EXT1["<external-module-1>"]
+        %% Include ALL external/integration modules
+    end
+```
+
+**Validation**: 
+- Count nodes in diagram MUST equal `internalModules.length`
+- If count doesn't match → diagram is INCOMPLETE
+
 ### Step 2: Generate Project Responsibilities Table
 
 | Project | Type | Role | Endpoints | Key Entities |

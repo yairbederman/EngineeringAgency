@@ -12,7 +12,7 @@
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `${WORKSPACE_ROOT}` | Root directory containing all WG3 projects | `C:\My Projects\WG3` (Windows) or `/Users/dev/WG3` (Mac) |
+| `${WORKSPACE_ROOT}` | Root directory containing all projects | `/path/to/your/projects` (adjust for your OS) |
 | `${GLOBAL_WORKFLOWS_ROOT}` | Path to global_workflows directory | Resolved automatically when using agents |
 
 ---
