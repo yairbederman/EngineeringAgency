@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive Architecture Viewer</title>
+    <title>WG3 Interactive Architecture</title>
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,20 +12,20 @@
     <!-- Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
 
+    <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/svg-pan-zoom@3.6.1/dist/svg-pan-zoom.min.js"></script>
 
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg-sidebar: rgba(255, 255, 255, 0.75);
+            --primary: #4f46e5;
+            --primary-hover: #4338ca;
+            --bg-sidebar: rgba(255, 255, 255, 0.85);
             --bg-content: #f8fafc;
-            --border: rgba(226, 232, 240, 0.8);
-            --text-main: #1e293b;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
             --text-muted: #64748b;
-            --sidebar-width: 300px;
-            --glass-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            --sidebar-width: 320px;
         }
 
         body {
@@ -41,7 +41,7 @@
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* Sidebar Styles */
+        /* --- Sidebar & Layout --- */
         #sidebar {
             width: var(--sidebar-width);
             background: var(--bg-sidebar);
@@ -97,7 +97,6 @@
             letter-spacing: -0.02em;
         }
 
-        /* Search Box */
         .search-container {
             padding: 0 20px 16px;
             border-bottom: 1px solid var(--border);
@@ -161,7 +160,6 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
-        /* Content Area */
         #content {
             flex: 1;
             position: relative;
@@ -171,7 +169,7 @@
             flex-direction: column;
         }
 
-        /* Header / Top Bar */
+        /* --- Top Bar & Navigation --- */
         .top-bar {
             position: absolute;
             top: 24px;
@@ -209,7 +207,6 @@
             transform: scale(1.05);
         }
 
-        /* Breadcrumbs */
         .breadcrumbs {
             display: flex;
             align-items: center;
@@ -247,7 +244,6 @@
             font-size: 1.2em;
         }
 
-        /* Diagram Container */
         #diagrams-root {
             flex: 1;
             position: relative;
@@ -268,22 +264,19 @@
             visibility: hidden;
             opacity: 0;
             z-index: 0;
-            overflow: hidden;
+            overflow: visible;
             display: flex;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: scale(0.98);
+            transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .diagram-container.active {
             visibility: visible;
             opacity: 1;
             z-index: 10;
-            transform: scale(1);
         }
 
-        /* Loading Spinner */
         #loader {
             position: absolute;
             top: 50%;
@@ -318,7 +311,6 @@
             }
         }
 
-        /* Zoom Controls */
         .zoom-controls {
             position: absolute;
             bottom: 30px;
@@ -353,7 +345,7 @@
             background: #f1f5f9;
         }
 
-        /* Mermaid Overrides */
+        /* --- Mermaid Overrides --- */
         .mermaid {
             width: 100%;
             height: 100%;
@@ -363,8 +355,7 @@
         }
 
         svg {
-            width: 100%;
-            height: 100%;
+            overflow: visible !important;
         }
 
         .node {
@@ -376,8 +367,6 @@
         .node:hover circle {
             stroke: var(--primary) !important;
             stroke-width: 3px !important;
-            filter: drop-shadow(0 8px 12px rgba(99, 102, 241, 0.2));
-            transition: all 0.2s ease;
         }
 
         .mermaid .node rect,
@@ -401,6 +390,50 @@
             transition: all 0.3s;
         }
 
+        /* --- Visual Semantics: Layer Colors --- */
+        /* Presentation (Blue) */
+        .node.presentation rect,
+        .node.presentation polygon,
+        .node.presentation circle {
+            fill: #eef2ff !important;
+            stroke: #6366f1 !important;
+            stroke-width: 2px !important;
+        }
+
+        /* Data (Green) */
+        .node.data rect,
+        .node.data polygon,
+        .node.data circle {
+            fill: #f0fdf4 !important;
+            stroke: #22c55e !important;
+            stroke-width: 2px !important;
+        }
+
+        /* External/Shared (Orange) */
+        .node.external rect,
+        .node.external polygon,
+        .node.external circle {
+            fill: #fff7ed !important;
+            stroke: #f97316 !important;
+            stroke-width: 2px !important;
+        }
+
+        /* Shared (Gray) */
+        .node.shared rect,
+        .node.shared polygon {
+            fill: #f8fafc !important;
+            stroke: #64748b !important;
+            stroke-width: 2px !important;
+        }
+
+        /* Orchestration (Purple) */
+        .node.orchestration rect,
+        .node.orchestration polygon {
+            fill: #fdf4ff !important;
+            stroke: #d946ef !important;
+            stroke-width: 2px !important;
+        }
+
         .tooltip {
             position: absolute;
             background: rgba(15, 23, 42, 0.9);
@@ -422,17 +455,20 @@
             opacity: 1;
         }
 
-        .diagram-container.interacting .node,
-        .diagram-container.interacting .edgePath .path {
-            opacity: 0.2;
+        /* --- Path Highlighting --- */
+        .diagram-container.interacting .node {
+            opacity: 0.1;
             transition: opacity 0.3s;
         }
 
-        /* Highlighted Nodes - Stable */
+        .diagram-container.interacting .edgePath .path {
+            opacity: 0.05;
+            transition: opacity 0.3s;
+        }
+
         .diagram-container.interacting .cluster {
             opacity: 0.2;
-            transform: scale(0.99);
-            transition: all 0.3s;
+            transition: opacity 0.3s;
         }
 
         .diagram-container.interacting .edgeLabel {
@@ -440,11 +476,14 @@
             transition: opacity 0.3s;
         }
 
+        .diagram-container.interacting .edgeLabel.active {
+            opacity: 1 !important;
+            transition: opacity 0.2s;
+        }
+
         .diagram-container.interacting .node.active {
             opacity: 1 !important;
-            transform: scale(1.05);
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s;
-            z-index: 10;
+            transition: opacity 0.2s;
         }
 
         .diagram-container.interacting .node.active rect,
@@ -452,17 +491,45 @@
         .diagram-container.interacting .node.active circle,
         .diagram-container.interacting .node.active ellipse {
             stroke: #4f46e5 !important;
-            stroke-width: 3px !important;
-            filter: drop-shadow(0 0 4px rgba(79, 70, 229, 0.4));
+            stroke-width: 4px !important;
+            filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.4));
         }
 
-        /* Active Edges - Fixed Selector */
+        /* Pulse animation for Locked Node */
+        .diagram-container.interacting .node.locked rect,
+        .diagram-container.interacting .node.locked polygon,
+        .diagram-container.interacting .node.locked circle {
+            animation: pulse-border 2s infinite;
+        }
+
+        @keyframes pulse-border {
+            0% {
+                filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.4));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 16px rgba(79, 70, 229, 0.6));
+            }
+
+            100% {
+                filter: drop-shadow(0 0 8px rgba(79, 70, 229, 0.4));
+            }
+        }
+
+        .diagram-container.interacting .edgePath.active,
+        .diagram-container.interacting .edgePath.active path,
         .diagram-container.interacting .edgePath.active .path {
             stroke: #4f46e5 !important;
             stroke-width: 3px !important;
             opacity: 1 !important;
             filter: drop-shadow(0 0 4px rgba(79, 70, 229, 0.4));
             transition: stroke 0.2s, stroke-width 0.2s, opacity 0.2s;
+        }
+
+        .diagram-container.interacting .node.source rect,
+        .diagram-container.interacting .node.source polygon {
+            stroke: #10b981 !important;
+            filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.4));
         }
     </style>
 </head>
@@ -473,8 +540,7 @@
         <div class="sidebar-header">
             <h1>
                 <span class="material-icons-round" style="color: var(--primary)">schema</span>
-                <!-- TEMPLATE: Update title -->
-                Architecture Viewer
+                WG3 Architect
             </h1>
             <button class="collapse-btn" onclick="toggleSidebar()" title="Collapse Sidebar">
                 <span class="material-icons-round">first_page</span>
@@ -487,14 +553,11 @@
     </div>
 
     <div id="content">
-
         <div class="top-bar">
             <button class="icon-btn" onclick="toggleSidebar()" title="Toggle Sidebar">
                 <span class="material-icons-round">menu</span>
             </button>
-            <div class="breadcrumbs" id="breadcrumbs">
-                <!-- Injected by JS -->
-            </div>
+            <div class="breadcrumbs" id="breadcrumbs"></div>
         </div>
 
         <div id="loader" class="visible">
@@ -520,296 +583,51 @@
     </div>
 
     <script>
-        // ============================================================
-        // TEMPLATE: DIAGRAM CONFIGURATION
-        // ============================================================
-        // Replace this array with your project-specific diagrams.
-        // Each diagram needs: id, title, and Mermaid code.
-        // Use click callbacks to enable drill-down navigation.
-        // ============================================================
+        // Generated: {{GENERATED_DATE}}
+        // Source: service-topology.json, project-inventory.json
 
-        const diagrams = [
-            {
-                id: 'system-overview',
-                title: 'System Overview',
-                code: `graph TB
-    subgraph Presentation["📱 Presentation Layer"]
-        CLIENT["frontend-app<br/>Frontend Application"]
-    end
-    
-    subgraph API["🔌 API Layer"]
-        SERVICE_A["service-a<br/>Service A"]
-        SERVICE_B["service-b<br/>Service B"]
-        SERVICE_C["service-c<br/>Service C"]
-    end
-    
-    subgraph Data["💾 Data Layer"]
-        DATABASE["database<br/>Database"]
-    end
-    
-    subgraph Shared["🔧 Shared Library"]
-        CORE["shared-lib<br/>Shared Library"]
-    end
-    
-    CLIENT --> SERVICE_A
-    CLIENT --> SERVICE_B
-    CLIENT --> SERVICE_C
-    
-    SERVICE_A --> DATABASE
-    SERVICE_B --> DATABASE
-    SERVICE_C --> DATABASE
-    
-    SERVICE_A -.-> CORE
-    SERVICE_B -.-> CORE
-    SERVICE_C -.-> CORE
-    
-    %% TEMPLATE: Add click callbacks for drill-down navigation
-    click CLIENT call navigateTo("frontend-app")
-    click SERVICE_A call navigateTo("service-a")
-    click SERVICE_B call navigateTo("service-b")
-    click SERVICE_C call navigateTo("service-c")
-    click DATABASE call navigateTo("database")
-    click CORE call navigateTo("shared-lib")
-    `
-            },
-            {
-                id: 'frontend-app',
-                title: '1. Frontend Application',
-                code: `graph TB
-    subgraph UI["UI Layer"]
-        COMPONENTS["Components"]
-        PAGES["Pages"]
-    end
-    
-    subgraph State["State Management"]
-        STORE["Store"]
-        ACTIONS["Actions"]
-    end
-    
-    subgraph API["API Layer"]
-        CLIENTS["API Clients"]
-    end
-    
-    PAGES --> COMPONENTS
-    COMPONENTS --> State
-    State --> API`
-            },
-            {
-                id: 'service-a',
-                title: '2. Service A',
-                code: `graph TB
-    subgraph Controllers["Controllers"]
-        CTRL["REST Controller"]
-    end
-    
-    subgraph Services["Services"]
-        SVC["Business Service"]
-    end
-    
-    subgraph Repository["Data Access"]
-        REPO["Repository"]
-    end
-    
-    CTRL --> SVC
-    SVC --> REPO`
-            },
-            {
-                id: 'service-b',
-                title: '3. Service B',
-                code: `graph TB
-    subgraph Controllers["Controllers"]
-        CTRL["REST Controller"]
-    end
-    
-    subgraph Services["Services"]
-        SVC["Business Service"]
-    end
-    
-    subgraph External["External"]
-        EXT["External API"]
-    end
-    
-    CTRL --> SVC
-    SVC --> EXT`
-            },
-            {
-                id: 'service-c',
-                title: '4. Service C',
-                code: `graph TB
-    subgraph Controllers["Controllers"]
-        CTRL["REST Controller"]
-    end
-    
-    subgraph Services["Services"]
-        SVC["Business Service"]
-    end
-    
-    subgraph Queue["Messaging"]
-        MQ["Message Queue"]
-    end
-    
-    CTRL --> SVC
-    SVC --> MQ`
-            },
-            {
-                id: 'database',
-                title: '5. Database',
-                code: `graph TB
-    subgraph Tables["Core Tables"]
-        USERS["Users"]
-        ORDERS["Orders"]
-        PRODUCTS["Products"]
-    end
-    
-    ORDERS --> USERS
-    ORDERS --> PRODUCTS`
-            },
-            {
-                id: 'shared-lib',
-                title: '6. Shared Library',
-                code: `graph TB
-    subgraph Modules["Modules"]
-        UTILS["Utilities"]
-        CLIENTS["Service Clients"]
-        MODELS["Shared Models"]
-    end
-    
-    CLIENTS --> UTILS
-    CLIENTS --> MODELS`
-            }
-        ];
-
-        // ============================================================
-        // END TEMPLATE CONFIGURATION
-        // ============================================================
-
-        // Data Placeholders (to be populated by generation script)
-        const projectPaths = {};
-        const adjacencyMap = {};
-
-        // Build reverse adjacency for incoming edges
-        const reverseAdjacency = {};
-        // Note: active adjacency logic requires populated adjacencyMap
-
-        // Enhanced hover handlers for path highlighting
-        function setupPathHighlighting(container) {
-            const nodes = container.querySelectorAll('.node');
-            const edges = container.querySelectorAll('.edgePath');
-            const tooltip = document.getElementById('tooltip');
-            let cleanupTimer = null;
-
-            const clearHighlights = (keepInteracting = false) => {
-                if (!keepInteracting) {
-                    container.classList.remove('interacting');
-                }
-                nodes.forEach(n => n.classList.remove('active', 'source'));
-                edges.forEach(e => e.classList.remove('active'));
-                tooltip.classList.remove('visible');
-            };
-
-            // Initialize reverse adjacency map if empty and adjacencyMap is populated
-            if (Object.keys(reverseAdjacency).length === 0 && Object.keys(adjacencyMap).length > 0) {
-                Object.keys(adjacencyMap).forEach(from => {
-                    adjacencyMap[from].forEach(to => {
-                        if (!reverseAdjacency[to]) reverseAdjacency[to] = [];
-                        reverseAdjacency[to].push(from);
-                    });
-                });
-            }
-
-            nodes.forEach(node => {
-                node.addEventListener('mouseenter', (e) => {
-                    if (cleanupTimer) {
-                        clearTimeout(cleanupTimer);
-                        cleanupTimer = null;
-                    }
-
-                    const nodeId = node.id?.replace('flowchart-', '').replace(/-\d+$/, '');
-                    if (!nodeId) return;
-
-                    // Clean previous highlights but maintain "interacting" state to prevent flicker
-                    clearHighlights(true);
-
-                    container.classList.add('interacting');
-                    node.classList.add('active', 'source');
-
-                    // Highlight outgoing connections
-                    const outgoing = adjacencyMap[nodeId] || [];
-                    const incoming = reverseAdjacency[nodeId] || [];
-                    const connected = [...outgoing, ...incoming];
-
-                    nodes.forEach(n => {
-                        const nId = n.id?.replace('flowchart-', '').replace(/-\d+$/, '');
-                        if (connected.includes(nId)) {
-                            n.classList.add('active');
-                        }
-                    });
-
-                    // Highlight connected edges
-                    edges.forEach(edge => {
-                        const edgeClasses = edge.className.baseVal || '';
-                        const matchesOut = outgoing.some(t => edgeClasses.includes(t));
-                        const matchesIn = incoming.some(t => edgeClasses.includes(t));
-                        if (edgeClasses.includes(nodeId) || matchesOut || matchesIn) {
-                            edge.classList.add('active');
-                        }
-                    });
-
-                    // Show tooltip
-                    const label = node.querySelector('.nodeLabel')?.textContent || nodeId;
-                    tooltip.innerHTML = label.replace('<br/>', ' - ');
-                    tooltip.classList.add('visible');
-                    tooltip.style.left = (e.pageX + 15) + 'px';
-                    tooltip.style.top = (e.pageY - 10) + 'px';
-                });
-
-                node.addEventListener('mouseleave', () => {
-                    // Full clear after delay
-                    cleanupTimer = setTimeout(() => clearHighlights(false), 200);
-                });
-
-                node.addEventListener('mousemove', (e) => {
-                    tooltip.style.left = (e.pageX + 15) + 'px';
-                    tooltip.style.top = (e.pageY - 10) + 'px';
-                });
-
-                // Click to navigate
-                node.addEventListener('click', () => {
-                    const nodeId = node.id?.replace('flowchart-', '').replace(/-\d+$/, '');
-                    if (!nodeId) return;
-
-                    // Try to map node ID to project ID if possible, or use nodeId as diagram ID
-                    // In real gen, we might have a nodeToProject map
-                    if (diagrams.find(d => d.id === nodeId)) {
-                        navigateTo(nodeId);
-                    } else if (projectPaths[nodeId] || diagrams.find(d => d.title.includes(nodeId))) {
-                        // Fallback logic could go here
-                    }
-                });
-            });
-        }
-
+        const diagrams = {{ DIAGRAMS_DATA }};
 
         // State
         let currentDiagramId = 'system-overview';
         let history = ['system-overview'];
         let panZoomInstances = {};
         let renderedDiagrams = new Set();
+        let adjacencyMap = {};
+        let reverseAdjacencyMap = {};
 
         // Mermaid initialization
         mermaid.initialize({
             startOnLoad: false,
             theme: 'neutral',
             securityLevel: 'loose',
-            flowchart: {
-                useMaxWidth: true,
-                htmlLabels: true,
-                curve: 'basis',
-                padding: 20
-            }
+            flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis', padding: 20 }
         });
 
-        // Build navigation
+        // --- NEW: Dynamic Connection Parser ---
+        function parseMermaidConnections(code) {
+            const adjacency = {};
+            const reverse = {};
+
+            const edgeRegex = /(^|\s)([A-Za-z0-9_]+)\s*[-=.]+(?:>|\|)+\s*([A-Za-z0-9_]+)/gm;
+
+            let match;
+            while ((match = edgeRegex.exec(code)) !== null) {
+                const source = match[2];
+                const target = match[3];
+
+                if (!adjacency[source]) adjacency[source] = [];
+                if (!adjacency[target]) adjacency[target] = [];
+                if (!adjacency[source].includes(target)) adjacency[source].push(target);
+
+                if (!reverse[target]) reverse[target] = [];
+                if (!reverse[source]) reverse[source] = [];
+                if (!reverse[target].includes(source)) reverse[target].push(source);
+            }
+
+            return { adjacency, reverse };
+        }
+
         function buildNav() {
             const navList = document.getElementById('nav-list');
             navList.innerHTML = diagrams.map(d => `
@@ -821,7 +639,6 @@
             `).join('');
         }
 
-        // Search functionality
         document.getElementById('search-input').addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase();
             document.querySelectorAll('.nav-item').forEach(item => {
@@ -830,15 +647,12 @@
             });
         });
 
-        // Navigation
         window.navigateTo = function (id) {
             const diagram = diagrams.find(d => d.id === id);
             if (!diagram) return;
 
             currentDiagramId = id;
-            if (history[history.length - 1] !== id) {
-                history.push(id);
-            }
+            if (history[history.length - 1] !== id) history.push(id);
 
             buildNav();
             updateBreadcrumbs();
@@ -860,7 +674,6 @@
             }).join('');
         }
 
-        // Show diagram
         async function showDiagram(id) {
             document.querySelectorAll('.diagram-container').forEach(c => c.classList.remove('active'));
 
@@ -883,26 +696,55 @@
                         setTimeout(() => {
                             const svgElement = container.querySelector('svg');
                             if (svgElement) {
-                                panZoomInstances[id] = svgPanZoom(svgElement, {
-                                    zoomEnabled: true,
-                                    controlIconsEnabled: false,
-                                    fit: true,
-                                    center: true,
-                                    contain: false,
-                                    minZoom: 0.1,
-                                    maxZoom: 5,
-                                    zoomScaleSensitivity: 0.3
-                                });
-                                // Adaptive zoom
-                                const nodeCount = container.querySelectorAll('.node').length;
-                                const adaptiveZoom = nodeCount > 12 ? 0.65 : nodeCount > 8 ? 0.75 : 0.85;
-                                panZoomInstances[id].zoom(adaptiveZoom);
-                                panZoomInstances[id].center();
+                                // Critical fix: Remove mermaid's max-width which conflicts with pan-zoom
+                                svgElement.style.maxWidth = 'none';
+                                svgElement.style.height = '100%';
+                                svgElement.style.width = '100%';
 
-                                // Initialize highlighting
-                                setupPathHighlighting(container);
+                                // Check if we have valid dimensions before init
+                                const rect = svgElement.getBoundingClientRect();
+                                if (rect.width === 0 || rect.height === 0) {
+                                    // Fallback: try to force dimensions from parent if SVG has none
+                                    const parentRect = container.getBoundingClientRect();
+                                    if (parentRect.width > 0 && parentRect.height > 0) {
+                                        svgElement.setAttribute('width', parentRect.width);
+                                        svgElement.setAttribute('height', parentRect.height);
+                                    } else {
+                                        console.warn("SVG has 0 dimensions, skipping PanZoom init");
+                                        return;
+                                    }
+                                }
+
+                                try {
+                                    // Fixed: Disable 'fit' initially to prevent 0-scale crashes
+                                    // We will manually fit it after ensuring logic is safe
+                                    panZoomInstances[id] = svgPanZoom(svgElement, {
+                                        zoomEnabled: true,
+                                        controlIconsEnabled: false,
+                                        fit: false,
+                                        center: true,
+                                        minZoom: 0.1,
+                                        maxZoom: 5,
+                                        zoomScaleSensitivity: 0.3
+                                    });
+
+                                    // Manual fit logic with safety checks
+                                    const pz = panZoomInstances[id];
+                                    pz.resize(); // Force update dimensions
+                                    pz.fit();
+                                    pz.center();
+
+                                    // Adaptive zoom adjustment
+                                    const nodeCount = container.querySelectorAll('.node').length;
+                                    const currentZoom = pz.getZoom();
+                                    const adaptiveFactor = nodeCount > 12 ? 0.75 : 0.85;
+                                    pz.zoom(currentZoom * adaptiveFactor);
+
+                                } catch (err) {
+                                    console.warn("PanZoom init failed temporarily", err);
+                                }
                             }
-                        }, 100);
+                        }, 200); // Increased timeout to ensure DOM settle
                     } catch (e) {
                         console.error('Mermaid render error:', e);
                         container.innerHTML = `<div style="color: red; padding: 20px;">Error rendering diagram: ${e.message}</div>`;
@@ -910,35 +752,182 @@
                 }
             }
 
+            const diagramCode = diagrams.find(d => d.id === id)?.code || "";
+            const maps = parseMermaidConnections(diagramCode);
+            adjacencyMap = maps.adjacency;
+            reverseAdjacencyMap = maps.reverse;
+
             container.classList.add('active');
             document.getElementById('loader').classList.remove('visible');
+
+            if (!container.dataset.highlightingSetup) {
+                setTimeout(() => {
+                    setupPathHighlighting(container);
+                    container.dataset.highlightingSetup = 'true';
+                }, 250);
+            }
         }
 
-        // Zoom controls
         window.zoomIn = function () {
-            const pz = panZoomInstances[currentDiagramId];
-            if (pz) pz.zoomIn();
+            try {
+                const pz = panZoomInstances[currentDiagramId];
+                if (pz) pz.zoomIn();
+            } catch (e) { console.warn("Zoom error", e); }
         };
-
         window.zoomOut = function () {
-            const pz = panZoomInstances[currentDiagramId];
-            if (pz) pz.zoomOut();
+            try {
+                const pz = panZoomInstances[currentDiagramId];
+                if (pz) pz.zoomOut();
+            } catch (e) { console.warn("Zoom error", e); }
         };
-
         window.resetZoom = function () {
-            const pz = panZoomInstances[currentDiagramId];
-            if (pz) {
-                pz.resetZoom();
-                pz.center();
-            }
+            try {
+                const pz = panZoomInstances[currentDiagramId];
+                if (pz) { pz.resetZoom(); pz.center(); }
+            } catch (e) { console.warn("Zoom error", e); }
         };
+        window.toggleSidebar = function () { document.getElementById('sidebar').classList.toggle('collapsed'); };
 
-        // Sidebar toggle
-        window.toggleSidebar = function () {
-            document.getElementById('sidebar').classList.toggle('collapsed');
-        };
+        function setupPathHighlighting(container) {
+            const nodes = container.querySelectorAll('.node');
+            const edges = container.querySelectorAll('.edgePath');
+            const edgeLabels = container.querySelectorAll('.edgeLabel');
+            const tooltip = document.getElementById('tooltip');
+            let cleanupTimer = null;
+            let lockedNodeId = null; // State for Focus Mode
 
-        // Initialize
+            // Helper to apply highlight visuals
+            const highlightNode = (nodeId) => {
+                // Remove existing highlights first to ensure clean slate
+                // But if we are locked, we keep the interacting class until specific cleanup
+                nodes.forEach(n => n.classList.remove('active', 'source'));
+                edges.forEach(e => e.classList.remove('active'));
+                edgeLabels.forEach(el => el.classList.remove('active'));
+
+                container.classList.add('interacting');
+
+                // Find and highlight source node
+                let sourceNode = null;
+                nodes.forEach(n => {
+                    const nId = n.id?.replace(/^flowchart-/, '').replace(/-\d+$/, '');
+                    if (nId === nodeId) {
+                        n.classList.add('active', 'source');
+                        if (lockedNodeId === nodeId) n.classList.add('locked');
+                        else n.classList.remove('locked');
+                        sourceNode = n;
+                    }
+                });
+
+                if (!sourceNode) return;
+
+                // Highlight connections
+                const outgoing = adjacencyMap[nodeId] || [];
+                const incoming = reverseAdjacencyMap[nodeId] || [];
+                const connected = [...outgoing, ...incoming];
+
+                nodes.forEach(n => {
+                    const nId = n.id?.replace(/^flowchart-/, '').replace(/-\d+$/, '');
+                    if (connected.includes(nId)) {
+                        n.classList.add('active');
+                    }
+                });
+
+                edges.forEach((edge, index) => {
+                    const edgeClasses = edge.className.baseVal || '';
+                    const isConnected =
+                        edgeClasses.includes(nodeId) ||
+                        connected.some(target => edgeClasses.includes(target));
+
+                    if (isConnected) {
+                        edge.classList.add('active');
+                        if (edgeLabels[index]) {
+                            edgeLabels[index].classList.add('active');
+                        }
+                    }
+                });
+            };
+
+            const clearHighlights = (force = false) => {
+                if (lockedNodeId && !force) return; // Respect lock
+
+                container.classList.remove('interacting');
+                lockedNodeId = null;
+                nodes.forEach(n => n.classList.remove('active', 'source', 'locked'));
+                edges.forEach(e => e.classList.remove('active'));
+                edgeLabels.forEach(el => el.classList.remove('active'));
+                tooltip.classList.remove('visible');
+            };
+
+            // Global click to clear lock
+            container.addEventListener('click', (e) => {
+                // If clicking background (not a node), clear lock
+                if (e.target === container || e.target.classList.contains('diagram-container') || e.target.tagName === 'svg') {
+                    clearHighlights(true);
+                }
+            });
+
+            nodes.forEach(node => {
+                node.addEventListener('mouseenter', (e) => {
+                    if (lockedNodeId) return; // Ignore hover if locked
+
+                    if (cleanupTimer) {
+                        clearTimeout(cleanupTimer);
+                        cleanupTimer = null;
+                    }
+
+                    const nodeId = node.id?.replace(/^flowchart-/, '').replace(/-\d+$/, '');
+                    if (!nodeId) return;
+
+                    highlightNode(nodeId);
+
+                    const label = node.querySelector('.nodeLabel')?.textContent || nodeId;
+                    tooltip.innerHTML = label.replace('<br/>', ' - ');
+                    tooltip.classList.add('visible');
+                    tooltip.style.left = (e.pageX + 15) + 'px';
+                    tooltip.style.top = (e.pageY - 10) + 'px';
+                });
+
+                node.addEventListener('mouseleave', () => {
+                    if (lockedNodeId) return; // Ignore leave if locked
+                    cleanupTimer = setTimeout(() => clearHighlights(), 200);
+                });
+
+                node.addEventListener('mousemove', (e) => {
+                    if (lockedNodeId) return; // Don't move tooltip if locked (optional preference)
+                    tooltip.style.left = (e.pageX + 15) + 'px';
+                    tooltip.style.top = (e.pageY - 10) + 'px';
+                });
+
+                // SINGLE CLICK: Toggle Lock
+                node.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Prevent container click from firing
+
+                    const nodeId = node.id?.replace(/^flowchart-/, '').replace(/-\d+$/, '');
+                    if (!nodeId) return;
+
+                    lockedNodeId = nodeId;
+                    highlightNode(nodeId);
+                });
+
+                // DOUBLE CLICK: Navigate (Kept for speed)
+                node.addEventListener('dblclick', (e) => {
+                    e.stopPropagation();
+                    const nodeId = node.id?.replace(/^flowchart-/, '').replace(/-\d+$/, '');
+                    if (!nodeId) return;
+
+                    const nodeToProject = {{ NODE_TO_PROJECT_MAPPING }
+                };
+
+                const projectId = nodeToProject[nodeId];
+                if (projectId && diagrams.find(d => d.id === projectId)) {
+                    // Clear lock before navigating so new diagram starts fresh
+                    clearHighlights(true);
+                    navigateTo(projectId);
+                }
+            });
+        });
+        }
+
         buildNav();
         updateBreadcrumbs();
         showDiagram('system-overview');
