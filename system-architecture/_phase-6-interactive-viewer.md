@@ -12,11 +12,11 @@
 
 ## Template
 
-- `${SYSTEM_ARCH_ROOT}/WG3-Architecture-template.html`
+- `${SYSTEM_ARCH_ROOT}/${TEMPLATE_FILE}`
 
 ## Output
 
-- `${OUTPUT_ROOT}/WG3-Architecture-Interactive.html`
+- `${OUTPUT_ROOT}/${OUTPUT_FILE}`
 
 ---
 
@@ -195,7 +195,7 @@ const diagrams = [
 
 ### Step 5: Generate HTML Output
 
-1. **Copy** `WG3-Architecture-template.html` to output location
+1. **Copy** `${TEMPLATE_FILE}` to output location
 2. **Replace** the placeholder `const diagrams = [...]` section with the generated diagrams array
 3. **Update** the page title to match the system name
 
@@ -259,12 +259,12 @@ function handleNodeClick(nodeId) {
 }
 ```
 
-**Project Path Mapping**:
+**Project Path Mapping** (generated from `project-inventory.json`):
 ```javascript
+// Auto-generated from project-inventory.json
 const projectPaths = {
-    'wg-client': { path: 'c:/My Projects/WG3/wg-client', type: 'Frontend' },
-    'wg-search-api': { path: 'c:/My Projects/WG3/wg-search-api', type: 'Backend' },
-    // ... generated from project-inventory.json
+    // For each project in project-inventory.json:
+    // '<project-name>': { path: project.path, type: project.type }
 };
 ```
 
@@ -361,15 +361,15 @@ Given this `service-topology.json` snippet:
 ```json
 {
   "services": [
-    { "name": "wg-client", "type": "Frontend", "role": "Next.js web app" },
-    { "name": "wg-search-api", "type": "Backend", "role": "Travel search" }
+    { "name": "<frontend-project>", "type": "Frontend", "role": "<frontend description>" },
+    { "name": "<backend-project>", "type": "Backend", "role": "<backend description>" }
   ],
   "dependencies": [
-    { "from": "wg-client", "to": "wg-search-api", "type": "http" }
+    { "from": "<frontend-project>", "to": "<backend-project>", "type": "http" }
   ],
   "layers": {
-    "presentation": ["wg-client"],
-    "api": ["wg-search-api"]
+    "presentation": ["<frontend-project>"],
+    "api": ["<backend-project>"]
   }
 }
 ```
@@ -379,15 +379,15 @@ Given this `service-topology.json` snippet:
 ```mermaid
 graph TB
     subgraph Presentation["📱 Presentation Layer"]
-        CLIENT["wg-client<br/>Next.js web app"]
+        CLIENT["<frontend-project><br/><frontend description>"]
     end
     
     subgraph API["🔌 API Layer"]
-        SEARCH["wg-search-api<br/>Travel search"]
+        BACKEND["<backend-project><br/><backend description>"]
     end
     
-    CLIENT --> SEARCH
+    CLIENT --> BACKEND
     
-    click CLIENT call navigateTo("wg-client")
-    click SEARCH call navigateTo("wg-search-api")
+    click CLIENT call navigateTo("<frontend-project>")
+    click BACKEND call navigateTo("<backend-project>")
 ```
