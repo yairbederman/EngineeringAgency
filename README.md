@@ -23,8 +23,7 @@ Provides Jira and Confluence integration for epics, tasks, and specs.
 
 - [ ] Install the Atlassian MCP server extension
 - [ ] Configure authentication with your Atlassian account
-- [ ] Verify access to the WG3 Jira project (`W0`)
-- [ ] Verify access to Confluence space (`WGPro30`)
+- [ ] Verify access to the WG3 Jira project and Confluence space (see [`engineering/configuration.md`](engineering/configuration.md) for keys)
 
 **Test**: Run `mcp_atlassian-mcp-server_atlassianUserInfo` to verify your connection.
 
@@ -45,17 +44,15 @@ Provides design token extraction for pixel-perfect UI implementation.
 ### Step 1: Clone Repositories
 
 ```bash
-# 1. Create your workspace directory
-mkdir "C:\My Projects\WG3"   # Windows
-# OR
-mkdir ~/WG3                   # Mac/Linux
+# 1. Create your workspace directory (choose your preferred location)
+mkdir <YOUR_WORKSPACE_ROOT>   # e.g., ~/WG3 or C:\Projects\WG3
 
 # 2. Clone all WG3 project repositories into this directory
-cd "C:\My Projects\WG3"       # or ~/WG3
+cd <YOUR_WORKSPACE_ROOT>
+# Clone all projects listed in shared/projects.md
 git clone <wg-client-repo>
 git clone <wg-cms-api-repo>
-git clone <wg-data-api-repo>
-# ... clone all projects listed in shared/projects.md
+# ... etc.
 
 # 3. Clone this workflows repository
 git clone <this-repo> ~/.gemini/antigravity/global_workflows
@@ -79,25 +76,14 @@ git clone <this-repo> ~/.gemini/antigravity/global_workflows
 ### Step 3: VS Code Workspace Setup
 
 - [ ] Open VS Code
-- [ ] **File → Add Folder to Workspace...** for each project:
-  - `wg-client`
-  - `wg-cms-api`
-  - `wg-data-api`
-  - `wg-ancillary-api`
-  - `wg-ordermanager-api`
-  - `wg-payment-api`
-  - `wg-search-api`
-  - `wg-tripdetails-api`
-  - `wg-booking-api`
-  - `wg-email-api`
-  - `wg-invoice-api`
+- [ ] **File → Add Folder to Workspace...** for each project listed in [`shared/projects.md`](shared/projects.md)
 - [ ] **File → Save Workspace As...** → Save as `WG3.code-workspace`
 
 ### Step 4: Verify Setup
 
 Run this quick verification:
 
-- [ ] All 11 projects visible in VS Code Explorer sidebar
+- [ ] All projects from [`shared/projects.md`](shared/projects.md) visible in VS Code Explorer sidebar
 - [ ] Each project has `.ai-instructions/` folder (if previously mapped)
 - [ ] Type `/engineering-agent` in Copilot chat to test
 
@@ -138,17 +124,9 @@ global_workflows/
 | [`shared/projects.md`](shared/projects.md) | Add/remove projects | When new projects are added to the team |
 | [`engineering/configuration.md`](engineering/configuration.md) | Jira/Confluence settings | If Atlassian instance changes |
 
-### Atlassian Configuration (engineering/configuration.md)
+### Atlassian Configuration
 
-Current values (update only if your Atlassian instance differs):
-
-| Setting | Current Value |
-|---------|--------------|
-| Atlassian Cloud ID | `lognetsystems.atlassian.net` |
-| Jira Project Key | `W0` |
-| Confluence Space Key | `WGPro30` |
-| Product Specs Folder ID | `260177923` |
-| Tech Specs Folder ID | `259883024` |
+See [`engineering/configuration.md`](engineering/configuration.md) for current Jira/Confluence settings (project keys, space keys, folder IDs).
 
 ---
 
