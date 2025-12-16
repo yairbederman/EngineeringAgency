@@ -86,6 +86,11 @@ Analyze each project to determine what it CALLS:
 > AI instructions may contain stale or inaccurate dependencies. 
 > **Finding a configuration key is NOT enough.** You must verify it is **USED** in active code.
 
+> [!CAUTION]
+> **⛔ BLOCKING GATE**: You MUST execute `grep_search` for EACH claimed dependency before adding to `callsServices`.
+> Skipping this step is a workflow failure. If no search was performed, the dependency CANNOT be added.
+> Do NOT trust `backendOwner` or `description` fields in `api-contracts.json` without code verification.
+
 **For each potential dependency**, perform a Two-Step Verification:
 
 1. **Verify Configuration Existence**:
@@ -114,9 +119,36 @@ Analyze each project to determine what it CALLS:
 }
 ```
 
+### Step 2.6: Frontend BFF Route Verification (MANDATORY for Frontend projects)
+
+> [!CAUTION]
+> **⛔ BLOCKING**: For frontend projects with Next.js API routes or BFF proxies, do NOT trust `api-contracts.json` descriptions that claim backend targets.
+
+For EACH claimed route → backend mapping in `api-contracts.json._nextApiRoutes`:
+
+1. **Open the actual route file** (`route.ts` or `route.js`) using `view_file`
+2. **Search for the backend service name or URL**:
+   - `grep_search("<claimed-backend>", "${ROUTE_DIR}")`
+   - Look for `process.env.*_URL`, `fetch()` calls, or SDK imports
+3. **Decision**:
+   - If backend reference found → Include dependency with `codeEvidence`
+   - If NOT found → Mark as `_unverified` and **EXCLUDE** from topology
+
+**Example of false positive to catch**:
+```json
+// api-contracts.json says:
+"<route-category>": { "description": "<category> proxies to <claimed-backend>" }
+
+// But grep_search("<backend-name>", "src/app/api/<route-category>") returns NO RESULTS
+// → DO NOT add <frontend> → <claimed-backend> dependency
+```
+
 ### Step 3: Build Dependency Graph
 
 Create edges representing runtime calls:
+
+> [!IMPORTANT]
+> **Every dependency MUST include `codeEvidence`**. Dependencies without verification CANNOT appear in the `dependencies[]` array.
 
 ```json
 {
@@ -127,7 +159,7 @@ Create edges representing runtime calls:
       "type": "<Frontend | Backend | Data Service | Shared Library>",
       "role": "<from project-inventory.json>",
       "exposedEndpoints": "<count from api-contracts.json>",
-      "callsServices": ["<list of service names this calls>"],
+      "callsServices": ["<list of VERIFIED service names>"],
       "calledBy": ["<computed in Step 3.5>"]
     }
     // ... one entry per ready project
@@ -136,17 +168,33 @@ Create edges representing runtime calls:
     {
       "from": "<calling-service>",
       "to": "<called-service>",
-      "type": "<http | grpc | message-queue>",
-      "description": "<why this dependency exists>"
+      "type": "<http | grpc | message-queue | library>",
+      "description": "<why this dependency exists>",
+      "codeEvidence": "<file>:<line> - <what was found>",
+      "verified": true
     }
-    // ... one entry per dependency edge
+    // ... one entry per VERIFIED dependency edge ONLY
   ],
   "layers": {
     "presentation": ["<frontend services>"],
     "api": ["<backend API services>"],
     "integration": ["<external/CMS services>"],
-    "data": ["<database-focused services>"]
-  }
+    "data": ["<database-focused services>"],
+    "shared": ["<library projects>"]
+  },
+  "_verificationSummary": {
+    "totalClaimed": "<number of dependencies initially claimed>",
+    "verified": "<number that passed verification>",
+    "excluded": "<number excluded due to no code evidence>"
+  },
+  "_warnings": [
+    {
+      "type": "unverified-dependency-removed",
+      "from": "<source>",
+      "claimed": "<target>",
+      "reason": "<why it was excluded>"
+    }
+  ]
 }
 ```
 
@@ -177,6 +225,38 @@ These may be:
 - Standalone utilities
 - Misconfigured
 - Legacy/unused
+
+### Step 6: Final Dependency Verification Gate (BLOCKING)
+
+> [!CAUTION]
+> **⛔ BLOCKING**: Before finalizing `service-topology.json`, EVERY dependency MUST be verified.
+
+**For EACH project in `project-inventory.json`:**
+
+1. **Read** the project's `function-registry.json.crossProjectDependencies` (if backend) OR `api-contracts.json._backendMapping` (if frontend)
+
+2. **Check for `codeEvidence`** field:
+   - If `codeEvidence` present → Dependency is pre-verified, include it
+   - If `codeEvidence` missing → Run live verification:
+     - For frontend: `grep_search("<target-service>", "${PROJECT_PATH}/src")`
+     - For backend: `grep_search("<target-baseUrl>|<target-ServiceClient>", "${PROJECT_PATH}/src")`
+
+3. **Decision**:
+   - Evidence found → Add to `dependencies[]` with `codeEvidence` field
+   - No evidence → Add to `_warnings[]` and EXCLUDE from topology
+
+**Verification Outcome Requirements:**
+
+| Outcome | Action |
+|---------|--------|
+| `codeEvidence` exists | Include in `dependencies[]` with `verified: true` |
+| Live search finds evidence | Include with new `codeEvidence` from search |
+| No evidence found | Exclude from topology, add to `_warnings[]` |
+
+**Final Check**: Count dependencies:
+- `_verificationSummary.totalClaimed` = initial count from all projects
+- `_verificationSummary.verified` = count in `dependencies[]`
+- `_verificationSummary.excluded` = count in `_warnings[]` with `type: "unverified-dependency-removed"`
 
 ---
 

@@ -51,6 +51,51 @@ If an API client file would have `endpoints: []`:
 - `"Pending"` or any "later" language → **Invalid, extract now**
 - Any blank or vague reason → **Invalid**
 
+### 2.6 Backend Owner Verification (BLOCKING GATE)
+
+> **⛔ BLOCKING**: Every `backendOwner` field and description claiming a specific backend target MUST be verified against actual code. Unverified claims will cause false dependencies in `/system-architecture-agent`.
+
+For each API route category or client with a claimed `backendOwner`:
+
+1. **Search for actual import/call**:
+   - `grep_search("<backendServiceName>", "${ROUTE_FILE}")`
+   - Look for imports from the backend SDK or URL constants
+
+2. **Check environment variables**:
+   - Look for `process.env.*_URL` patterns that match the claimed backend
+   - Verify the env var is actually USED in an HTTP call
+
+3. **Verify HTTP calls**:
+   - Find actual `fetch()`, `axios`, or HTTP client calls
+   - Confirm the URL resolves to the claimed backend
+
+**Valid to include**:
+- Verified import/call to claimed backend with code evidence
+- Environment variable confirmed in use
+
+**Invalid (exclude or mark `_unresolved`)**:
+- Assumption-based description without code evidence
+- Route name suggests backend but no actual call found
+- Backend name in comments only
+
+**Example of INVALID claim**:
+```json
+// BAD: No code evidence, just assumption from route name
+"<route-category>": {
+  "description": "<category-name> proxies to <backend-name>"  // WHERE IS THE EVIDENCE?
+}
+```
+
+**Example of VALID claim**:
+```json
+// GOOD: Code evidence provided
+"<route-category>": {
+  "backendOwner": "<verified-backend-project>",
+  "codeEvidence": "<FileName.ts>:<line> - <what was found>",
+  "description": "Calls <backend-project> <endpoint-path> endpoint"
+}
+```
+
 ### 3. For Each Endpoint, Extract:
 - HTTP method (GET/POST/PUT/DELETE/PATCH)
 - Path (resolve path params like `:id` or `{id}`)
@@ -223,19 +268,24 @@ For **frontend projects** that call external backend APIs:
 
 **DO NOT hardcode project names** - always reference the registry.
 
-**Output format**:
+**Output format (with MANDATORY codeEvidence)**:
 ```json
 {
-  "SearchApiClient": {
+  "<ClientName>": {
     "endpoints": [...],
-    "backendOwner": "[matched project from registry]",
-    "baseUrl": "${[PROJECT]_URL}/api/search",
-    "matchedBy": "urlPattern" | "config" | "inferred"
+    "backendOwner": "<matched project from registry>",
+    "codeEvidence": "<file>:<line> - <what was found>",
+    "baseUrl": "${<PROJECT>_URL}/api/<path>",
+    "matchedBy": "urlPattern" | "config" | "inferred",
+    "verified": true
   }
 }
 ```
 
-**For backend projects**: Mark `"backendOwner": "self"` for all endpoints.
+> [!IMPORTANT]
+> **`codeEvidence` is MANDATORY**. If you cannot provide code evidence, the `backendOwner` MUST be set to `"_unverified"` and logged in `_unresolved.backendOwners`.
+
+**For backend projects**: Mark `"backendOwner": "self"`, `"codeEvidence": "N/A - self-hosted"`
 
 ---
 

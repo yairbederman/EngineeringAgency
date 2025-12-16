@@ -107,6 +107,61 @@ Document at least ONE call chain for each detected flow:
 }
 ```
 
+### 4. Backend Cross-Project Dependency Verification (BLOCKING for Backend Projects)
+
+> [!CAUTION]
+> **⛔ BLOCKING**: For backend projects, EVERY claimed cross-project dependency MUST be verified with code evidence before inclusion in `function-registry.json`.
+
+**Step 1: Detect HTTP Client Patterns** (Framework-Agnostic)
+
+Search the project for common HTTP client patterns:
+
+| Ecosystem | Search Pattern |
+|-----------|----------------|
+| JVM/Spring | `RestTemplate`, `WebClient`, `FeignClient`, `@FeignClient` |
+| Node.js | `fetch`, `axios`, `http`, `got`, `request` |
+| Python | `requests`, `httpx`, `aiohttp`, `urllib` |
+| Go | `http.Client`, `http.Get`, `http.Post` |
+| .NET | `HttpClient`, `RestClient`, `WebRequest` |
+
+**Step 2: Extract Target Service URLs**
+
+For EACH HTTP client usage found:
+1. Identify the target URL or config key (e.g., `${<SERVICE>_URL}`, `api.<service>.url`)
+2. Cross-reference with `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md` to identify target project
+3. Verify the call is ACTIVE (not commented out, in test files, or dead code)
+
+**Step 3: Document with Code Evidence**
+
+```json
+"crossProjectDependencies": [
+  {
+    "target": "<target-project-from-registry>",
+    "callType": "http" | "library",
+    "codeEvidence": "<file>:<line> - <what was found>",
+    "verified": true
+  }
+]
+```
+
+**Step 4: Handle Unverifiable Claims**
+
+If a config key exists but NO active code usage is found:
+
+```json
+"_excludedDependencies": [
+  {
+    "claimed": "<target-project>",
+    "configFound": "<config-file>:<key>",
+    "reason": "Config exists but no active client usage found in code",
+    "searchPerformed": "Searched for <pattern> in ${PROJECT_PATH}/src"
+  }
+]
+```
+
+> [!IMPORTANT]
+> **Do NOT include dependencies in `crossProjectDependencies` unless `verified: true`**. Unverified claims go to `_excludedDependencies`.
+
 
 ## Output
 
