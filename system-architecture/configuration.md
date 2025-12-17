@@ -32,7 +32,7 @@
 
 | Variable | Path | Description |
 |----------|------|-------------|
-| `${OUTPUT_ROOT}` | `${WORKSPACE_ROOT}/system-architecture` | Root for all generated system documentation |
+| `${OUTPUT_ROOT}` | `${WORKSPACE_ROOT}/${SYSTEM_NAME}-system-architecture` | Root for all generated system documentation |
 | `${ANALYSIS_DIR}` | `${OUTPUT_ROOT}/analysis/` | JSON analysis files |
 | `${DEEP_DIVE_DIR}` | `${OUTPUT_ROOT}/deep-dive/` | Detailed documentation |
 
@@ -40,8 +40,8 @@
 
 > [!IMPORTANT]  
 > **Output Location**: The `OUTPUT_ROOT` resolves to:
-> - Example: If `WORKSPACE_ROOT = /path/to/your/projects`, then
-> - `OUTPUT_ROOT = /path/to/your/projects/system-architecture/`
+> - Example: If `WORKSPACE_ROOT = /path/to/your/projects` and `SYSTEM_NAME = WG3`, then
+> - `OUTPUT_ROOT = /path/to/your/projects/WG3-system-architecture/`
 > - This places system architecture docs **alongside** the project folders, NOT inside `global_workflows`.
 
 > [!IMPORTANT]
