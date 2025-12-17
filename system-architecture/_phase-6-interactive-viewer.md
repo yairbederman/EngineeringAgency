@@ -60,8 +60,7 @@ graph TB
     %% <from-id> --> <to-id>  (for http dependencies)
     %% <from-id> -.-> <to-id> (for library dependencies)
     
-    %% Add click callbacks for drill-down:
-    %% click <SERVICE_ID> call navigateTo("<service-id>")
+    %% Note: Drill-down interactions are handled via the `links` data object, NOT click callbacks.
 ```
 
 **Diagram Generation Rules**:
@@ -174,19 +173,30 @@ Given `service-topology.json`:
 
 ### Step 4: Build Diagrams Array
 
-Construct the JavaScript `diagrams` array for the HTML:
+Construct the JavaScript `diagrams` array for the HTML.
+
+**Crucial**: You must generate a `links` object for the System Overview diagram.
+- `links`: A map of `{ "NodeID": "TargetDiagramID" }`
+- Example: `{ "WG_ORDER": "wg-ordermanager-api", "CLIENT": "wg-client" }`
+- This enables the double-click drill-down functionality.
 
 ```javascript
 const diagrams = [
     {
         id: 'system-overview',
         title: 'System Overview',
+        // Map node IDs from the Mermaid code to their drill-down target IDs
+        links: {
+            // <NodeID>: <TargetDiagramID>
+            // e.g., 'CORE': 'lts-core'
+        },
         code: `<generated-mermaid-from-step-2>`
     },
     // For each project:
     {
         id: '<project-name>',
         title: '<N>. <project-name> (<type>)',
+        links: {}, // Usually empty for leaf diagrams
         code: `<generated-mermaid-from-step-3>`
     }
     // ... one entry per project
@@ -241,27 +251,13 @@ When user hovers over a node:
 
 ### Click Navigation
 
-When user clicks a node:
-1. **System Overview nodes** → Navigate to per-project drill-down diagram
-2. **Per-project nodes** → Navigate to external project path if available
+Navigation is handled by the **Links Object** strategy:
+- **Single Click**: Highlights connections (Path Highlighting).
+- **Double Click**: Drills down to the sub-diagram if a link exists.
 
-**Click Handler**:
-```javascript
-function handleNodeClick(nodeId) {
-    // Check if drill-down diagram exists
-    const targetDiagram = diagrams.find(d => d.id === nodeId);
-    if (targetDiagram) {
-        navigateTo(nodeId);
-        return;
-    }
-    
-    // Fall back to project path navigation (VS Code compatible)
-    const project = projectPaths[nodeId];
-    if (project) {
-        window.location.href = `vscode://file/${project.path}`;
-    }
-}
-```
+The Template file contains the robust logic to handle this. Your job is ONLY to provide the correct `links` map in the data.
+
+**Project Path Mapping** (generated from `project-inventory.json`):
 
 **Project Path Mapping** (generated from `project-inventory.json`):
 ```javascript
@@ -281,8 +277,8 @@ const projectPaths = {
 | All projects included | Count of per-project diagrams matches project-inventory ready count |
 | System overview complete | All services from topology appear in overview diagram |
 | **Module completeness** | Each per-project diagram includes ALL `internalModules` from `service-topology.json` |
-| Click navigation works | Every node has a `click ... call navigateTo()` callback |
-| Drill-down exists | Each click target has a matching diagram id |
+| Click navigation works | `links` object is populated for System Overview |
+| Drill-down exists | `nodes` with links have `dblclick` listeners (verified in template) |
 | HTML renders | File opens in browser without Mermaid syntax errors |
 | **Initial zoom fits all** | Default zoom level shows entire diagram without clipping |
 
@@ -392,6 +388,9 @@ graph TB
     
     CLIENT --> BACKEND
     
-    click CLIENT call navigateTo("<frontend-project>")
-    click BACKEND call navigateTo("<backend-project>")
+    CLIENT --> BACKEND
+    
+    %% No click callbacks needed here.
+    %% They are defined in the `links` object:
+    %% links: { "CLIENT": "<frontend-project>", "BACKEND": "<backend-project>" }
 ```
