@@ -22,7 +22,9 @@
 | Phase 2: Service Topology | `_phase-2-service-topology.md` | `analysis/service-topology.json` |
 | Phase 3: Cross-Service APIs | `_phase-3-cross-service-apis.md` | `analysis/cross-service-apis.json` |
 | Phase 4: Domain Model | `_phase-4-domain-model.md` | `analysis/unified-domain-model.json` |
-| Phase 5: Generate System Doc | `_phase-5-generate-system-doc.md` | `system-architecture.md`, `deep-dive/*` |
+| Phase 5: Generate System Doc | `_phase-5-generate-system-doc.md` | `${SYSTEM_NAME}-system-architecture.md`, `deep-dive/*` |
+| Phase 6: Interactive Viewer | `_phase-6-interactive-viewer.md` | `${OUTPUT_FILE}` |
+| Phase 7: Final Verification | `_phase-7-final-verification.md` | Verification report |
 
 ---
 

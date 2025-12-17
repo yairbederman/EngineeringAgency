@@ -135,6 +135,7 @@ Some services proxy to others. Document the full chain:
   "crossServiceCalls": [
     {
       "id": "<unique-call-id>",
+      "topologyRef": "<from>-><to>",
       "caller": "<caller-service>",
       "callee": "<callee-service>",
       "endpoint": {
@@ -149,6 +150,19 @@ Some services proxy to others. Document the full chain:
       "response": {
         "type": "<ResponseDTO>",
         "definedIn": "<owning project>"
+      },
+      "verification": {
+        "status": "<verified | partial | unverified>",
+        "callerEvidence": {
+          "file": "<relative path in caller project>",
+          "line": "<line number>",
+          "snippet": "<code snippet showing the call>"
+        },
+        "calleeEvidence": {
+          "file": "<relative path in callee project>",
+          "line": "<line number or null if external>",
+          "snippet": "<endpoint definition snippet>"
+        }
       },
       "usedBy": ["<list of components/modules using this call>"]
     }
@@ -168,7 +182,9 @@ Some services proxy to others. Document the full chain:
   "_coverage": {
     "dependenciesAnalyzed": "<count>",
     "endpointsDocumented": "<count>",
-    "sharedTypesFound": "<count>"
+    "sharedTypesFound": "<count>",
+    "verifiedCalls": "<count where verification.status == 'verified'>",
+    "unverifiedCalls": "<count where verification.status != 'verified'>"
   }
 }
 ```

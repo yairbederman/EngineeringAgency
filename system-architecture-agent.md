@@ -35,6 +35,25 @@ Where `SYSTEM_ARCH_ROOT` = `./system-architecture`
 
 Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
 
+> [!IMPORTANT]
+> **ALL phases are MANDATORY**. Do NOT stop after Phase 5. Phase 6 (Interactive Viewer) MUST be executed to complete the workflow.
+
+### Phase 0: Clean Slate
+**Purpose**: Ensure fresh output before regeneration
+**Action**:
+1. Check if `${OUTPUT_ROOT}` exists
+2. If exists, delete:
+   - `${OUTPUT_ROOT}/analysis/` (all JSON files)
+   - `${OUTPUT_ROOT}/deep-dive/` (all deep-dive docs)
+   - `${OUTPUT_ROOT}/system-architecture.md`
+   - `${OUTPUT_ROOT}/${OUTPUT_FILE}` (interactive viewer)
+3. Recreate directory structure:
+   - `${OUTPUT_ROOT}/analysis/`
+   - `${OUTPUT_ROOT}/deep-dive/`
+
+> [!WARNING]
+> **Do NOT delete** files outside `${OUTPUT_ROOT}`. This phase only cleans generated system architecture artifacts.
+
 ### Phase 1: Project Inventory
 **Read**: `${SYSTEM_ARCH_ROOT}/_phase-1-project-inventory.md`
 **Output**: `analysis/project-inventory.json`
@@ -85,18 +104,43 @@ Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
   - Real-time sidebar search
   - Collapsible sidebar for full-screen viewing
 
+### Phase 7: Final Verification
+**Read**: `${SYSTEM_ARCH_ROOT}/_phase-7-final-verification.md`
+**Action**:
+- Enumerate all files in `${OUTPUT_ROOT}` and subdirectories
+- Validate all required artifacts exist
+- Verify JSON files have valid structure
+- Open interactive viewer in browser to confirm rendering
+- Generate verification report
+
+> [!CAUTION]
+> **Do NOT mark workflow as complete until Phase 7 passes.**
+
 ---
 
 ## Success Criteria
 
-- [ ] `project-inventory.json` lists ALL registered projects with status
-- [ ] `service-topology.json` has dependency graph with no orphan services
-- [ ] `cross-service-apis.json` documents all inter-service calls
-- [ ] `unified-domain-model.json` identifies canonical entities
-- [ ] `system-architecture.md` contains:
+### Phase Completion (ALL required)
+- [ ] Phase 0: Clean Slate - Output directory cleaned
+- [ ] Phase 1: `project-inventory.json` lists ALL registered projects with status
+- [ ] Phase 2: `service-topology.json` has dependency graph with no orphan services
+- [ ] Phase 3: `cross-service-apis.json` documents all inter-service calls
+- [ ] Phase 4: `unified-domain-model.json` identifies canonical entities
+- [ ] Phase 5: `${SYSTEM_NAME}-system-architecture.md` contains:
   - Service topology Mermaid diagram
   - Project responsibilities table
   - Cross-service API reference
   - Domain model summary
+- [ ] **Phase 6: `${OUTPUT_FILE}` generated** with:
+  - All projects as clickable nodes
+  - Working drill-down navigation
+  - Interactive pan/zoom
+- [ ] **Phase 7: Final Verification passed** with:
+  - All 8 required artifacts exist
+  - JSON files have valid structure
+  - Interactive viewer renders in browser
+  - Verification report generated
+
+### Quality Gates
 - [ ] All projects with missing AI instructions are flagged (not silently skipped)
-- [ ] `${OUTPUT_FILE}` renders all diagrams with working navigation and zoom
+- [ ] Interactive viewer renders without Mermaid syntax errors

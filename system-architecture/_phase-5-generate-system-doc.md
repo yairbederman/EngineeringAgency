@@ -13,7 +13,7 @@
 
 ## Output
 
-- `${OUTPUT_ROOT}/system-architecture.md`
+- `${OUTPUT_ROOT}/${SYSTEM_NAME}-system-architecture.md`
 - `${DEEP_DIVE_DIR}/end-to-end-flows.md`
 - `${DEEP_DIVE_DIR}/cross-cutting-concerns.md`
 

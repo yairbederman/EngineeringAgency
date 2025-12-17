@@ -66,6 +66,28 @@ For each `ready` project from Phase 1:
 - You MUST enumerate ALL code directories at the project root
 - Cross-reference with build config (`settings.gradle`, `package.json` workspaces, `pom.xml` modules) if available
 
+**Minimum Module Coverage Requirements:**
+
+| Service Type | Minimum Modules Expected | If Below Minimum |
+|--------------|--------------------------|------------------|
+| Frontend | ≥ 2 (at least UI/components and app/routing) | Re-scan project structure |
+| Backend Service | ≥ 1 (at least main service package) | Check src/main/java subdirectories |
+| Shared Library | ≥ 2 (must enumerate all published modules) | Check settings.gradle or pom.xml |
+
+> [!WARNING]
+> **If a service has 0 `internalModules` after enumeration:**
+> 1. Re-run `list_dir` on the project's source root (`src/` or `src/main/java/`)
+> 2. For Java projects: check `src/main/java/<package>/` subdirectories
+> 3. For Node projects: check for `packages/`, `apps/`, or `src/` subdirectories
+> 4. If still 0 modules → Add warning to `_warnings[]`:
+>    ```json
+>    {
+>      "type": "no-internal-modules",
+>      "service": "<service-name>",
+>      "reason": "No submodules detected after enumeration - verify project structure is correct"
+>    }
+>    ```
+
 ### Step 2: Detect Dependencies
 
 Analyze each project to determine what it CALLS:
@@ -142,6 +164,51 @@ For EACH claimed route → backend mapping in `api-contracts.json._nextApiRoutes
 // But grep_search("<backend-name>", "src/app/api/<route-category>") returns NO RESULTS
 // → DO NOT add <frontend> → <claimed-backend> dependency
 ```
+
+### Step 2.7: Evidence Quality Gate (BLOCKING)
+
+> [!CAUTION]
+> **⛔ BLOCKING**: Every dependency MUST have HIGH-QUALITY code evidence.
+> Evidence that uses phrases like "inferred", "assumed", "standard pattern" is INVALID and MUST NOT appear in the final output.
+
+**Evidence Quality Requirements:**
+
+| Quality Level | Criteria | Allowed in `dependencies[]`? |
+|--------------|----------|------------------------------|
+| **HIGH** | Specific `file:line` with code snippet | ✅ Yes |
+| **MEDIUM** | File reference without line number | ⚠️ With warning in `_warnings[]` |
+| **LOW/INVALID** | "Inferred", "pattern-based", "assumed", "standard" | ❌ No - must verify or exclude |
+
+**For each dependency, verify:**
+1. `codeEvidence` contains a file path (relative or absolute)
+2. `codeEvidence` contains a line number reference (`:L123` or `:123` format)
+3. Evidence does NOT contain forbidden phrases: "inferred", "assumed", "pattern", "standard"
+
+**If evidence fails quality check:**
+1. Run `grep_search` to find actual code evidence for the dependency
+2. For library dependencies: search for specific import statements (e.g., `import com.lognet.lts.common`)
+3. For HTTP dependencies: search for client class usage or URL construction
+4. If no high-quality evidence found → **Exclude from `dependencies[]`** and add to `_warnings[]`:
+   ```json
+   {
+     "type": "low-quality-evidence-removed",
+     "from": "<source>",
+     "claimed": "<target>",
+     "originalEvidence": "<the vague evidence that was rejected>",
+     "reason": "Evidence did not meet quality requirements"
+   }
+   ```
+
+**Library Dependency Evidence Requirements:**
+For dependencies of type `library`, evidence MUST include:
+- Specific import statement with package path
+- File and line number where import occurs
+- Example: `BookingService.java:8 - import com.lognet.lts.common.model.SessionData`
+
+**Do NOT use generic evidence like:**
+- ❌ "Standard Spring Boot dependency pattern"
+- ❌ "Uses LTS common utilities"
+- ❌ "Inferred from architecture"
 
 ### Step 3: Build Dependency Graph
 
