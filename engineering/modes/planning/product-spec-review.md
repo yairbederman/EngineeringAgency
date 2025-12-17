@@ -42,6 +42,40 @@
 3. **Priority/Ordering**: If multiple items match, how are they ranked?
 4. **Timing**: When does data update (real-time, nightly, manual refresh)?
 
+### **D. Design Validation (Figma)**
+
+> **Purpose**: Validate spec-to-design alignment and surface visual ambiguities **before** Epic creation.
+
+**When to Run**: If the Product Spec includes a Figma link, analyze the designs as part of this phase.
+
+**Analysis Steps**:
+1. **Extract Figma Link** from Product Spec
+2. **Navigate to Figma** (browser or MCP tool)
+3. **Cross-Reference Spec vs Design**:
+   - Do all spec features have corresponding designs?
+   - Are there design states the spec doesn't mention (loading, empty, error)?
+   - Are there UI elements in the design not described in the spec?
+4. **Document Design Gaps**:
+   - Missing designs → Flag as 🟠 HIGH RISK
+   - Conflicting designs → Flag as 🔴 BLOCKER
+   - Extra designs not in spec → Flag as 🟢 LOW RISK (confirm scope)
+
+**Output**: Include a "Design Validation" section in the Gap Analysis Report:
+
+```markdown
+### Design Validation Summary
+
+| Area | Spec Says | Design Shows | Gap Type |
+|------|-----------|--------------|----------|
+| Reset Notification | "notification required" | Toast component visible | ✅ Aligned |
+| TF Filters | "no filter for TF" | No filter UI in TF frames | ✅ Aligned |
+| Empty State | Not mentioned | Design shows empty state | 🟢 LOW (confirm) |
+```
+
+**Tool Failure Handling**:
+- If Figma is unreachable: Ask user for screenshot
+- If no Figma link in spec: Log as 🟠 HIGH RISK gap ("No design reference provided")
+
 ---
 
 ## 3. Gap Analysis Output Format

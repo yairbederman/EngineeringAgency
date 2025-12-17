@@ -30,7 +30,7 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 | Task Planning | `modes/planning/task-planning.md` |
 | Implementation | `modes/implementation.md` |
 | BugFix | `modes/bugfix.md` |
-| Figma Automation | `modes/figma-automation.md` |
+| Figma Automation | `design/figma-automation.md` |
 | Cross-Project | `modes/cross-project.md` |
 | **Templates** | |
 | Epic Template | `templates/epic.md` |
