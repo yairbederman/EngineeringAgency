@@ -6,9 +6,13 @@
 
 ## When to Trigger
 
-**MANDATORY** for any task in TaskPlanning mode where:
-- Task Layer = "Frontend" OR "Frontend Integration"
-- Epic contains Figma link(s) in description or links section
+**Primary Trigger**: During **DesignReview** mode when:
+- Product Spec contains Figma links
+- User has not opted to skip DesignReview
+
+**Secondary Trigger**: During **TaskPlanning** mode for:
+- Frontend tasks requiring additional detail
+- Tasks where designs changed since DesignReview
 
 ---
 
@@ -16,7 +20,7 @@
 
 > **Purpose**: Document the expected response structure from Figma MCP tools to ensure accurate parsing.
 
-### `mcp1_get_design_context` Response
+### `mcp_figma-dev-mode-mcp-server_get_design_context` Response
 
 ```json
 {
@@ -155,7 +159,7 @@ Extract from Epic description:
 Does URL contain node-id?
 ├── YES → Use node ID directly → Go to Step 2
 └── NO
-    └── Call mcp1_get_metadata to list all frames on the page
+    └── Call mcp_figma-dev-mode-mcp-server_get_metadata to list all frames on the page
         └── How many top-level frames?
             ├── 1 frame → Use that frame → Go to Step 2
             ├── 2-10 frames → Try automatic matching (Step 1C)
@@ -171,7 +175,7 @@ When multiple frames exist, match by name:
 
 2. **Search frame names** for matches:
    ```
-   Frame names from mcp1_get_metadata:
+   Frame names from mcp_figma-dev-mode-mcp-server_get_metadata:
    - "SearchWidget" ← MATCH
    - "SearchWidget/Desktop"
    - "SearchWidget/Mobile"
@@ -219,7 +223,7 @@ Please specify which frame to use for task "[TaskName]":
 
 ### Step 2: Extract Design Context (Enhanced)
 
-For each Frontend task, call `mcp1_get_design_context` with node ID and extract ALL of the following:
+For each Frontend task, call `mcp_figma-dev-mode-mcp-server_get_design_context` with node ID and extract ALL of the following:
 
 #### 2A. Component Tree (Structure)
 - **Root node**: Type (Frame/Component/Instance) and layer name
@@ -405,10 +409,10 @@ If Figma MCP can't access image data:
 
 **Step 2G.1: Call Variable Extraction**
 
-After extracting design context, call `mcp1_get_variable_defs` with the same node ID:
+After extracting design context, call `mcp_figma-dev-mode-mcp-server_get_variable_defs` with the same node ID:
 
 ```
-mcp1_get_variable_defs(nodeId: "[node-id]")
+mcp_figma-dev-mode-mcp-server_get_variable_defs(nodeId: "[node-id]")
 ```
 
 **Step 2G.2: Parse Variable Response**
@@ -464,7 +468,7 @@ Enhance the Token Mapping table with variable source:
 
 | Scenario | Action |
 |----------|--------|
-| `mcp1_get_variable_defs` fails | Proceed with Style Names and algorithmic matching |
+| `mcp_figma-dev-mode-mcp-server_get_variable_defs` fails | Proceed with Style Names and algorithmic matching |
 | No variables defined in Figma | Note: "Figma Variables not configured" |
 | Partial variables | Use available, fallback for rest |
 
@@ -610,7 +614,7 @@ Before creating Frontend Jira task, verify ALL sections are populated:
 
 ### 1. MCP Tool Failure
 
-**If `mcp1_get_design_context` fails** (timeout, auth, unreachable):
+**If `mcp_figma-dev-mode-mcp-server_get_design_context` fails** (timeout, auth, unreachable):
 
 1. Add placeholder sections:
    ```markdown

@@ -147,7 +147,7 @@ Verify for each task type:
 
 **Frontend Task**:
 - [ ] Figma link checked in Epic
-- [ ] If Figma exists: `mcp1_get_design_context` called with correct node ID
+- [ ] If Figma exists: `mcp_figma-dev-mode-mcp-server_get_design_context` called with correct node ID
 - [ ] Figma tokens extracted and mapped to project tokens
 - [ ] "UI Implementation Guide" section fully populated
 

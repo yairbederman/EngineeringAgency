@@ -5,11 +5,12 @@ description: Activates the Engineering Agent Role
 ## Planning Phase Flow
 
 ```
-ProductSpecReview → Gap Analysis → FeaturePlanning → TechSpec → TaskPlanning
-       ⬇️                ⬇️                ⬇️             ⬇️           ⬇️
-  [APPROVE]     [POST QUESTIONS]    [APPROVE Epic]  [APPROVE Spec] [APPROVE Tasks]
-                to Confluence                                             ⬇️
-                                                                   Implementation
+ProductSpecReview → DesignReview → FeaturePlanning → TechSpec → TaskPlanning
+       ⬇️               ⬇️              ⬇️             ⬇️           ⬇️
+  [APPROVE]       [APPROVE]      [APPROVE Epic]  [APPROVE Spec] [APPROVE Tasks]
+       |               ↓                                              ⬇️
+   (if no Figma,   Design Report                               Implementation
+    can skip)      + Token Map
 ```
 
 
@@ -38,7 +39,7 @@ Load from configuration.md:
 ### 2. Identify Mode
 
 Determine which mode the user wants:
-- **Planning**: ProductSpecReview, FeaturePlanning, TechSpec, TaskPlanning
+- **Planning**: ProductSpecReview, DesignReview, FeaturePlanning, TechSpec, TaskPlanning
 - **Implementation**: Implementation, Testing
 - **BugFix**: BugReport, BugFix
 
@@ -54,6 +55,7 @@ Read `${AGENT_ROOT}/core-rules.md` for:
 
 **If Planning Mode**:
 - **ProductSpecReview**: Read `${AGENT_ROOT}/modes/planning/product-spec-review.md`
+- **DesignReview**: Read `${AGENT_ROOT}/modes/planning/design-review.md`
 - **FeaturePlanning**: Read `${AGENT_ROOT}/modes/planning/feature-planning.md`
 - **TechSpec**: Read `${AGENT_ROOT}/modes/planning/tech-spec.md`
 - **TaskPlanning**: Read `${AGENT_ROOT}/modes/planning/task-planning.md`
@@ -99,6 +101,25 @@ Proceed with the task using the loaded context and mode-specific rules.
     - **Option C**: Proceed with provisional assumptions (see Assumption Logging Protocol in `product-spec-review.md` § 6)
 - **Gate**: STOP until user selects an option
 - **If proceeding with assumptions**: Follow Assumption Logging Protocol to document all assumptions in Epic's "Assumptions Log" section
+
+#### After DesignReview
+- **Artifact**: Design Review Report
+- **Trigger**: Run if Product Spec contains Figma links
+- **Skip Condition**: If no Figma links exist, user may approve skipping this phase
+- **Action**:
+  - Extract component tree and layout properties from Figma frames
+  - Map Figma tokens to project design system
+  - Identify responsive variants and breakpoint differences
+  - List required assets (images, icons needing export)
+  - Match Figma component instances to project components
+  - Flag design gaps (missing states, incomplete structures)
+- **Output**: Design Review Report with:
+  - Token Mapping Table (Figma Value → Project Token)
+  - Component Reuse Checklist
+  - Responsive Behavior Summary
+  - Asset Manifest
+  - Design Issues/Gaps flagged
+- **Gate**: STOP until user approves Design Review
 
 #### After FeaturePlanning
 - **Artifact**: Jira Epic

@@ -23,7 +23,7 @@
    - **Backend Check**: Is there an API Contract / Schema?
    - **Frontend Check**: Is there a "UI Implementation Guide" with mapped tokens?
    - **Action**:
-     - If MISSING: **STOP**. Do not write code. Go back to `TaskPlanning` or use Figma MCP (`mcp1_get_design_context`) to generate it.
+     - If MISSING: **STOP**. Do not write code. Go back to `TaskPlanning` or use Figma MCP (`mcp_figma-dev-mode-mcp-server_get_design_context`) to generate it.
      - If PRESENT: Proceed to Phase 1.
 
 ### Phase 1: Queue Management
@@ -49,7 +49,7 @@
       - Read `Reference Files` (from Pattern Context).
     - **Strict Check (Backend)**: Does task have the API Contract?
     - **Strict Check (Frontend)**: Does task have the "UI Implementation Guide"?
-        - *If No*: Stop. Go back to `TaskPlanning` or use Figma MCP (`mcp1_get_design_context`) *now* to generate it.
+        - *If No*: Stop. Go back to `TaskPlanning` or use Figma MCP (`mcp_figma-dev-mode-mcp-server_get_design_context`) *now* to generate it.
         - *If Yes*: Proceed.
     - **Git Action**: 
         - **Branch Name**: `feature/[TaskKey]-[Short-Summary]` (e.g., `feature/PROJ-123-user-login`).
@@ -64,17 +64,17 @@
     
     - **Step B: Capture Design Screenshot**
       ```
-      mcp1_get_screenshot(nodeId: "[node-id]")
+      mcp_figma-dev-mode-mcp-server_get_screenshot(nodeId: "[node-id]")
       ```
       - Save to artifacts: `[TaskKey]_figma_reference.png`
     
     - **Step C: Extract Design Dimensions**
-      - Note the bounding box from `mcp1_get_design_context`:
+      - Note the bounding box from `mcp_figma-dev-mode-mcp-server_get_design_context`:
         - Width: `[X]px`
         - Height: `[Y]px`
       - This sets the expected viewport for browser comparison
     
-    - **Fallback**: If `mcp1_get_screenshot` fails, note in walkthrough:
+    - **Fallback**: If `mcp_figma-dev-mode-mcp-server_get_screenshot` fails, note in walkthrough:
       ```markdown
       > ⚠️ Figma screenshot unavailable. Visual comparison based on Token Mapping table only.
       ```

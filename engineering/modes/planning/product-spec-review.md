@@ -42,39 +42,37 @@
 3. **Priority/Ordering**: If multiple items match, how are they ranked?
 4. **Timing**: When does data update (real-time, nightly, manual refresh)?
 
-### **D. Design Validation (Figma)**
+### **D. Design Reference Check (Figma)**
 
-> **Purpose**: Validate spec-to-design alignment and surface visual ambiguities **before** Epic creation.
+> **Purpose**: Quick validation that designs exist. Deep analysis happens in **DesignReview** phase.
 
-**When to Run**: If the Product Spec includes a Figma link, analyze the designs as part of this phase.
+**Quick Checks Only**:
+1. **Extract Figma Links**: List all Figma URLs found in the spec
+2. **Verify Accessibility**: Confirm each link is reachable via MCP
+3. **Coverage Check**: Note if any spec features lack Figma references
+4. **Defer Deep Analysis**: Component extraction, tokens, and responsive review happen in DesignReview
 
-**Analysis Steps**:
-1. **Extract Figma Link** from Product Spec
-2. **Navigate to Figma** (browser or MCP tool)
-3. **Cross-Reference Spec vs Design**:
-   - Do all spec features have corresponding designs?
-   - Are there design states the spec doesn't mention (loading, empty, error)?
-   - Are there UI elements in the design not described in the spec?
-4. **Document Design Gaps**:
-   - Missing designs → Flag as 🟠 HIGH RISK
-   - Conflicting designs → Flag as 🔴 BLOCKER
-   - Extra designs not in spec → Flag as 🟢 LOW RISK (confirm scope)
-
-**Output**: Include a "Design Validation" section in the Gap Analysis Report:
+**Output**: Add to Gap Analysis Report:
 
 ```markdown
-### Design Validation Summary
+### Design References
 
-| Area | Spec Says | Design Shows | Gap Type |
-|------|-----------|--------------|----------|
-| Reset Notification | "notification required" | Toast component visible | ✅ Aligned |
-| TF Filters | "no filter for TF" | No filter UI in TF frames | ✅ Aligned |
-| Empty State | Not mentioned | Design shows empty state | 🟢 LOW (confirm) |
+| Feature Area | Figma Link | Accessible |
+|--------------|------------|------------|
+| Search Results | [node-id=123] | ✅ |
+| GDS Modal | [node-id=456] | ✅ |
+| Mobile View | Not provided | ❌ Flag |
+
+> **Next Phase**: DesignReview will extract tokens, components, and responsive specs.
 ```
+
+**No-Figma Handling**:
+- If spec has NO Figma links: Flag as 🟠 HIGH RISK
+- User can choose to skip DesignReview phase with acknowledgment
 
 **Tool Failure Handling**:
 - If Figma is unreachable: Ask user for screenshot
-- If no Figma link in spec: Log as 🟠 HIGH RISK gap ("No design reference provided")
+- If link is broken: Flag for PM to fix
 
 ---
 

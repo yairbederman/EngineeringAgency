@@ -55,7 +55,7 @@ Rules:
 
 **Translation Protocol (The "Design-to-Code" Bridge)**:
 1.  **Extract, Don't Guess**: Use Figma MCP to read the frame properties.
-2.  **Extract Variables First**: Call `mcp1_get_variable_defs` to get designer-defined semantic tokens (highest priority).
+2.  **Extract Variables First**: Call `mcp_figma-dev-mode-mcp-server_get_variable_defs` to get designer-defined semantic tokens (highest priority).
 3.  **Map to Tokens (CRITICAL)**:
     - *Do not* use raw values (e.g., `#1D4ED8`, `16px`) unless they are one-off overrides.
     - *Priority*: Figma Variables > Style Names > `design-tokens.json` match > Algorithmic closest match
@@ -77,7 +77,7 @@ Rules:
 **Workflow**:
 
 1. **Extract Component Instances from Figma**:
-   - When `mcp1_get_design_context` returns component instances, extract their names
+   - When `mcp_figma-dev-mode-mcp-server_get_design_context` returns component instances, extract their names
    - Common patterns: `Button/Primary`, `Icon/Search`, `Avatar/Medium`, `Card/Default`
 
 2. **Cross-Reference with Project Component Registry**:

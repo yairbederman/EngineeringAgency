@@ -37,7 +37,7 @@
   - [ ] Include validation rules and constraints
 - [ ] **Frontend Tasks**:
   - [ ] Check if Figma link exists in Epic
-  - [ ] If Figma exists: Use `mcp1_get_design_context` with node ID extracted from URL
+  - [ ] If Figma exists: Use `mcp_figma-dev-mode-mcp-server_get_design_context` with node ID extracted from URL
   - [ ] Extract Figma tokens: colors, spacing, typography, layout structure
   - [ ] Map Figma values to project tokens (from `tailwind.config.js` or theme files)
   - [ ] Populate "UI Implementation Guide" section with mapped tokens
@@ -133,7 +133,7 @@ For **each layer** in order (Database → Service → API → Frontend → State
 
 **For Frontend Tasks**:
 1. **Check Figma** (from Epic):
-   - If Figma link exists in Epic: Use `mcp1_get_design_context` with node ID
+   - If Figma link exists in Epic: Use `mcp_figma-dev-mode-mcp-server_get_design_context` with node ID
    - Extract Figma tokens: colors, spacing, typography, layout structure
    - Map to project tokens (from `tailwind.config.js`)
 

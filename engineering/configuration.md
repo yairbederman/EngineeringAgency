@@ -25,6 +25,7 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 | Workflow Validation | `workflow-validation.md` |
 | **Modes** | |
 | Product Spec Review | `modes/planning/product-spec-review.md` |
+| Design Review | `modes/planning/design-review.md` |
 | Feature Planning | `modes/planning/feature-planning.md` |
 | Tech Spec | `modes/planning/tech-spec.md` |
 | Task Planning | `modes/planning/task-planning.md` |
@@ -115,12 +116,12 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 | `mcp0_transitionJiraIssue` | Change issue status |
 | `mcp0_searchJiraIssuesUsingJql` | Search issues with JQL |
 
-### Figma (mcp1_*)
+### Figma (mcp_figma-dev-mode-mcp-server_*)
 
 | Tool | Purpose |
 |------|---------|
-| `mcp1_get_design_context` | Extract design tokens from Figma frame |
-| `mcp1_get_screenshot` | Capture screenshot of Figma node |
-| `mcp1_get_metadata` | Get node metadata (structure overview) |
-| `mcp1_get_variable_defs` | Get variable definitions (colors, spacing) |
+| `mcp_figma-dev-mode-mcp-server_get_design_context` | Extract design tokens from Figma frame |
+| `mcp_figma-dev-mode-mcp-server_get_screenshot` | Capture screenshot of Figma node |
+| `mcp_figma-dev-mode-mcp-server_get_metadata` | Get node metadata (structure overview) |
+| `mcp_figma-dev-mode-mcp-server_get_variable_defs` | Get variable definitions (colors, spacing) |
 

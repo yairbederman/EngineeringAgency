@@ -9,7 +9,7 @@
 **ALWAYS resolve tokens in this order**:
 
 1. **Figma Variables** (highest priority)
-   - Source: `mcp1_get_variable_defs` response
+   - Source: `mcp_figma-dev-mode-mcp-server_get_variable_defs` response
    - If element has a linked variable (e.g., `color/primary/500`), use directly
    - See: `figma-automation.md` Step 2G
 
