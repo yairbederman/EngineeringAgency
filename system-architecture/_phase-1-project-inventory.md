@@ -18,7 +18,7 @@
 
 ### Step 1: Read Configuration
 
-Load the project registry from `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md`.
+Load the project registry from `${GLOBAL_WORKFLOWS_ROOT}/shared/configuration.md`.
 
 ### Step 2: Scan Each Project
 
@@ -64,7 +64,7 @@ For each project in the registry:
     {
       "name": "<project-name>",
       "type": "<Frontend | Backend>",
-      "role": "<from projects.md registry>",
+      "role": "<from configuration.md registry>",
       "path": "<full filesystem path>",
       "status": "<ready | incomplete | missing>",
       "summary": "<extracted from copilot-instructions.md>",
@@ -99,7 +99,7 @@ For each project in the registry:
     // ... only populated if problems exist
   ],
   "_coverage": {
-    "registeredProjects": "<count from projects.md>",
+    "registeredProjects": "<count from configuration.md>",
     "scannedProjects": "<count actually checked>",
     "readyProjects": "<count with status=ready>",
     "incompleteProjects": "<count with status=incomplete>",

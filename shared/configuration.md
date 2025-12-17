@@ -1,7 +1,17 @@
-# Shared Project Registry
+# Shared Configuration
 
-> **Single Source of Truth**: All agents reference this file for the project list.
-> When adding/removing projects, update **only this file**.
+> **Single Source of Truth**: All agents reference this file for global settings and the project list.
+> When adding/removing projects or changing global constants, update **only this file**.
+
+---
+
+## Global Constants
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `SYSTEM_NAME` | `WG3` | Global system identifier |
+| `SYSTEM_ARCH_OUTPUT_ROOT` | `${WORKSPACE_ROOT}/${SYSTEM_NAME}-system-architecture` | Contract path for system architecture artifacts |
+| `GLOBAL_WORKFLOWS_ROOT` | `.` | Root path for global_workflows directory |
 
 ---
 
@@ -10,10 +20,9 @@
 > [!IMPORTANT]
 > **Team Setup Required**: Each team member must set `WORKSPACE_ROOT` to their local projects directory.
 
-| Variable | Description | Example |
+| Variable | Description | Value |
 |----------|-------------|---------|
-| `${WORKSPACE_ROOT}` | Root directory containing all projects | `/path/to/your/projects` (adjust for your OS) |
-| `${GLOBAL_WORKFLOWS_ROOT}` | Path to global_workflows directory | Resolved automatically when using agents |
+| `${WORKSPACE_ROOT}` | Root directory containing all projects | `C:/My Projects/WG3` |
 
 ---
 

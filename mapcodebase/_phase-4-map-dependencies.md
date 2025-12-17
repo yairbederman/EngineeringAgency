@@ -128,7 +128,7 @@ Search the project for common HTTP client patterns:
 
 For EACH HTTP client usage found:
 1. Identify the target URL or config key (e.g., `${<SERVICE>_URL}`, `api.<service>.url`)
-2. Cross-reference with `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md` to identify target project
+2. Cross-reference with `${GLOBAL_WORKFLOWS_ROOT}/shared/configuration.md` to identify target project
 3. Verify the call is ACTIVE (not commented out, in test files, or dead code)
 
 **Step 3: Document with Code Evidence**

@@ -49,7 +49,7 @@ mkdir <YOUR_WORKSPACE_ROOT>   # e.g., ~/WG3 or C:\Projects\WG3
 
 # 2. Clone all WG3 project repositories into this directory
 cd <YOUR_WORKSPACE_ROOT>
-# Clone all projects listed in shared/projects.md
+# Clone all projects listed in shared/configuration.md
 git clone <wg-client-repo>
 git clone <wg-cms-api-repo>
 # ... etc.
@@ -60,7 +60,7 @@ git clone <this-repo> ~/.gemini/antigravity/global_workflows
 
 ### Step 2: Configure Workspace Root
 
-- [ ] Open [`shared/projects.md`](shared/projects.md)
+- [ ] Open [`shared/configuration.md`](shared/configuration.md)
 - [ ] Note down your local projects directory (this is your `WORKSPACE_ROOT`)
 
 | Platform | Example `WORKSPACE_ROOT` |
@@ -76,14 +76,14 @@ git clone <this-repo> ~/.gemini/antigravity/global_workflows
 ### Step 3: VS Code Workspace Setup
 
 - [ ] Open VS Code
-- [ ] **File → Add Folder to Workspace...** for each project listed in [`shared/projects.md`](shared/projects.md)
+- [ ] **File → Add Folder to Workspace...** for each project listed in [`shared/configuration.md`](shared/configuration.md)
 - [ ] **File → Save Workspace As...** → Save as `WG3.code-workspace`
 
 ### Step 4: Verify Setup
 
 Run this quick verification:
 
-- [ ] All projects from [`shared/projects.md`](shared/projects.md) visible in VS Code Explorer sidebar
+- [ ] All projects from [`shared/configuration.md`](shared/configuration.md) visible in VS Code Explorer sidebar
 - [ ] Each project has `.ai-instructions/` folder (if previously mapped)
 - [ ] Type `/engineering-agent` in Copilot chat to test
 
@@ -95,7 +95,7 @@ Run this quick verification:
 global_workflows/
 ├── README.md                         # This file
 ├── shared/
-│   └── projects.md                   # 🔑 Project registry (SINGLE SOURCE OF TRUTH)
+│   └── configuration.md              # 🔑 Project registry (SINGLE SOURCE OF TRUTH)
 │
 ├── engineering-agent.md              # Feature lifecycle workflow
 ├── engineering/                      # Configuration & mode files
@@ -121,7 +121,7 @@ global_workflows/
 
 | File | What to Configure | When |
 |------|-------------------|------|
-| [`shared/projects.md`](shared/projects.md) | Add/remove projects | When new projects are added to the team |
+| [`shared/configuration.md`](shared/configuration.md) | Add/remove projects | When new projects are added to the team |
 | [`engineering/configuration.md`](engineering/configuration.md) | Jira/Confluence settings | If Atlassian instance changes |
 
 ### Atlassian Configuration
@@ -180,7 +180,7 @@ Run after adding new projects or major cross-service changes.
 
 ## ➕ Adding New Projects
 
-- [ ] Add project row to [`shared/projects.md`](shared/projects.md)
+- [ ] Add project row to [`shared/configuration.md`](shared/configuration.md)
 - [ ] Run `/map-codebase-agent` on the new project
 - [ ] Run `/system-architecture-agent` to update cross-project docs
 - [ ] Add project folder to VS Code workspace
@@ -191,7 +191,7 @@ Run after adding new projects or major cross-service changes.
 
 | Issue | Solution |
 |-------|----------|
-| Agent can't find project | Verify project is in `shared/projects.md` and added to VS Code workspace |
+| Agent can't find project | Verify project is in `shared/configuration.md` and added to VS Code workspace |
 | `.ai-instructions/` not found | Run `/map-codebase-agent` on the project first |
 | Cross-project context missing | Run `/system-architecture-agent` to generate `system-architecture/` |
 | Jira/Confluence errors | Check `engineering/configuration.md` for correct Atlassian settings |

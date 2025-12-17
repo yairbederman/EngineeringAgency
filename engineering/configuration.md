@@ -70,9 +70,9 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 
 ## Workspace Projects
 
-> **📁 Source**: [shared/projects.md](../shared/projects.md) – Single source of truth for all agents.
+> **📁 Source**: [shared/configuration.md](../shared/configuration.md) – Single source of truth for all agents.
 >
-> Read the shared projects file for project variables, names, types, roles, paths, and selection criteria.
+> Read the shared configuration file for project variables, names, types, roles, paths, and selection criteria.
 
 ### Per-Project Config Files
 
@@ -88,13 +88,13 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 
 | Variable | Path | Description |
 |----------|------|-------------|
-| `${SYSTEM_ARCH_OUTPUT}` | `${WORKSPACE_ROOT}/system-architecture` | Root for generated cross-project docs |
+| `${SYSTEM_ARCH_OUTPUT}` | `${SYSTEM_ARCH_OUTPUT_ROOT}` | Root for generated cross-project docs (from shared config) |
 | `${SERVICE_TOPOLOGY_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/service-topology.json` | Service dependencies |
 | `${CROSS_SERVICE_APIS_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/cross-service-apis.json` | Inter-service API contracts |
 | `${UNIFIED_DOMAIN_MODEL_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/unified-domain-model.json` | Canonical entities |
 | `${SYSTEM_ARCH_DOC_PATH}` | `${SYSTEM_ARCH_OUTPUT}/system-architecture.md` | Master system doc |
 
-> **Note**: `${WORKSPACE_ROOT}` is defined in [shared/projects.md](../shared/projects.md).
+> **Note**: `${WORKSPACE_ROOT}` and `${SYSTEM_ARCH_OUTPUT_ROOT}` are defined in [shared/configuration.md](../shared/configuration.md).
 
 ---
 

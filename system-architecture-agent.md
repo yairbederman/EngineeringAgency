@@ -25,7 +25,8 @@ Each project MUST have been processed by `/map-codebase-agent` first, producing:
 ## Configuration
 
 First, read the configuration file for path variables:
-**Read**: `${SYSTEM_ARCH_ROOT}/configuration.md`
+1. **Read**: `${SYSTEM_ARCH_ROOT}/../shared/configuration.md` (Global constants)
+2. **Read**: `${SYSTEM_ARCH_ROOT}/configuration.md` (Agent specifics)
 
 Where `SYSTEM_ARCH_ROOT` = `./system-architecture`
 

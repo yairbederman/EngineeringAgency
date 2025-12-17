@@ -18,7 +18,8 @@ Produces `${AI_INSTRUCTIONS_ROOT}` with full entity contracts, API definitions, 
 ## Configuration
 
 First, read the configuration file for path variables:
-**Read**: `${ARCHITECT_ROOT}/configuration.md`
+1. **Read**: `${ARCHITECT_ROOT}/../shared/configuration.md` (Global constants)
+2. **Read**: `${ARCHITECT_ROOT}/configuration.md` (Agent specifics)
 
 Where `ARCHITECT_ROOT` = `./mapcodebase`
 
@@ -28,11 +29,11 @@ Where `ARCHITECT_ROOT` = `./mapcodebase`
 
 Before running any phases, validate the target project:
 
-1. **Read** `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md`
+1. **Read** `${GLOBAL_WORKFLOWS_ROOT}/shared/configuration.md`
 2. **Check**: Is the target project listed in the Registered Projects table?
    - **If YES**: Proceed to Execution
    - **If NO**: 
-     - **STOP**: "Project not registered. Add it to `shared/projects.md` first."
+     - **STOP**: "Project not registered. Add it to `shared/configuration.md` first."
      - Provide guidance on how to add the project
 
 > **Why**: Ensures all analyzed projects are tracked centrally, enabling `/system-architecture-agent` to discover them.

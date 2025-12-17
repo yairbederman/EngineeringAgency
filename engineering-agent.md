@@ -22,7 +22,9 @@ Entry conditions for **Implementation** and **BugFix** are defined in `core-rule
 
 ### 1. Establish Context (MANDATORY - Run First)
 
-**Read Configuration**: `${AGENT_ROOT}/configuration.md`
+**Read Configuration**:
+1. `${AGENT_ROOT}/../shared/configuration.md` (Global constants)
+2. `${AGENT_ROOT}/configuration.md` (Agent specifics)
 
 Where `AGENT_ROOT` = `./engineering`
 

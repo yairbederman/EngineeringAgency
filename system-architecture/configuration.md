@@ -10,7 +10,7 @@
 | Variable | Value | Description |
 |----------|-------|-------------|
 | `SYSTEM_ARCH_ROOT` | `./system-architecture` | Base path for agent files (relative to `global_workflows` root) |
-| `SYSTEM_NAME` | `WG3` | System name prefix for generated files (also replaced in template placeholders) |
+| `SYSTEM_NAME` | `${SYSTEM_NAME}` | System name prefix (from shared config) |
 | `TEMPLATE_FILE` | `Architecture-template.html` | Interactive viewer HTML template (contains `{{SYSTEM_NAME}}` placeholders) |
 | `OUTPUT_FILE` | `${SYSTEM_NAME}-Architecture-Interactive.html` | Generated interactive viewer output |
 
@@ -32,12 +32,12 @@
 
 | Variable | Path | Description |
 |----------|------|-------------|
-| `${OUTPUT_ROOT}` | `${WORKSPACE_ROOT}/${SYSTEM_NAME}-system-architecture` | Root for all generated system documentation |
+| `${OUTPUT_ROOT}` | `${SYSTEM_ARCH_OUTPUT_ROOT}` | Root for all generated system documentation (from shared config) |
 | `${ANALYSIS_DIR}` | `${OUTPUT_ROOT}/analysis/` | JSON analysis files |
 | `${DEEP_DIVE_DIR}` | `${OUTPUT_ROOT}/deep-dive/` | Detailed documentation |
 
-> **Note**: `${WORKSPACE_ROOT}` is defined in [shared/projects.md](../shared/projects.md).
-
+> **Note**: `${WORKSPACE_ROOT}`, `${SYSTEM_NAME}` and `${SYSTEM_ARCH_OUTPUT_ROOT}` are defined in [shared/configuration.md](../shared/configuration.md).
+>
 > [!IMPORTANT]  
 > **Output Location**: The `OUTPUT_ROOT` resolves to:
 > - Example: If `WORKSPACE_ROOT = /path/to/your/projects` and `SYSTEM_NAME = WG3`, then
@@ -53,7 +53,7 @@
 
 ## Project Registry
 
-> **📁 Source**: [shared/projects.md](../shared/projects.md) – Single source of truth for all agents.
+> **📁 Source**: [shared/configuration.md](../shared/configuration.md) – Single source of truth for all agents.
 >
 > This agent will scan all projects listed in the shared projects file.
 
