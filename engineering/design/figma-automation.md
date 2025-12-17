@@ -476,6 +476,498 @@ Enhance the Token Mapping table with variable source:
 > ℹ️ **Figma Variables**: Not configured for this file. Using style names and algorithmic matching.
 ```
 
+### Step 2H: Screenshot Extraction (Visual Grounding)
+
+> **Purpose**: LLMs are language models but UI is visual. Screenshots provide critical visual context that token tables alone cannot convey.
+
+**Step 2H.1: Capture Design Screenshot**
+
+For each extracted frame, call `mcp_figma-dev-mode-mcp-server_get_screenshot`:
+
+```
+mcp_figma-dev-mode-mcp-server_get_screenshot(nodeId: "[node-id]")
+```
+
+**Step 2H.2: Screenshot Capture Strategy**
+
+| Context | What to Capture |
+|---------|-----------------|
+| Full component | Primary frame at 1x scale |
+| Responsive variants | Each breakpoint variant (Mobile, Tablet, Desktop) |
+| Interactive states | Separate screenshots for Default, Hover, Disabled if visually distinct |
+| Empty/Error states | Separate screenshots if they exist in design |
+
+**Step 2H.3: Screenshot Embedding Format**
+
+Embed screenshots in markdown using:
+
+```markdown
+### Visual Reference
+
+![SearchWidget - Desktop](file:///path/to/screenshot-desktop.png)
+
+> **Critical Visual Notes**:
+> - Button row is pinned to bottom (space-between, not gap-stacking)
+> - Content area scrolls if overflow
+> - Title has larger visual weight (24px margin-bottom vs 16px elsewhere)
+```
+
+**Step 2H.4: Visual Annotations**
+
+When capturing, add inline annotations for:
+
+| Pattern | Annotation |
+|---------|------------|
+| Pinned elements | "Footer pinned to bottom with `mt-auto`" |
+| Scroll areas | "Content area has `overflow-auto`" |
+| Optical alignment | "Logo offset 4px left for optical center" |
+| Visual rhythm | "Larger gap (24px) before CTA section" |
+
+**Step 2H.5: Handle Screenshot Failure**
+
+| Scenario | Action |
+|----------|--------|
+| MCP screenshot fails | Request screenshot from user |
+| Very large frame | Capture at 0.5x scale, note: "Low-res preview" |
+| Multiple pages | Capture each page section separately |
+
+---
+
+### Step 2I: Interaction & Animation Context
+
+> **Purpose**: UI is not static. Components have states, transitions, and micro-interactions that must be explicitly documented.
+
+**Step 2I.1: Extract Component Variants (States)**
+
+From `mcp_figma-dev-mode-mcp-server_get_design_context` response, parse `variants` field:
+
+```json
+"variants": {
+  "availableVariants": ["Default", "Hover", "Pressed", "Disabled", "Focused"]
+}
+```
+
+**Step 2I.2: State Extraction Table**
+
+For each available variant, extract visual differences:
+
+```markdown
+### Interaction States
+
+| State | Background | Border | Shadow | Transform | Transition |
+|-------|------------|--------|--------|-----------|------------|
+| Default | bg-primary-500 | - | shadow-sm | - | - |
+| Hover | bg-primary-600 | - | shadow-md | scale(1.02) | 150ms ease-out |
+| Pressed | bg-primary-700 | - | shadow-sm | scale(0.98) | 50ms ease-in |
+| Focused | bg-primary-500 | ring-2 ring-primary-300 | shadow-sm | - | 100ms |
+| Disabled | bg-gray-300 | - | - | - | - |
+```
+
+**Step 2I.3: Transition Timing Defaults**
+
+If Figma doesn't specify transition timing, use these defaults:
+
+| Interaction | Duration | Easing |
+|-------------|----------|--------|
+| Hover effects | 150ms | ease-out |
+| Active/Pressed | 50ms | ease-in |
+| Focus ring | 100ms | ease-in-out |
+| Modal/Drawer open | 200ms | ease-out |
+| Modal/Drawer close | 150ms | ease-in |
+| Skeleton shimmer | 1500ms | linear (infinite) |
+
+**Step 2I.4: Micro-Interaction Patterns**
+
+Identify and document common micro-interactions:
+
+| Pattern | Detection | Output |
+|---------|-----------|--------|
+| Button press | Hover + Pressed variants exist | `active:scale-95 transition-transform` |
+| Input focus | Focus variant with ring | `focus:ring-2 focus:ring-primary-300` |
+| Checkbox toggle | Checked/Unchecked variants | `transition-colors duration-150` |
+| Skeleton loading | Gradient fill with animation | `animate-pulse` or custom shimmer |
+| Success feedback | Success state variant | `animate-bounce` or checkmark transition |
+
+**Step 2I.5: Output Format in UI Implementation Guide**
+
+```markdown
+### Interaction Behavior
+
+**State Machine**:
+```
+Default → Hover (on mouseenter) → Pressed (on mousedown) → Default (on mouseup)
+         ↓
+      Focused (on keyboard focus)
+         ↓
+      Disabled (when isDisabled=true)
+```
+
+**CSS Transitions**:
+```css
+.button {
+  @apply transition-all duration-150 ease-out;
+}
+.button:hover {
+  @apply bg-primary-600 shadow-md scale-102;
+}
+.button:active {
+  @apply bg-primary-700 shadow-sm scale-98 duration-50 ease-in;
+}
+.button:focus-visible {
+  @apply ring-2 ring-primary-300 ring-offset-2;
+}
+```
+
+**Tailwind Classes**:
+```
+transition-all duration-150 ease-out hover:bg-primary-600 hover:shadow-md hover:scale-102 active:scale-98 active:duration-50 focus-visible:ring-2 focus-visible:ring-primary-300
+```
+```
+
+**Step 2I.6: Handle Missing Interaction States**
+
+| Scenario | Action |
+|----------|--------|
+| No variants defined | Use industry-standard defaults, mark as `[ASSUMED]` |
+| Only Default + Hover | Extrapolate Pressed = darker shade, mark as `[EXTRAPOLATED]` |
+| No Disabled state | Flag: "⚠️ Disabled state not designed" |
+| No Focus state | Flag: "⚠️ Focus state missing - a11y risk" |
+
+---
+
+### Step 2J: Spatial Constraints Analysis
+
+> **Purpose**: LLMs understand tokens but struggle with spatial reasoning. This step captures scroll behavior, pinned elements, z-index relationships, and positioning patterns that cannot be inferred from token tables.
+
+**Step 2J.1: Identify Scroll Containers**
+
+Analyze frame structure for overflow behavior:
+
+| Figma Signal | Detection | Constraint Type |
+|--------------|-----------|-----------------|
+| Frame with `layoutSizingVertical = FILL` + children exceed height | Likely scroll container | `overflow-auto` |
+| Frame with `clipsContent = true` | Clips overflow | `overflow-hidden` or `overflow-auto` |
+| Frame name contains "Scroll", "List", "Content" | Designer intent | `overflow-auto` |
+
+**Step 2J.2: Detect Pinned/Sticky Elements**
+
+Analyze positioning within parent containers:
+
+| Figma Signal | Detection | CSS Implementation |
+|--------------|-----------|-------------------|
+| Last child in vertical layout with `constraints.vertical = MAX` | Pinned footer | `mt-auto` or `sticky bottom-0` |
+| First child with `constraints.vertical = MIN` | Pinned header | `sticky top-0` |
+| Frame outside auto-layout, positioned at corner | FAB/floating | `fixed` or `absolute` |
+| Frame with `layoutPositioning = ABSOLUTE` | Overlay element | `absolute` or `fixed` |
+
+**Step 2J.3: Map z-index Relationships**
+
+Determine layer stacking from Figma structure:
+
+```
+Layer Order (from Figma):
+1. Background elements (lowest layer) → z-0
+2. Main content → z-0 (base)
+3. Sticky headers → z-10
+4. Floating elements (FAB) → z-30
+5. Dropdowns/Popovers → z-40
+6. Modals/Overlays (highest layer) → z-50
+```
+
+**Detection Heuristics**:
+| Figma Pattern | Likely Constraint | CSS Implementation |
+|---------------|-------------------|-------------------|
+| Frame outside auto-layout at top of layer list | Overlay/modal | `fixed inset-0 z-50` |
+| Frame with dark/blur fill covering full bounds | Backdrop | `fixed inset-0 z-40 bg-black/50` |
+| Small button frame at corner, high in layer order | FAB | `fixed bottom-4 right-4 z-30` |
+| Frame with `constraints = STRETCH` in both axes | Full-bleed | `absolute inset-0` or `w-full h-full` |
+
+**Step 2J.4: Viewport vs Container Positioning**
+
+Determine positioning context:
+
+| Positioning Type | When to Use | Detection |
+|------------------|-------------|-----------|
+| `fixed` | Element relative to viewport (stays during page scroll) | FABs, modals, toasts, global navs |
+| `sticky` | Element relative to scroll container (stays during section scroll) | Section headers, action bars |
+| `absolute` | Element relative to positioned parent | Badges, overlays within cards |
+| `static` (default) | Normal document flow | Most elements |
+
+**Step 2J.5: Output Format**
+
+Add to UI Implementation Guide:
+
+```markdown
+## Spatial Constraints
+
+> **Purpose**: Scroll, pinned, and z-index behavior not inferable from tokens.
+
+| Element | Constraint Type | Behavior | CSS Implementation |
+|---------|-----------------|----------|-------------------|
+| HeaderBar | Sticky | Sticks to top during content scroll | `sticky top-0 z-10` |
+| ContentArea | Scroll Container | Scrolls when content overflows | `flex-1 overflow-auto` |
+| ActionBar | Pinned Footer | Always visible at bottom | `mt-auto` |
+| ModalOverlay | Fixed Overlay | Covers entire viewport | `fixed inset-0 z-50 bg-black/50` |
+| FAB | Fixed Position | Bottom-right of viewport | `fixed bottom-4 right-4 z-40` |
+
+### Scroll & Overflow Structure
+```
+┌─────────────────────────────┐
+│ HeaderBar (sticky top)      │ ← Does NOT scroll
+├─────────────────────────────┤
+│                             │
+│ ContentArea (overflow-auto) │ ← Scrolls independently
+│                             │
+├─────────────────────────────┤
+│ ActionBar (mt-auto/sticky)  │ ← Does NOT scroll
+└─────────────────────────────┘
+```
+
+### z-index Stack
+| Layer | z-index | Elements |
+|-------|---------|----------|
+| Modal/Overlay | 50 | ModalOverlay, DialogBackdrop |
+| Dropdown/Popover | 40 | Dropdown menus, tooltips |
+| Floating | 30 | FAB, floating buttons |
+| Sticky | 10 | Headers, sticky navigation |
+| Base | 0 | Main content |
+```
+
+**Step 2J.6: Handle Ambiguous Cases**
+
+| Scenario | Action |
+|----------|--------|
+| Can't determine if sticky vs fixed | Default to `sticky`, flag for designer confirmation |
+| Multiple scroll containers nested | Document each level, warn about complexity |
+| No clear pinning in Figma | Mark as `[TBD - confirm scroll behavior with designer]` |
+
+---
+
+### Step 2K: Content Constraints Analysis
+
+> **Purpose**: Figma shows ideal content ("John Doe", 3 items). LLMs need to know how components behave with real-world variable content (long text, 0 items, 100+ items).
+
+**Step 2K.1: Identify Text Overflow Patterns**
+
+For each text layer in the extracted frame:
+
+| Detection | Question | Constraint Types |
+|-----------|----------|------------------|
+| Text within constrained width frame | What if text is 2-5x longer? | Truncate, wrap, or expand? |
+| Single-line text with fixed height | Long text will overflow | Truncate with ellipsis |
+| Multi-line text | How many lines before cutoff? | Line clamp (2-3 lines typical) |
+| Button/label text | Should never wrap | `whitespace-nowrap min-w-[X]` |
+
+**Common Patterns by Element Type**:
+| Element | Max Length | Overflow Behavior | CSS Implementation |
+|---------|------------|-------------------|-------------------|
+| User Name | 30 chars | Truncate | `truncate max-w-[200px]` |
+| Email | 50 chars | Truncate | `truncate` |
+| Card Title | 50 chars | Truncate | `truncate` |
+| Description | 150 chars | Clamp 2-3 lines | `line-clamp-2` |
+| Button Label | 20 chars | No wrap, min-width | `whitespace-nowrap min-w-[80px]` |
+| Table Cell | Varies | Truncate or wrap | Context-dependent |
+
+**Step 2K.2: Identify List/Array Patterns**
+
+For each repeating pattern (grid, list, cards):
+
+| Detection | Questions to Answer |
+|-----------|---------------------|
+| Repeating child elements | What if 0 items? (empty state) |
+| Showing N items | What if 100+ items? (pagination/virtualization) |
+| Tag/chip list | What if 10+ tags? (show +N more) |
+
+**Common Patterns**:
+| List Type | Empty State | Overflow Behavior | Threshold |
+|-----------|-------------|-------------------|-----------|
+| Product Grid | "No products found" + CTA | Paginate | 12-24 per page |
+| Notification List | "All caught up!" illustration | Virtualize | After 50 items |
+| Search Results | "No matches for [query]" | Infinite scroll | Batch of 20 |
+| Tag List | Hide section | "+N more" pill | After 5 visible |
+| Dropdown Options | "No options" | Virtual scroll | After 100 |
+
+**Step 2K.3: Required State Checklist**
+
+For each component, verify these states are accounted for:
+
+```markdown
+### Required States
+- [ ] **Empty State**: What to show when list has 0 items
+- [ ] **Loading State**: Skeleton/spinner while data loads
+- [ ] **Error State**: Message when API/data fetch fails
+- [ ] **Partial State**: Fallback for missing optional data (e.g., avatar → initials)
+```
+
+**Detection from Figma**:
+| Figma Signal | State Type |
+|--------------|------------|
+| Frame named "*Empty*", "*No Data*", "*Zero State*" | Empty State |
+| Frame with skeleton/pulse animation | Loading State |
+| Frame named "*Error*", "*Failed*" | Error State |
+| Avatar with initials instead of image | Partial/Fallback State |
+
+**Step 2K.4: Dynamic Content Formatting**
+
+Document formatting expectations for dynamic data:
+
+| Content Type | Format | Example | Notes |
+|--------------|--------|---------|-------|
+| Price/Currency | Locale-aware | `$1,234.56` | Use `Intl.NumberFormat` |
+| Date < 7 days | Relative | "2 hours ago" | Use `date-fns/formatDistance` |
+| Date >= 7 days | Absolute | "Dec 15, 2024" | Use locale format |
+| Large numbers | Compact | `12.5K`, `1.2M` | Use `Intl.NumberFormat` compact |
+| Phone | E.164 display | `+1 (555) 123-4567` | Format after validation |
+| File size | Human readable | `2.4 MB` | Use appropriate unit |
+
+**Step 2K.5: Output Format**
+
+Add to UI Implementation Guide:
+
+```markdown
+## Content Constraints
+
+> **Purpose**: Handle real-world variable content, not just Figma's ideal mockup.
+
+### Text Overflow
+| Element | Max | Overflow | CSS |
+|---------|-----|----------|-----|
+| User Name | 30 chars | Truncate | `truncate max-w-[200px]` |
+| Description | 150 chars | Clamp 2 lines | `line-clamp-2` |
+
+### List Handling
+| Element | Empty State | Pagination/Virtualization |
+|---------|-------------|---------------------------|
+| Products | "No products found" | Paginate 12/page |
+| Comments | "No comments yet" | Load more button |
+
+### Required States
+- [ ] Empty: `<EmptyState icon="box" message="..." />`
+- [ ] Loading: `<Skeleton count={3} />`
+- [ ] Error: `<ErrorMessage retry={refetch} />`
+```
+
+**Step 2K.6: Handle Missing Content Specs**
+
+| Scenario | Action |
+|----------|--------|
+| Figma shows no empty state frame | Mark as `[TBD - empty state design needed]` |
+| No max length defined | Estimate from container width, flag for product confirmation |
+| List without pagination | Recommend virtualization threshold, flag for product decision |
+
+---
+
+### Step 2L: Semantic Intent Extraction
+
+> **Purpose**: Figma shows *appearance*; behavior lives in Product Specs. LLMs need explicit intent to generate correct event handlers, not just correct JSX structure.
+
+**Step 2L.1: Scan for Interactive Elements**
+
+From the extracted frame structure, identify all interactive elements:
+
+| Element Type | Detection Signal | Needs Intent? |
+|--------------|------------------|---------------|
+| Button | `isInstance = true` + componentName contains "Button" | ✅ Yes |
+| Link | Text with underline OR componentName contains "Link" | ✅ Yes |
+| Icon (standalone) | Small vector/icon outside of other components | ⚠️ Maybe (could be decorative) |
+| Card (clickable) | Frame with hover variant OR cursor pointer | ✅ Yes |
+| Input/Form field | Input component instance | ✅ Yes (for submit behavior) |
+| Toggle/Checkbox | Switch or checkbox component | ✅ Yes |
+| Tab/Accordion | Repeated similar elements with selection state | ✅ Yes |
+
+**Step 2L.2: Cross-Reference with Product Spec**
+
+For each interactive element, search the Product Spec (Confluence/Jira) for:
+
+1. **User Story Match**: Does a user story mention this element?
+   - "As a user, I can click 'Add to Cart' to add item to my cart"
+   
+2. **Flow Reference**: Is this element part of a documented flow?
+   - "Step 3: User clicks 'Continue' → navigates to checkout"
+
+3. **Acceptance Criteria**: Does an AC mention the behavior?
+   - "GIVEN user on product page WHEN clicks 'Add to Cart' THEN item added and toast shown"
+
+**Step 2L.3: Classify Intent Type**
+
+| Intent Type | Characteristics | Implementation Pattern |
+|-------------|-----------------|------------------------|
+| **Navigation** | Changes URL, shows different view | `router.push()`, `<Link>`, `navigate()` |
+| **State Toggle** | Flips boolean, no server call | `useState`, `useReducer`, prop change |
+| **Data Mutation** | Creates/Updates/Deletes data | `useMutation`, API call, optimistic update |
+| **Data Fetch** | Loads more data, filters, searches | `useQuery`, `useInfiniteQuery`, debounce |
+| **Modal/Overlay** | Opens overlay without navigation | State for isOpen, portal rendering |
+| **Form Submit** | Validates and sends form data | Form library submit, validation trigger |
+| **External Action** | Browser API, external link | `window.open()`, clipboard, share API |
+| **Disclosure** | Expand/collapse content in place | Accordion state, height animation |
+
+**Step 2L.4: Document Intent Map**
+
+For each interactive element, create an entry:
+
+```markdown
+| Element | Visual Role | Intent Type | Behavior Description | Spec Ref | Pattern |
+|---------|-------------|-------------|----------------------|----------|---------|
+| "Add to Cart" btn | Primary CTA below price | Data Mutation | POST to cart API, optimistic add, show toast | AC-3.2.1 | `useMutation` + toast |
+| Heart icon | Top-right of card | State Toggle | Toggle wishlist, persist to API | US-4.1 | `useState` + debounced API |
+| Product card | Entire clickable area | Navigation | Go to /products/{slug} | Flow 3.1 | `<Link>` wrapper or router |
+| "Load More" | Bottom of list | Data Fetch | Fetch next page, append | US-2.5 | `useInfiniteQuery` |
+| Size selector | Below product image | State Change | Update selected variant (local) | AC-3.2.3 | `useState` for selection |
+```
+
+**Step 2L.5: Detect Implicit Behaviors**
+
+Many behaviors are implied, not explicit:
+
+| Implicit Pattern | How to Detect | What to Document |
+|------------------|---------------|------------------|
+| Card = link to detail | Card has hover state, same destination as "View" button | Document: "Card click = same as View Details" |
+| Enter = Submit | Form with submit button | Document: "Enter in last field triggers submit" |
+| Escape = Close | Modal/drawer component | Document: "Escape key closes modal" |
+| Click outside = Close | Modal with backdrop | Document: "Backdrop click closes modal" |
+| Swipe = Dismiss | Mobile card with gesture hints | Document: "Swipe left triggers delete" |
+
+**Step 2L.6: Handle Missing/Ambiguous Intent**
+
+| Scenario | Action |
+|----------|--------|
+| Element visible in Figma, no spec reference | Add to Missing Context: `[TBD - "{element}" behavior not in spec]` |
+| Spec reference ambiguous | List options: "Could be: (A) modal, (B) page navigation. Clarify." |
+| Multiple elements → same action | Document: "Both [X] and [Y] trigger [action]" |
+| Decorative element (no interaction) | Skip from intent map, note as "decorative" |
+
+**Step 2L.7: Output for Design Review Report**
+
+Add to report:
+
+```markdown
+## Semantic Intent Map
+
+> **Purpose**: Maps visual elements to behavioral implementation patterns.
+
+| Element | Visual Role | Intent | Spec Ref | Implementation |
+|---------|-------------|--------|----------|----------------|
+| "View Details" | Card CTA | Navigation | § 3.2 | `<Link to="/products/{id}">` |
+| Heart icon | Wishlist toggle | Mutation | § 4.1 | `useMutation('wishlist')` |
+| Product card | Clickable area | Navigation | § 3.2 | Same as "View Details" |
+| "Load More" | Pagination | Fetch | § 3.1 | `useInfiniteQuery` |
+
+### Keyboard Equivalents
+| Element | Mouse | Keyboard |
+|---------|-------|----------|
+| Submit form | Click "Submit" | Enter in last field |
+| Close modal | Click X or backdrop | Escape key |
+| Navigate card | Click anywhere | Focus + Enter |
+
+### Missing Behavioral Context
+> ⚠️ These elements need spec clarification before implementation:
+
+- [ ] "Share" button: `[TBD - opens native share? copies link? shows modal?]`
+- [ ] Filter chips: `[TBD - single-select or multi-select?]`
+```
+
+---
+
 ### Step 3: Map to Project Design System
 
 > **MANDATORY**: Use [`token-mapping-rules.md`](./token-mapping-rules.md) for all token conversions.
@@ -497,11 +989,133 @@ Enhance the Token Mapping table with variable source:
 | Layout | § 6 - Flex direction, alignment, sizing |
 | Fallbacks | § 7 - Annotation format for approximate matches |
 
-### Step 3.5: Match Component Instances
+### Step 3.5: Match Component Instances (Enhanced Schema)
 
-> **MANDATORY**: Use project's `component-registry.json` for deterministic matching.
+> **MANDATORY**: Use project's `component-registry.json` for deterministic matching WITH full behavioral context.
 
 **Read component registry**: `.ai-instructions/analysis/component-registry.json`
+
+**Enhanced Registry Schema** (generated by `/map-codebase-agent`):
+
+```json
+{
+  "Button": {
+    "path": "src/components/Button/Button.tsx",
+    "figmaMapping": {
+      "Button/Primary": { "variant": "primary" },
+      "Button/Secondary": { "variant": "secondary" },
+      "Button/Ghost": { "variant": "ghost" }
+    },
+    "props": {
+      "variant": { "type": "primary | secondary | ghost", "required": true },
+      "size": { "type": "sm | md | lg", "default": "md" },
+      "isLoading": { "type": "boolean", "default": false, "description": "Shows spinner, disables click" },
+      "isDisabled": { "type": "boolean", "default": false }
+    },
+    "slots": {
+      "children": { "type": "ReactNode", "description": "Button label text" },
+      "leftIcon": { "type": "ReactNode", "description": "Icon before label" },
+      "rightIcon": { "type": "ReactNode", "description": "Icon after label" }
+    },
+    "events": {
+      "onClick": { 
+        "type": "(e: MouseEvent) => void", 
+        "description": "Standard click handler" 
+      },
+      "onSubmit": { 
+        "type": "() => Promise<void>", 
+        "description": "Async submit handler - shows loading state automatically",
+        "preferred": true,
+        "note": "Use this instead of onClick + manual loading state"
+      }
+    },
+    "a11y": {
+      "role": "button",
+      "requiredAria": [
+        "aria-label (required if icon-only, no children text)"
+      ],
+      "keyboardNav": "Enter/Space triggers onClick",
+      "focusVisible": "Built-in focus ring via focus-visible"
+    },
+    "composition": {
+      "contextRequired": null,
+      "validChildren": ["text", "Icon"],
+      "forbiddenChildren": ["Button", "Link", "a"],
+      "validParents": ["form", "div", "ButtonGroup", "CardActions"]
+    },
+    "stateManagement": {
+      "type": "uncontrolled",
+      "internalState": ["isLoading (auto-managed when using onSubmit)"],
+      "note": "Loading state is automatically managed when using onSubmit prop"
+    },
+    "antiPatterns": [
+      "❌ Don't put <Icon> as direct child - use leftIcon/rightIcon props",
+      "❌ Don't manage loading state manually when using onSubmit",
+      "❌ Don't nest interactive elements (buttons, links) inside Button",
+      "❌ Don't omit aria-label on icon-only buttons"
+    ],
+    "stateProps": ["isLoading", "isDisabled"],
+    "usage": "<Button variant=\"primary\" leftIcon={<Icon name=\"search\" />}>Search</Button>"
+  },
+  
+  "Input": {
+    "path": "src/components/Input/Input.tsx",
+    "props": {...},
+    "events": {
+      "onChange": { "type": "(e: ChangeEvent<HTMLInputElement>) => void" },
+      "onBlur": { "type": "(e: FocusEvent) => void" }
+    },
+    "a11y": {
+      "requiredAria": ["aria-label or associated label element"],
+      "keyboardNav": "Standard input navigation"
+    },
+    "stateManagement": {
+      "type": "controlled | uncontrolled",
+      "controlled": "Pass value + onChange",
+      "uncontrolled": "Pass defaultValue + use ref",
+      "note": "Do NOT mix value and defaultValue"
+    },
+    "antiPatterns": [
+      "❌ Don't pass both value and defaultValue",
+      "❌ Don't forget to associate a label (a11y)"
+    ]
+  },
+  
+  "Dropdown": {
+    "path": "src/components/Dropdown/Dropdown.tsx",
+    "composition": {
+      "contextRequired": "DropdownProvider",
+      "structure": [
+        "DropdownProvider (wrapper)",
+        "  DropdownTrigger (button that opens menu)",
+        "  DropdownMenu (the menu container)",
+        "    DropdownItem (menu items)"
+      ],
+      "note": "All Dropdown parts MUST be wrapped in DropdownProvider"
+    },
+    "a11y": {
+      "role": "menu",
+      "keyboardNav": "Arrow keys to navigate, Enter to select, Escape to close"
+    },
+    "antiPatterns": [
+      "❌ Don't use DropdownTrigger without DropdownProvider",
+      "❌ Don't forget keyboard navigation testing"
+    ]
+  }
+}
+```
+
+### Component API Contract Fields
+
+| Field | Purpose | LLM Usage |
+|-------|---------|-----------|
+| `events` | Available callbacks with signatures | Know which handlers exist, prefer built-in over manual |
+| `a11y.requiredAria` | Mandatory accessibility attributes | Never forget aria-label on icon buttons |
+| `a11y.keyboardNav` | Expected keyboard behavior | Ensure implementation supports keyboard |
+| `composition.contextRequired` | Context providers needed | Avoid runtime "context not found" errors |
+| `composition.validChildren` | What can be nested inside | Avoid invalid DOM nesting |
+| `stateManagement` | Controlled vs uncontrolled behavior | Don't mix patterns |
+| `antiPatterns` | Common mistakes to avoid | Explicit "don't do this" guidance |
 
 **Matching Algorithm**:
 
@@ -512,9 +1126,16 @@ Enhance the Token Mapping table with variable source:
    component-registry.json → components["Button"] → figmaMapping["Button/Primary"]
    ```
 
-3. **Extract result**:
-   - `importPath`: Where to import from
-   - `props`: What props to pass (e.g., `{ "variant": "primary" }`)
+3. **Extract FULL context**:
+   - `path`: Import path
+   - `props`: Available props with types and defaults
+   - `slots`: Named slots for children, icons, etc.
+   - `events`: Callbacks with signatures and preferences
+   - `a11y`: Accessibility requirements
+   - `composition`: Context and nesting rules
+   - `stateManagement`: Controlled/uncontrolled guidance
+   - `antiPatterns`: Mistakes to avoid
+   - `usage`: Example code snippet
 
 4. **Handle wildcards**: `Icon/*` → `name` prop gets the wildcard value
    - `Icon/Search` → `<Icon name="search">`
@@ -523,13 +1144,64 @@ Enhance the Token Mapping table with variable source:
    - Check `aliases` section (e.g., `CTA_Button` → `Button`)
    - If still not found: Mark as `[NOT FOUND - verify or create]`
 
-**Output Format**:
+**Enhanced Output Format**:
 ```markdown
 **Component Instances** (REUSE REQUIRED):
-- [x] `Button/Primary` → `<Button variant="primary">` from `@/components/Button`
-- [x] `Icon/Search` → `<Icon name="search">` from `@/components/Icon`
-- [ ] `ProductCard` → **[NOT FOUND]** - Verify in component-registry.json or create new
+
+| Figma Instance | Project Component | Props | Slots | Import |
+|----------------|-------------------|-------|-------|--------|
+| `Button/Primary` | `<Button>` | `variant="primary"` | children, leftIcon, rightIcon | `@/components/Button` |
+| `Icon/Search` | `<Icon>` | `name="search"` | - | `@/components/Icon` |
+| `ProductCard` | **[NEW]** | - | - | Create in `@/components/ProductCard` |
+
+**Component Usage Guide** (for LLM implementation):
+
+#### Button (`@/components/Button`)
+**Props**:
+- **Required**: `variant="primary | secondary | ghost"`
+- **For icons**: Use `leftIcon` or `rightIcon` props, NOT as children
+- **For loading**: Set `isLoading={true}` (shows built-in spinner)
+
+**Events**:
+- `onClick`: Standard click handler
+- `onSubmit`: **Preferred for async** - auto-manages loading state
+
+**Accessibility**:
+- Icon-only buttons MUST have `aria-label`
+- Keyboard: Enter/Space triggers click
+
+**❌ Anti-Patterns**:
+- Don't wrap Icon in children, use leftIcon/rightIcon prop
+- Don't manage loading manually when using onSubmit
+
+**Example**: `<Button variant="primary" leftIcon={<Icon name="search" />}>Search</Button>`
+
+#### Icon (`@/components/Icon`)
+- **Required**: `name="icon-name"` (matches Figma icon name, lowercase)
+- **Optional**: `size="sm | md | lg"`, `className` for color
+- **Example**: `<Icon name="search" size="md" className="text-gray-500" />`
+
+#### Dropdown (`@/components/Dropdown`)
+**⚠️ Requires Context Provider**:
+```jsx
+<DropdownProvider>
+  <DropdownTrigger>Open Menu</DropdownTrigger>
+  <DropdownMenu>
+    <DropdownItem>Option 1</DropdownItem>
+  </DropdownMenu>
+</DropdownProvider>
 ```
+**Accessibility**: Arrow keys navigate, Enter selects, Escape closes
+```
+
+**Anti-Pattern Detection**:
+
+| Pattern | Detection | Correction |
+|---------|-----------|------------|
+| Icon as child | `<Button><Icon/> Label</Button>` | Use `leftIcon` prop instead |
+| Hardcoded color | `style={{ color: '#3B82F6' }}` | Use className with design tokens |
+| Custom loading | Custom spinner inside Button | Use `isLoading` prop |
+| Missing variant | `<Button>` without variant | Add required `variant` prop |
 
 ### Step 4: Populate UI Implementation Guide
 

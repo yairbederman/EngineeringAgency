@@ -65,6 +65,16 @@ Response: ResourceResponse
 
 ---
 
+**Visual Reference** (Screenshot):
+
+![Component Name - Desktop](file:///path/to/screenshot.png)
+
+> **Critical Visual Notes**:
+> - [Note any pinned elements, scroll areas, visual rhythm]
+> - [Note any non-obvious layout details visible in screenshot]
+
+---
+
 **Component Tree** (Semantic Structure):
 ```
 RootContainer (Frame)
@@ -85,25 +95,141 @@ RootContainer (Frame)
 | ActionBar | row | 12px → gap-3 | 16px h, 12px v | end |
 
 **Token Mapping** (Figma → Project):
-| Category | Figma Value | Project Token |
-|----------|-------------|---------------|
-| Background | #FFFFFF | bg-white / bg-surface-card |
-| Border | 1px #E5E7EB | border border-gray-200 |
-| Shadow | 0 1px 3px rgba(0,0,0,0.1) | shadow-sm |
-| Text Primary | #111827 / 16px / 600 | text-gray-900 text-base font-semibold |
-| Spacing Gap | 16px | gap-4 |
+| Category | Figma Value | Variable/Style | Project Token |
+|----------|-------------|----------------|---------------|
+| Background | #FFFFFF | color/neutral/50 | bg-white / bg-surface-card |
+| Border | 1px #E5E7EB | color/neutral/200 | border border-gray-200 |
+| Shadow | 0 1px 3px rgba(0,0,0,0.1) | shadow/sm | shadow-sm |
+| Text Primary | #111827 / 16px / 600 | - | text-gray-900 text-base font-semibold |
+| Spacing Gap | 16px | spacing/md | gap-4 |
 
-**Component Instances** (REUSE REQUIRED):
-- [ ] `IconComponent` → Use `<Icon name="...">` from `src/components/Icon`
-- [ ] `Button/Primary` → Use `<Button variant="primary">` from `src/components/Button`
+---
 
-**Interactive States** (if component has states):
-| State | Background | Border | Text |
-|-------|------------|--------|------|
-| Default | bg-primary-600 | - | text-white |
-| Hover | bg-primary-700 | - | text-white |
-| Focused | bg-primary-600 | ring-2 ring-primary-400 | text-white |
-| Disabled | bg-gray-300 | - | text-gray-500 |
+**Spatial Constraints** (Scroll, Pinned, z-index):
+
+| Element | Constraint | Behavior | CSS Implementation |
+|---------|------------|----------|-------------------|
+| HeaderSection | Sticky | Sticks to top during scroll | `sticky top-0 z-10` |
+| ContentArea | Scroll | Scrolls when content overflows | `flex-1 overflow-auto` |
+| ActionBar | Pinned | Always visible at container bottom | `mt-auto` |
+
+> **Scroll Behavior**: ContentArea scrolls independently; Header and ActionBar remain visible.
+
+---
+
+**Content Constraints** (Overflow, Empty States, Lists):
+
+| Element | Content Type | Max | Overflow Behavior | CSS |
+|---------|--------------|-----|-------------------|-----|
+| User Name | Text | 30 chars | Truncate | `truncate max-w-[200px]` |
+| Description | Text | 150 chars | Clamp 2 lines | `line-clamp-2` |
+| Item List | Array | ∞ | Virtualize after 50 | `react-virtual` |
+
+**Required States**:
+- [ ] **Empty**: Show `<EmptyState message="No items found" />` when 0 items
+- [ ] **Loading**: Show skeleton/spinner while fetching
+- [ ] **Error**: Show error message on API failure
+
+---
+
+### Semantic Intent Map
+
+> **Purpose**: What each interactive element DOES, not just how it looks. Cross-referenced with Product Spec.
+
+| Element | Visual Role | Intent Type | Behavior | Spec Ref | Implementation |
+|---------|-------------|-------------|----------|----------|----------------|
+| [Button name] | [Position/purpose] | [Navigation/Mutation/Fetch/etc.] | [What happens on click] | § [X.X] | [Pattern] |
+| [Icon/Toggle] | [Location] | [State Toggle/Mutation] | [Detailed behavior] | § [X.X] | [Pattern] |
+
+**Keyboard Equivalents**:
+| Visual Action | Keyboard | Implementation |
+|---------------|----------|----------------|
+| Click form submit | Enter key | Form `onSubmit` handler |
+| Click close button | Escape key | `useEffect` keyboard listener |
+
+**Missing Behavioral Context** (if any):
+> ⚠️ These elements need spec clarification:
+- [ ] [Element]: `[TBD - behavior not specified]`
+
+---
+
+**Component Instances** (Enhanced - REUSE REQUIRED):
+
+| Figma Instance | Project Component | Props | Slots | Import |
+|----------------|-------------------|-------|-------|--------|
+| `Icon/Search` | `<Icon>` | `name="search"` | - | `@/components/Icon` |
+| `Button/Primary` | `<Button>` | `variant="primary"` | children, leftIcon, rightIcon | `@/components/Button` |
+
+**Component Usage Guide** (with behavioral context):
+
+#### Button (`@/components/Button`)
+
+**Props**:
+- **Required**: `variant="primary | secondary | ghost"`
+- **For icons**: Use `leftIcon` or `rightIcon` props, NOT as children
+- **For loading**: Set `isLoading={true}` (shows built-in spinner)
+
+**Events**:
+- `onClick`: Standard click handler
+- `onSubmit`: **Preferred for async** - auto-manages loading state
+
+**Accessibility**:
+- Icon-only buttons MUST have `aria-label`
+- Keyboard: Enter/Space triggers click
+
+**❌ Anti-Patterns**:
+- Don't wrap `<Icon>` in children - use `leftIcon`/`rightIcon` props
+- Don't manage loading manually when using `onSubmit`
+
+**Example**: `<Button variant="primary" leftIcon={<Icon name="search" />}>Search</Button>`
+
+#### Icon (`@/components/Icon`)
+- **Required**: `name="icon-name"` (matches Figma icon name, lowercase)
+- **Optional**: `size="sm | md | lg"`, `className` for color
+- **Example**: `<Icon name="search" size="md" className="text-gray-500" />`
+
+#### [Compound Components] (e.g., Dropdown, Modal)
+
+> If a component requires a context provider, document it here:
+
+```jsx
+<DropdownProvider>
+  <DropdownTrigger>Open Menu</DropdownTrigger>
+  <DropdownMenu>
+    <DropdownItem>Option 1</DropdownItem>
+  </DropdownMenu>
+</DropdownProvider>
+```
+
+**⚠️ Context Required**: All parts must be wrapped in provider.
+
+---
+
+**Interactive States & Transitions**:
+
+| State | Background | Border | Shadow | Transform | Transition |
+|-------|------------|--------|--------|-----------|------------|
+| Default | bg-primary-600 | - | shadow-sm | - | - |
+| Hover | bg-primary-700 | - | shadow-md | scale(1.02) | 150ms ease-out |
+| Pressed | bg-primary-800 | - | shadow-sm | scale(0.98) | 50ms ease-in |
+| Focused | bg-primary-600 | ring-2 ring-primary-400 | shadow-sm | - | 100ms |
+| Disabled | bg-gray-300 | - | - | - | - |
+
+**Transition CSS**:
+```css
+.component {
+  @apply transition-all duration-150 ease-out;
+}
+.component:hover {
+  @apply bg-primary-700 shadow-md scale-102;
+}
+.component:active {
+  @apply scale-98 duration-50;
+}
+.component:focus-visible {
+  @apply ring-2 ring-primary-400 ring-offset-2;
+}
+```
 
 ---
 

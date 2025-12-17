@@ -47,23 +47,41 @@ Rules:
 
 ### 0.3 Figma – Design System Translation
 
-**Purpose**: Translate visual intent into project-compliant Design Tokens and Component Structures.
+**Purpose**: Translate visual intent into project-compliant Design Tokens, Component Structures, AND visual context for LLM implementation.
 
 **Use Figma when**:
 - Working on any Frontend/UI task.
 - The spec references Figma files/frames.
 
 **Translation Protocol (The "Design-to-Code" Bridge)**:
+
 1.  **Extract, Don't Guess**: Use Figma MCP to read the frame properties.
+
 2.  **Extract Variables First**: Call `mcp_figma-dev-mode-mcp-server_get_variable_defs` to get designer-defined semantic tokens (highest priority).
-3.  **Map to Tokens (CRITICAL)**:
+
+3.  **Capture Screenshots (Visual Grounding)**:
+    - Call `mcp_figma-dev-mode-mcp-server_get_screenshot` for each frame
+    - Embed screenshots in Design Review Report and Task descriptions
+    - Add visual annotations for pinned elements, scroll areas, visual rhythm
+    - **Strict Rule**: LLMs need to "see" the design, not just parse tokens
+
+4.  **Extract Interaction States**:
+    - Parse `variants.availableVariants` for component states (Default, Hover, Pressed, Focused, Disabled)
+    - Document state transitions and timing (e.g., 150ms ease-out)
+    - Flag missing states (especially Focus for a11y)
+    - See: `figma-automation.md` Step 2I
+
+5.  **Map to Tokens (CRITICAL)**:
     - *Do not* use raw values (e.g., `#1D4ED8`, `16px`) unless they are one-off overrides.
     - *Priority*: Figma Variables > Style Names > `design-tokens.json` match > Algorithmic closest match
     - *Do*: Map Figma values to the project's Design System found in `${COPILOT_INSTRUCTIONS_PATH}` or `${DESIGN_TOKENS_PATH}`.
     - *Example*: Figma Variable `color/primary/500` → Project Token: `bg-primary-500`.
-4.  **Component Identification**:
-    - Identify repeating UI patterns in Figma that match existing components in `${FILE_CATEGORIZATION_PATH}`.
-    - *Instruction*: "Reuse `<Button variant='primary'>` instead of building a rectangle with text."
+
+6.  **Component Identification (Enhanced)**:
+    - Identify Figma component instances and match to project components
+    - Extract FULL context: props, slots, stateProps, usage examples
+    - *Instruction*: "Reuse `<Button variant='primary' leftIcon={...}>` instead of building a rectangle with text."
+    - See: `figma-automation.md` Step 3.5 for enhanced component schema
 
 **Tool Failure & Missing Designs**:
 - If Figma is unreachable: Ask for a **screenshot**.
