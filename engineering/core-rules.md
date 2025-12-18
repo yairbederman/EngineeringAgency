@@ -140,6 +140,26 @@ On any MCP/tool failure (timeout, auth error, tool not found):
 5. If unsafe:
    - Stop; explain what is missing and request it.
 
+### 0.4.1 Truncation Detection (MANDATORY)
+
+**Purpose**: Prevent proceeding with incomplete data when MCP tools truncate responses.
+
+**Detection**: Look for `<truncated X bytes>` markers in MCP tool output.
+
+**On Truncation Detected**:
+
+1. **STOP immediately** – Do not proceed with analysis based on partial data.
+2. **Alert the user** with:
+   - Which tool/content was truncated
+   - How much data was lost (X bytes)
+   - What content appears to be missing
+3. **Attempt recovery** in this order:
+   - Try browser subagent to read full content via JavaScript extraction
+   - Ask user to paste the missing sections manually
+4. **Only proceed** after full content is obtained or user explicitly approves partial analysis.
+
+**Strict Rule**: Never summarize, analyze, or draw conclusions from truncated content without disclosing the truncation to the user first.
+
 ### 0.5 System Architecture – Cross-Project Context
 
 **Purpose**: Understand service dependencies and cross-project impacts for multi-project features.
