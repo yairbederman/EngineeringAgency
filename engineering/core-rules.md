@@ -69,7 +69,7 @@ Rules:
     - Parse `variants.availableVariants` for component states (Default, Hover, Pressed, Focused, Disabled)
     - Document state transitions and timing (e.g., 150ms ease-out)
     - Flag missing states (especially Focus for a11y)
-    - See: `figma-automation.md` Step 2I
+    - See: `figma-extraction-protocol.md` Step 2I
 
 5.  **Map to Tokens (CRITICAL)**:
     - *Do not* use raw values (e.g., `#1D4ED8`, `16px`) unless they are one-off overrides.
@@ -81,7 +81,7 @@ Rules:
     - Identify Figma component instances and match to project components
     - Extract FULL context: props, slots, stateProps, usage examples
     - *Instruction*: "Reuse `<Button variant='primary' leftIcon={...}>` instead of building a rectangle with text."
-    - See: `figma-automation.md` Step 3.5 for enhanced component schema
+    - See: `figma-extraction-protocol.md` Step 3.5 for enhanced component schema
 
 **Tool Failure & Missing Designs**:
 - If Figma is unreachable: Ask for a **screenshot**.
@@ -159,6 +159,33 @@ On any MCP/tool failure (timeout, auth error, tool not found):
 4. **Only proceed** after full content is obtained or user explicitly approves partial analysis.
 
 **Strict Rule**: Never summarize, analyze, or draw conclusions from truncated content without disclosing the truncation to the user first.
+
+### 0.4.2 No Reliance on Conversation History for Data (MANDATORY)
+
+**Purpose**: Conversation history may contain stale or outdated data. Always fetch fresh data.
+
+**Strict Rules**:
+
+1. **Never assume data from previous conversations** – Prior sessions may reference:
+   - Outdated Figma designs
+   - Changed Confluence specs
+   - Resolved or modified Jira issues
+   - Stale API responses or file contents
+
+2. **Always fetch fresh** – For every new request, use the appropriate tools to retrieve current data:
+   - **External content**: Confluence pages, Jira issues, Figma designs, URLs
+   - **Filesystem**: Source code, configuration files, documentation
+   - **API responses**: Any data retrieved via MCP or other integrations
+
+3. **Do not shortcut with "Based on earlier conversations..."** – This phrase is a red flag. If you find yourself using it, stop and fetch the data fresh.
+
+4. **Conversation summaries are for context, not data** – History summaries help understand user intent and prior decisions, but extracted data (specs, designs, code) must be re-fetched.
+
+**Why This Matters**: 
+- Designs evolve between sessions
+- Specs are updated based on feedback
+- Code changes are made outside conversations
+- Jira tickets are edited by other team members
 
 ### 0.5 System Architecture – Cross-Project Context
 

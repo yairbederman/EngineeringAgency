@@ -11,7 +11,7 @@
 1. **Figma Variables** (highest priority)
    - Source: `mcp_figma-dev-mode-mcp-server_get_variable_defs` response
    - If element has a linked variable (e.g., `color/primary/500`), use directly
-   - See: `figma-automation.md` Step 2G
+   - See: `figma-extraction-protocol.md` Step 2G
 
 2. **Figma Style Name** (if available)
    - If Figma element has a linked style (e.g., `Primary/500`), match to project token by name

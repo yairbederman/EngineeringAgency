@@ -4,15 +4,21 @@
 
 ---
 
+> [!CRITICAL]
+> **STRICT PROTOCOL ENFORCEMENT**:
+> 1. **NEVER** call `get_design_context` without first calling `get_metadata`.
+> 2. **ALWAYS** drill into child nodes if `get_metadata` shows `<symbol>` or `<instance>` children.
+> 3. **NEVER** assume a parent frame contains all annotations (API truncates deep data).
+
 ## When to Trigger
 
-**Primary Trigger**: During **DesignReview** mode when:
+**Primary Trigger**: During **DesignAnalysis** mode when:
 - Product Spec contains Figma links
-- User has not opted to skip DesignReview
+- User has not opted to skip DesignAnalysis
 
 **Secondary Trigger**: During **TaskPlanning** mode for:
 - Frontend tasks requiring additional detail
-- Tasks where designs changed since DesignReview
+- Tasks where designs changed since DesignAnalysis
 
 ---
 
@@ -153,7 +159,16 @@ Extract from Epic description:
 | Page URL | `figma.com/design/abc123/File` | ❌ No |
 | Branch URL | `figma.com/design/abc123/branch/xyz/File?node-id=1-234` | ✅ Yes |
 
-#### Step 1B: Decision Tree
+#### Step 1B: Multi-Node Handling (MANDATORY)
+
+If the Product Spec contains **multiple** Figma links/Node IDs:
+
+1.  **Collect ALL distinct Node IDs** found in the spec body.
+2.  **MANDATORY**: You must process **EVERY** explicit Node ID found.
+    - **Do NOT filter** based on name matching if the ID is explicitly linked.
+    - Name matching (Step 1C) is *only* for finding frames when no Node ID is provided.
+
+#### Step 1C: Decision Tree
 
 ```
 Does URL contain node-id?
@@ -168,38 +183,36 @@ Does URL contain node-id?
 
 #### Step 1C: Automatic Frame Matching
 
-When multiple frames exist, match by name:
+When multiple frames exist and **no explicit Node ID** was linked:
 
-1. **Extract task component name** from task title
-   - E.g., "Implement SearchWidget" → look for "SearchWidget"
+1.  **Extract keywords** from the Task Name or Epic Title.
+    - *Example*: If Task is "Implement [FeatureName]", keyword is "[FeatureName]".
 
-2. **Search frame names** for matches:
-   ```
-   Frame names from mcp_figma-dev-mode-mcp-server_get_metadata:
-   - "SearchWidget" ← MATCH
-   - "SearchWidget/Desktop"
-   - "SearchWidget/Mobile"
-   - "Header"
-   - "Footer"
-   ```
+2.  **Filter frame names** using fuzzy matching:
+    ```
+    Frame list from mcp_figma-dev-mode-mcp-server_get_metadata:
+    - "[FeatureName]"              ← EXACT MATCH
+    - "[FeatureName]/Desktop"      ← VARIANT MATCH
+    - "[FeatureName]/Mobile"       ← VARIANT MATCH
+    - "UnrelatedFrame"             ← IGNORE
+    ```
 
-3. **Selection rules**:
-   | Scenario | Action |
-   |----------|--------|
-   | Exact match found | Use that frame |
-   | Multiple matches (Desktop/Mobile) | Extract primary (Desktop), note variants |
-   | Partial match (e.g., "Search" vs "SearchWidget") | Use with confirmation |
-   | No match | Ask user to clarify |
-
+3.  **Selection Rules**:
+    | Scenario | Action |
+    |----------|--------|
+    | Exact Name Match | Select that frame. |
+    | Variant Matches ([Name]/Desktop) | Select the **Desktop** or primary variant. Note others for responsive check. |
+    | Partial Match | Select only if it shares >80% similarity or is the only logical candidate. |
+    | No Match | **STOP** and ask user to clarify. |
 #### Step 1D: Handle Variants
 
 If design has viewport variants:
 
 ```markdown
 **Detected Figma Variants**:
-- `SearchWidget/Desktop` (node-id: 1-234) ← PRIMARY
-- `SearchWidget/Mobile` (node-id: 1-567)
-- `SearchWidget/Tablet` (node-id: 1-890)
+- `[FeatureName]/Desktop` (node-id: 1-234) ← PRIMARY
+- `[FeatureName]/Mobile` (node-id: 1-567)
+- `[FeatureName]/Tablet` (node-id: 1-890)
 
 > Extracting Desktop variant. Mobile/Tablet tokens available if responsive behavior needed.
 ```
@@ -212,24 +225,69 @@ If automatic matching fails:
 ⚠️ **Figma Frame Selection Required**
 
 Found multiple frames, unable to auto-match:
-1. `Homepage` (node-id: 1-100)
-2. `SearchResults` (node-id: 1-200)
-3. `ProductDetail` (node-id: 1-300)
+1. `[FrameName_A]` (node-id: 1-100)
+2. `[FrameName_B]` (node-id: 1-200)
+3. `[FrameName_C]` (node-id: 1-300)
 
 Please specify which frame to use for task "[TaskName]":
 - Provide node-id, OR
 - Provide frame name
 ```
 
-### Step 2: Extract Design Context (Enhanced)
+### 2. The Recursive Extraction Protocol (MANDATORY)
 
-For each Frontend task, call `mcp_figma-dev-mode-mcp-server_get_design_context` with node ID and extract ALL of the following:
+> **Core Rule**: Figma's API truncates child data. You must fetch the Parent Metadata first, then **recursively** fetch Design Context for **every** child node.
 
-#### 2A. Component Tree (Structure)
-- **Root node**: Type (Frame/Component/Instance) and layer name
-- **Child nodes**: List with types, names, and nesting depth (up to 3 levels)
-- **Semantic hints**: Infer purpose from layer names (e.g., "Header", "CardContainer", "ActionBar")
-- **Component Instances**: Identify reusable component references (e.g., `Button/Primary`, `Icon/Search`)
+#### The Problem: Silent Truncation
+When you call `get_design_context` on a Parent Frame or Component Set, Figma **silently omits** `data-development-annotations` and detailed properties of its children (Variants). This results in missing behavioral logic (e.g., missed `onClick` triggers).
+
+#### The Solution: Parent-First → Child-Recursive Loop
+
+**Step 1: Parent Metadata (Discovery)**
+- **Call**: `mcp_figma-dev-mode-mcp-server_get_metadata(parentNodeId)`
+- **Goal**: unique ID list of all children (Variants, nested Frames).
+
+**Step 2: Recursive Child Extraction (The Work)**
+**Step 2: Recursive Child Extraction (The Work)**
+- **Condition**: If the metadata shows children (Type: `symbol`, `instance`, `frame`, `group`).
+- **Protocol**: **Extract ALL Children**. Do not skip any variants.
+  - **Rationale**: Design systems often attach critical "development annotations" (state keys, test IDs, behaviors) to "visual" states like `Hover` or `Focus`. Skipping them causes data loss.
+  - **Action**: Loop through **EVERY** child ID found in Parent Metadata and call `mcp_figma-dev-mode-mcp-server_get_design_context`.
+  - **Aggregation**: Collect `data-development-annotations` and tokens from **ALL** extracted children.
+
+> [!NOTE]
+> **Performance vs. Accuracy**: We prioritize **Accuracy**. It is better to spend extra tokens fetching a "Hover" state than to miss a critical `onClick` or `state` annotation hidden within it.
+
+**Step 3: Parent Context**
+- **Call**: `get_design_context(parentNodeId)`
+- **Goal**: Container layout and global positioning.
+
+> [!CRITICAL]
+> **Recursion is NOT optional.**
+> You cannot "infer" the child state from the parent response. You must physically fetch the child node to see its annotations.
+
+#### Execution Logic Visualization
+```
+1. GET Metadata(Parent)
+   └── Returns: [Child_A, Child_B, Child_C]
+
+2. LOOP Children:
+   ├── GET Context(Child_A) → Found: "trigger=click"
+   ├── GET Context(Child_B) → Found: "state=hover"
+   └── GET Context(Child_C) → Found: "style=primary"
+
+3. GET Context(Parent)
+   └── Returns: Layout wrapper
+```
+
+**Common Annotation Fields** (when found in `data-development-annotations`):
+| Field | Purpose | Example Values |
+|-------|---------|----------------|
+| `state` | Unique state identifier | `base_view`, `hover_view`, `clicked_view` |
+| `trigger` | Event or condition | `onclick`, `onhover`, `condition===true` |
+| `action` | What happens | `display`, `navigate`, `open` |
+| `opens` | Target node-id for modal/overlay | Figma node-id of target frame |
+| `result` | Human-readable outcome | Description of user-facing result |
 
 #### 2B. Auto-Layout Properties
 Extract for each auto-layout frame:

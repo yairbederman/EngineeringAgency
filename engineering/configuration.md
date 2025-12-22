@@ -25,13 +25,13 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 | Workflow Validation | `workflow-validation.md` |
 | **Modes** | |
 | Product Spec Review | `modes/planning/product-spec-review.md` |
-| Design Review | `modes/planning/design-review.md` |
+| Design Analysis | `modes/planning/design-analysis.md` |
 | Feature Planning | `modes/planning/feature-planning.md` |
 | Tech Spec | `modes/planning/tech-spec.md` |
 | Task Planning | `modes/planning/task-planning.md` |
 | Implementation | `modes/implementation.md` |
 | BugFix | `modes/bugfix.md` |
-| Figma Automation | `design/figma-automation.md` |
+| Figma Extraction Protocol | `design/figma-extraction-protocol.md` |
 | Cross-Project | `modes/cross-project.md` |
 | **Templates** | |
 | Epic Template | `templates/epic.md` |

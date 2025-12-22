@@ -192,5 +192,5 @@ After extraction, verify:
 
 The `/engineering-agent` uses this file in:
 
-1. **TaskPlanning**: `figma-automation.md` Step 3 reads `design-tokens.json` for token mapping
+1. **TaskPlanning**: `figma-extraction-protocol.md` Step 3 reads `design-tokens.json` for token mapping
 2. **Implementation**: LLM validates generated CSS against project tokens

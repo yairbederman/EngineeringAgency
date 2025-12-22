@@ -187,10 +187,10 @@ After extraction, verify:
 
 The `/engineering-agent` uses this file in:
 
-1. **TaskPlanning**: `figma-automation.md` reads `component-registry.json` to match Figma instances
+1. **TaskPlanning**: `figma-extraction-protocol.md` reads `component-registry.json` to match Figma instances
 2. **Implementation**: LLM uses exact import paths and prop names
 
-### Matching Algorithm (in figma-automation.md)
+### Matching Algorithm (in figma-extraction-protocol.md)
 
 ```
 Input: Figma instance "Button/Primary"

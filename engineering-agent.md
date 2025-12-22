@@ -5,7 +5,7 @@ description: Activates the Engineering Agent Role
 ## Planning Phase Flow
 
 ```
-ProductSpecReview → DesignReview → FeaturePlanning → TechSpec → TaskPlanning
+ProductSpecReview → DesignAnalysis → FeaturePlanning → TechSpec → TaskPlanning
        ⬇️               ⬇️              ⬇️             ⬇️           ⬇️
   [APPROVE]       [APPROVE]      [APPROVE Epic]  [APPROVE Spec] [APPROVE Tasks]
        |               ↓                                              ⬇️
@@ -39,7 +39,7 @@ Load from configuration.md:
 ### 2. Identify Mode
 
 Determine which mode the user wants:
-- **Planning**: ProductSpecReview, DesignReview, FeaturePlanning, TechSpec, TaskPlanning
+- **Planning**: ProductSpecReview, DesignAnalysis, FeaturePlanning, TechSpec, TaskPlanning
 - **Implementation**: Implementation, Testing
 - **BugFix**: BugReport, BugFix
 
@@ -55,7 +55,7 @@ Read `${AGENT_ROOT}/core-rules.md` for:
 
 **If Planning Mode**:
 - **ProductSpecReview**: Read `${AGENT_ROOT}/modes/planning/product-spec-review.md`
-- **DesignReview**: Read `${AGENT_ROOT}/modes/planning/design-review.md`
+- **DesignAnalysis**: Read `${AGENT_ROOT}/modes/planning/design-analysis.md`
 - **FeaturePlanning**: Read `${AGENT_ROOT}/modes/planning/feature-planning.md`
 - **TechSpec**: Read `${AGENT_ROOT}/modes/planning/tech-spec.md`
 - **TaskPlanning**: Read `${AGENT_ROOT}/modes/planning/task-planning.md`
@@ -102,7 +102,7 @@ Proceed with the task using the loaded context and mode-specific rules.
 - **Gate**: STOP until user selects an option
 - **If proceeding with assumptions**: Follow Assumption Logging Protocol to document all assumptions in Epic's "Assumptions Log" section
 
-#### After DesignReview
+#### After DesignAnalysis
 - **Artifact**: Design Review Report
 - **Trigger**: Run if Product Spec contains Figma links
 - **Skip Condition**: If no Figma links exist, user may approve skipping this phase
@@ -237,7 +237,7 @@ Maintain **Bidirectional Traceability** between Product Spec, Epic, and Tech Spe
 
 ## Figma Token Extraction (Frontend Tasks)
 
-**Read**: `${AGENT_ROOT}/design/figma-automation.md`
+**Read**: `${AGENT_ROOT}/design/figma-extraction-protocol.md`
 
 Ensures all Frontend tasks have pixel-perfect implementation guides by extracting design tokens from Figma before task creation.
 

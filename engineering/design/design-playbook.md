@@ -186,6 +186,6 @@ The engineering agent uses these Figma MCP tools:
 
 ## Related Files
 
-- [figma-automation.md](figma-automation.md) - Token extraction automation
+- [figma-extraction-protocol.md](figma-extraction-protocol.md) - Token extraction automation
 - [figma-design-guidelines.md](figma-design-guidelines.md) - Visual design standards
 - [token-mapping-rules.md](token-mapping-rules.md) - Token to code mapping

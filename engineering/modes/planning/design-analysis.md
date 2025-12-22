@@ -1,6 +1,6 @@
-# Engineering Agent – DesignReview Mode
+# Engineering Agent – DesignAnalysis Mode
 
-## 1. DesignReview Mode – Design Deep-Dive
+## 1. DesignAnalysis Mode – Design Deep-Dive
 
 **Goal**: Extract comprehensive design context from Figma to enable pixel-perfect implementation. This phase produces a Design Review Report with tokens, components, and responsive specifications.
 
@@ -9,7 +9,7 @@
 - Execute if Product Spec contains Figma links
 
 **Skip Condition**: If no Figma links exist in the spec, present option to user:
-- **Option A**: Proceed without DesignReview (flag as design debt)
+- **Option A**: Proceed without DesignAnalysis (flag as design debt)
 - **Option B**: Request Figma designs from PM/Designer before continuing
 
 ---
@@ -28,7 +28,7 @@ Before starting, ensure:
 
 ## 3. Deep-Dive Extraction Process
 
-> **Reference**: Full extraction steps in [`figma-automation.md`](../design/figma-automation.md)
+> **Reference**: Full extraction steps in [`figma-extraction-protocol.md`](../design/figma-extraction-protocol.md)
 
 ### Step 1: Node Selection
 
@@ -36,9 +36,25 @@ Before starting, ensure:
 2. If no node-id, call `mcp_figma-dev-mode-mcp-server_get_metadata` to list frames
 3. Match frames to feature areas described in spec
 
-### Step 2: Extract Design Context
+### Step 2: Structural Discovery (CRITICAL)
 
-For each relevant Figma frame, call `mcp_figma-dev-mode-mcp-server_get_design_context` and extract:
+> **Protocol**: The "2-Step Extraction Rule" applies here.
+
+1. **Call `get_metadata(nodeId)`**:
+   - Analyze the returned structure.
+   - **Check**: Does it contain `<symbol>` (variants) or `<instance>` children?
+   - **Decision**:
+     - **YES** (Complex): You MUST extract *each* child node individually in Next Step.
+     - **NO** (Simple): You may extract the parent node directly.
+
+### Step 3: Deep-Dive Extraction
+
+Execute based on Step 2 decision:
+
+- **For Simple Frames**: Call `get_design_context(parentNodeId)`
+- **For Component Sets**: Loop through child IDs and call `get_design_context(childNodeId)`
+
+**Extract the following for the complete set**:
 
 | Category | What to Extract |
 |----------|-----------------|
@@ -47,21 +63,22 @@ For each relevant Figma frame, call `mcp_figma-dev-mode-mcp-server_get_design_co
 | **Visual Tokens** | Colors, borders, shadows, typography |
 | **Component Instances** | Figma components that map to project components |
 | **Interactive States** | Hover, active, disabled, focused variants |
+| **Annotations** | `data-development-annotations` from *every* child variant |
 
-### Step 3: Responsive Design Review
+### Step 4: Responsive Design Review
 
 1. Identify viewport variants (Mobile, Tablet, Desktop)
 2. Extract each variant's layout and token differences
 3. Generate mobile-first responsive token mapping
 
-### Step 4: Extract Variables & Tokens
+### Step 5: Extract Variables & Tokens
 
 1. Call `mcp_figma-dev-mode-mcp-server_get_variable_defs` for semantic tokens
 2. Map Figma values to project design system:
    - Priority: Figma Variables > Style Names > Algorithmic match
 3. Flag any tokens not in project system
 
-### Step 5: Spatial Constraints Analysis
+### Step 6: Spatial Constraints Analysis
 
 > **Purpose**: LLMs understand tokens but struggle with spatial reasoning. This step captures scroll behavior, pinned elements, z-index relationships, and overlay patterns that cannot be inferred from token tables.
 
@@ -92,7 +109,7 @@ For each relevant Figma frame, call `mcp_figma-dev-mode-mcp-server_get_design_co
 | Frame with `FILL` height containing scrollable content | Scroll container | `flex-1 overflow-auto` |
 | Small frame at corner with high layer order | FAB | `fixed bottom-4 right-4 z-40` |
 
-### Step 5.5: Content Constraints Analysis
+### Step 7: Content Constraints Analysis
 
 > **Purpose**: Figma shows ideal content ("John Doe", 3 items). LLMs need to know how components behave with real-world variable content.
 
@@ -122,7 +139,7 @@ For each relevant Figma frame, call `mcp_figma-dev-mode-mcp-server_get_design_co
 | Tag list | Max 5 visible, +N more | Custom logic |
 | Long list | Virtualize after 50 | `react-virtual` or similar |
 
-### Step 5.6: Semantic Intent Analysis
+### Step 8: Semantic Intent Analysis
 
 > **Purpose**: Figma shows *appearance*; Product Specs define *behavior*. LLMs need both. This step cross-references visual elements with their behavioral intent.
 
@@ -172,13 +189,13 @@ For each relevant Figma frame, call `mcp_figma-dev-mode-mcp-server_get_design_co
 
 ---
 
-### Step 6: Asset Identification
+### Step 9: Asset Identification
 
 1. Detect image fills, vector graphics, icons
 2. Check against existing project assets
 3. Generate asset manifest for required exports
 
-### Step 7: Component Matching
+### Step 10: Component Matching
 
 1. List all Figma component instances
 2. Cross-reference with project `file-categorization.json`

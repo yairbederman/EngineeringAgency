@@ -44,13 +44,13 @@
 
 ### **D. Design Reference Check (Figma)**
 
-> **Purpose**: Quick validation that designs exist. Deep analysis happens in **DesignReview** phase.
+> **Purpose**: Quick validation that designs exist. Deep analysis happens in **DesignAnalysis** phase.
 
 **Quick Checks Only**:
 1. **Extract Figma Links**: List all Figma URLs found in the spec
 2. **Verify Accessibility**: Confirm each link is reachable via MCP
 3. **Coverage Check**: Note if any spec features lack Figma references
-4. **Defer Deep Analysis**: Component extraction, tokens, and responsive review happen in DesignReview
+4. **Defer Deep Analysis**: Component extraction, tokens, and responsive review happen in DesignAnalysis
 
 **Output**: Add to Gap Analysis Report:
 
@@ -63,12 +63,12 @@
 | GDS Modal | [node-id=456] | ✅ |
 | Mobile View | Not provided | ❌ Flag |
 
-> **Next Phase**: DesignReview will extract tokens, components, and responsive specs.
+> **Next Phase**: DesignAnalysis will extract tokens, components, and responsive specs.
 ```
 
 **No-Figma Handling**:
 - If spec has NO Figma links: Flag as 🟠 HIGH RISK
-- User can choose to skip DesignReview phase with acknowledgment
+- User can choose to skip DesignAnalysis phase with acknowledgment
 
 **Tool Failure Handling**:
 - If Figma is unreachable: Ask user for screenshot
