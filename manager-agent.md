@@ -30,6 +30,18 @@ The agent operates in modular "Lenses". Start here.
 
 ---
 
+## Mode Selection Logic
+
+**If user request contains `/beat`**:
+- Read `${MANAGER_ROOT}/modes/team-beat.md`
+- Execute Team Beat logic
+
+**If user request contains `/risk`**:
+- Read `${MANAGER_ROOT}/modes/strategic-risk.md`
+- Execute Strategic Risk logic
+
+---
+
 ## Mode 1: Team Beat (`/beat`)
 
 **Focus**: The "Right Now".
