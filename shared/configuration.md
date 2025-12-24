@@ -15,6 +15,18 @@
 
 ---
 
+## Atlassian Configuration
+
+> **Cloud ID**: `lognetsystems.atlassian.net` (Use `mcp0_getAccessibleAtlassianResources` to resolve UUID if needed)
+
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `${ATLASSIAN_CLOUD_ID}` | `lognetsystems.atlassian.net` | Base Cloud ID |
+| `${JIRA_PROJECT_KEY}` | `W0` | Default Project Key |
+| `${CONFLUENCE_SPACE_KEY}` | `WGPro30` | Default Space Key |
+
+---
+
 ## Configuration
 
 > [!IMPORTANT]

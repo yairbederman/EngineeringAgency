@@ -43,19 +43,14 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 
 ## Atlassian Configuration
 
-### Jira
+> **Source**: [shared/configuration.md](../shared/configuration.md)
+>
+> All Atlassian settings (Cloud ID, Jira Project Key, Confluence Space Key) are now centralized in the shared configuration file.
+
+### Confluence Folders
 
 | Variable | Setting | Value |
 |----------|---------|-------|
-| `${ATLASSIAN_CLOUD_ID}` | Cloud ID | `lognetsystems.atlassian.net` |
-| `${JIRA_PROJECT_KEY}` | Project Key | `W0` |
-| | Project Board | [W0 Board](https://lognetsystems.atlassian.net/jira/software/projects/W0) |
-
-### Confluence
-
-| Variable | Setting | Value |
-|----------|---------|-------|
-| `${CONFLUENCE_SPACE_KEY}` | Space Key | `WGPro30` |
 | `${PRODUCT_SPECS_FOLDER_ID}` | Product Specs Folder ID | `260177923` |
 | `${TECH_SPECS_FOLDER_ID}` | Tech Specs Folder ID | `259883024` |
 | | Product Specs URL | [Folder](https://lognetsystems.atlassian.net/wiki/spaces/WGPro30/folder/260177923) |
