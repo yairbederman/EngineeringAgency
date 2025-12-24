@@ -111,6 +111,11 @@ global_workflows/
 ├── system-architecture-agent.md      # Cross-project architecture generator
 └── system-architecture/              # Phase files for system docs
     └── configuration.md              # Output paths
+
+├── manager-agent.md                  # Engineering Lead's Co-Pilot
+└── manager/                          # Manager agent configuration
+    ├── configuration.md              # Manager settings
+    └── modes/                        # Manager modes (beat, risk, report)
 ```
 
 ---
@@ -144,6 +149,10 @@ See [`engineering/configuration.md`](engineering/configuration.md) for current J
 ┌─────────────────────────┐
 │   /engineering-agent    │  ← Daily feature work (uses all above)
 └─────────────────────────┘
+            ↓
+┌─────────────────────────┐
+│     /manager-agent      │  ← Oversight & Risk Management (observes all above)
+└─────────────────────────┘
 ```
 
 ### When to Run Each Workflow
@@ -153,6 +162,7 @@ See [`engineering/configuration.md`](engineering/configuration.md) for current J
 | `/map-codebase-agent` | Project structure changes significantly | `.ai-instructions/` in project |
 | `/system-architecture-agent` | New project added or major API changes | `system-architecture/` docs |
 | `/engineering-agent` | Any feature work, bug fixes | Jira tasks, code, tests |
+| `/manager-agent` | Daily standup, Weekly sync, Executive reporting | Risk reports, status briefs |
 
 ---
 
@@ -175,6 +185,12 @@ Run on a specific project when its structure changes.
 /system-architecture-agent
 ```
 Run after adding new projects or major cross-service changes.
+
+### Manager Oversight (Daily/Weekly)
+```
+/manager-agent
+```
+Run to check team pulse (`/beat`) or assess delivery risk (`/risk`).
 
 ---
 

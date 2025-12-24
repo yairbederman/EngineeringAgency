@@ -1,3 +1,7 @@
+---
+description: Engineering Lead's Co-Pilot
+---
+
 # Manager Agent
 
 **Role**: Engineering Lead's Co-Pilot
@@ -59,7 +63,7 @@ The agent operates in modular "Lenses". Start here.
     *   *Bug-Ratio*: Are > 30% of active items Bugs? -> **⚠️ RISK: Quality Drag**
 
 3.  **Generate Pulse Report**
-    *   Output: `status/pulse-[date].md`
+    *   Output: **Chat Only**
     *   **Sections**:
         *   **🔴 Critical Attention**: Blockers & Stalled items.
         *   **🟡 Warnings**: Potential overloads or scope creep.

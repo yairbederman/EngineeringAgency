@@ -48,7 +48,7 @@ The "Brain" of the Beat mode applies these rules to the raw data:
 
 ## 4. Output: Daily Pulse Report
 
-**File**: `${MANAGER_ROOT}/reports/pulse-{date}.md`
+**Output**: Present directly in Chat.
 
 ### Template
 
@@ -81,4 +81,4 @@ The "Brain" of the Beat mode applies these rules to the raw data:
 2.  **Jira Query**: Run `mcp0_searchJiraIssuesUsingJql`.
 3.  **Process Data**: Iterate through issues, applying heuristics in memory.
 4.  **Format Output**: Generate Markdown table.
-5.  **Present**: Save file and display summary in chat.
+5.  **Present**: Display summary table in chat using the template below.
