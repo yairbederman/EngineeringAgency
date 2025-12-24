@@ -234,47 +234,58 @@ Please specify which frame to use for task "[TaskName]":
 - Provide frame name
 ```
 
-### 2. The Recursive Extraction Protocol (MANDATORY)
+### 2. The Recursive Extraction Protocol (OPTIMIZED)
 
-> **Core Rule**: Figma's API truncates child data. You must fetch the Parent Metadata first, then **recursively** fetch Design Context for **every** child node.
+> **Core Rule**: Figma's API truncates child data. You must fetch the Parent Metadata first, then **recursively** fetch Design Context for **Container** children only.
 
-#### The Problem: Silent Truncation
-When you call `get_design_context` on a Parent Frame or Component Set, Figma **silently omits** `data-development-annotations` and detailed properties of its children (Variants). This results in missing behavioral logic (e.g., missed `onClick` triggers).
+#### The Problem: Silent Truncation & Rate Limits
+1.  **Truncation**: `get_design_context` on a Parent omits child details (annotations, behaviors).
+2.  **Rate Limits**: Recursively fetching *every* node triggers 429 errors on large files.
 
-#### The Solution: Parent-First → Child-Recursive Loop
+#### The Solution: Smart Recursion with Filtering
 
 **Step 1: Parent Metadata (Discovery)**
 - **Call**: `mcp_figma-dev-mode-mcp-server_get_metadata(parentNodeId)`
 - **Goal**: unique ID list of all children (Variants, nested Frames).
 
-**Step 2: Recursive Child Extraction (The Work)**
-**Step 2: Recursive Child Extraction (The Work)**
-- **Condition**: If the metadata shows children (Type: `symbol`, `instance`, `frame`, `group`).
-- **Protocol**: **Extract ALL Children**. Do not skip any variants.
-  - **Rationale**: Design systems often attach critical "development annotations" (state keys, test IDs, behaviors) to "visual" states like `Hover` or `Focus`. Skipping them causes data loss.
-  - **Action**: Loop through **EVERY** child ID found in Parent Metadata and call `mcp_figma-dev-mode-mcp-server_get_design_context`.
-  - **Aggregation**: Collect `data-development-annotations` and tokens from **ALL** extracted children.
+**Step 2: Recursive Child Extraction (Filtering & Throttling)**
+- **Protocol**:
+  1.  **Deduplication**: Maintain a global `visited_nodes` set. If `node-id` is in set, **SKIP**.
+  2.  **Type Filtering (CRITICAL)**:
+      -   **RECURSE ON**: `FRAME`, `COMPONENT`, `COMPONENT_SET`, `INSTANCE`, `GROUP`, `SECTION`, `SYMBOL`.
+      -   **SKIP (Do not fetch)**: `VECTOR`, `RECTANGLE`, `TEXT`, `ELLIPSE`, `LINE`, `STAR`, `REGULAR_POLYGON`.
+      -   *Rationale*: Primitives are fully described by the parent's context. Detailed "development annotations" are only critical on Containers.
+  3.  **Throttling**:
+      -   **Batch Size**: 1 (Serial execution to minimize concurrency spikes).
+      -   **Delay**: Wait **500ms** between every API call.
+      -   **429 Handling**: If error 429 received, sleep **10,000ms** (10s) and retry once.
 
-> [!NOTE]
-> **Performance vs. Accuracy**: We prioritize **Accuracy**. It is better to spend extra tokens fetching a "Hover" state than to miss a critical `onClick` or `state` annotation hidden within it.
+**Step 3: Execution Loop**
+-   Loop through children found in Step 1.
+-   Apply filtering rules.
+-   If valid container: `await sleep(500); get_design_context(childId)`.
+-   Collect `data-development-annotations` and tokens.
 
-**Step 3: Parent Context**
-- **Call**: `get_design_context(parentNodeId)`
-- **Goal**: Container layout and global positioning.
+**Step 3B: Special Handling for Component Sets (MANDATORY)**
+- If the identified node is a `COMPONENT_SET` (contains Variants):
+  - You **MUST** fetch `get_design_context` for **EVERY** Variant child (Type: `SYMBOL` or `COMPONENT`).
+  - **Reason**: Logic (state, triggers, actions) is physically located on the Variant nodes, not the Root.
+  - **Action**: Aggregate all found annotations into a "State Map" (e.g., Default vs. Select annotations) for the parent Component report.
 
-> [!CRITICAL]
-> **Recursion is NOT optional.**
-> You cannot "infer" the child state from the parent response. You must physically fetch the child node to see its annotations.
+**Step 4: Parent Context**
+-   **Call**: `get_design_context(parentNodeId)`
+-   **Goal**: Layout wrapper.
 
 #### Execution Logic Visualization
 ```
 1. GET Metadata(Parent)
-   └── Returns: [Child_A, Child_B, Child_C]
+   └── Returns: [Frame_A, Text_B, Vector_C, Instance_D]
 
 2. LOOP Children:
-   ├── GET Context(Child_A) → Found: "trigger=click"
-   ├── GET Context(Child_B) → Found: "state=hover"
-   └── GET Context(Child_C) → Found: "style=primary"
+   ├── Frame_A (Container)   → ⏳ Wait 500ms → 🟢 GET Context
+   ├── Text_B (Primitive)    → 🟡 SKIP (Primitive)
+   ├── Vector_C (Primitive)  → 🟡 SKIP (Primitive)
+   └── Instance_D (Container)→ ⏳ Wait 500ms → 🟢 GET Context
 
 3. GET Context(Parent)
    └── Returns: Layout wrapper
