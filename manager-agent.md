@@ -30,6 +30,7 @@ The agent operates in modular "Lenses". Start here.
 |------|---------|-------|---------|
 | **Team Beat** | `/beat` | Current Sprint / Active Epics | Tactical health check. "What is stuck today?" |
 | **Delivery Risk** | `/risk` | Key Initiatives | Mid-term projection. "Will we miss the deadline?" |
+| **Sprint Retro** | `/retro` | Completed Sprint | Managerial analysis. "Why did we miss Scope?" |
 | **Executive Brief** | `/report` | Portfolio | Weekly summary for upper management. |
 
 ---
@@ -43,6 +44,10 @@ The agent operates in modular "Lenses". Start here.
 **If user request contains `/risk`**:
 - Read `${MANAGER_ROOT}/modes/strategic-risk.md`
 - Execute Strategic Risk logic
+
+**If user request contains `/retro`**:
+- Read `${MANAGER_ROOT}/modes/sprint-retro.md`
+- Execute Sprint Retro logic
 
 ---
 
@@ -85,4 +90,18 @@ The agent operates in modular "Lenses". Start here.
 
 *(Placeholder for Future Expansion - Status Reporting)*
 *   Drafts email/Slack update
+*   Drafts email/Slack update
 *   Summarizes "Value Delivered" vs "Planned"
+
+---
+
+## Mode 4: Sprint Retro (`/retro`)
+
+**Focus**: The "After Action Review".
+**Input**: Recently closed Sprint.
+
+### Workflow Steps
+1.  **Dynamic Roster**: Find who actually worked (even if not in team list).
+2.  **Scope Creep**: Identify tickets added > Sprint Start.
+3.  **Accomplishments/Misses**: Per-user breakdown of shipped vs. stuck work.
+

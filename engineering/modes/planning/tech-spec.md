@@ -209,10 +209,11 @@ Fill `tech-spec.md` template with:
   1. Create a **Jira Task** under the Epic using `mcp0_createJiraIssue`.
      - `projectKey`: "${JIRA_PROJECT_KEY}"
      - `issueTypeName`: "Task"
-     - `parent`: [Epic Key]
+     - `parent`: [Epic Key] (Attempt to link during creation)
      - `summary`: "Tech Spec: [Feature Name]"
      - `description`: The full Tech Spec markdown content.
-  2. Treat this Jira Task URL as the "Tech Spec Artifact" for subsequent steps.
+  2. **CRITICAL**: Verify the newly created task is linked to the Epic. If not automatically linked, use `mcp0_editJiraIssue` to set the `parent` field to the Epic Key immediately.
+  3. Treat this Jira Task URL as the "Tech Spec Artifact" for subsequent steps.
 
 ### Step 7: Update Product Spec
 - Update Links table with Tech Spec link (mandatory)
