@@ -273,4 +273,8 @@ Before publishing, verify EVERY task has:
   - Jira Keys: [List of Keys]
   - By layer breakdown (e.g., "Database: 2, Service: 3, API: 2, Frontend: 4")
   - Dependency order confirmed: Task 1 → Task 2 → ... → Task N
-- **Next Step**: Implementation Mode (select a task to start)
+- **STOP** and wait for user instruction.
+
+> **⏸️ ACTION REQUIRED**: "Jira tasks have been created. Which task would you like to start implementing?"
+> - Wait for user to select a task (e.g., "Start with W0-1021").
+> - Do **NOT** auto-proceed to Execution Mode.
