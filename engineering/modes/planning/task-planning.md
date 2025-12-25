@@ -233,7 +233,27 @@ Before publishing, verify EVERY task has:
 - ✅ **Test Plan**: At least 2 cases, references Tech Spec § 5.5
 - ✅ **Steps**: Layer-appropriate implementation steps
 
-### Step 7: Publish to Jira
+### Step 7: Presentation & Gate (Proposed Plan)
+- **Present Plan**:
+  - List all tasks to be created (by Layer, with Titles)
+  - Show the dependency order
+  - Confirm context injection (e.g., "Frontend Tasks: 2 (with Figma), Backend Tasks: 3 (with API)")
+- **STOP** and request approval to create tasks in Jira.
+
+**Standard Approval Format**:
+```
+✅ **Task Plan Ready**
+- **Summary**: Proposed [N] tasks across [Database, Service, API, Frontend] layers.
+- **Action**: Awaiting approval to create Jira Tickets linked to Epic [Key].
+
+> **⏸️ APPROVAL REQUIRED**: Please review the proposed task list. Reply with:
+> - `Approve` to create Jira tickets
+> - `Revise` to change scope
+> - `Cancel` to abort
+```
+
+### Step 8: Publish to Jira (Execution)
+- **Condition**: Only proceed after user approval.
 - Create Jira Issues using `mcp0_createJiraIssue` with:
   - `projectKey`: "${JIRA_PROJECT_KEY}"
   - `issueTypeName`: "Task" or "Story"
@@ -242,28 +262,15 @@ Before publishing, verify EVERY task has:
   - `description`: Fully populated task template content (backend or frontend)
 - Add Tech Spec Confluence link to each task description
 
-### Step 8: Verify Links
+### Step 9: Verify Links
 - Use `mcp0_getJiraIssueRemoteIssueLinks` to verify:
   - All tasks linked to Epic (parent field)
   - All tasks reference Tech Spec Confluence page
 
-### Step 9: Presentation & Gate
+### Step 10: Final Readiness
 - **Display Summary**:
   - Total tasks created: [N]
+  - Jira Keys: [List of Keys]
   - By layer breakdown (e.g., "Database: 2, Service: 3, API: 2, Frontend: 4")
   - Dependency order confirmed: Task 1 → Task 2 → ... → Task N
-- **List All Tasks** with keys, titles, and layer
-- **STOP** and request approval
-
-**Standard Approval Format**:
-```
-✅ **TaskPlanning Complete**
-- **Artifact**: [List of Task Keys: ${JIRA_PROJECT_KEY}-XXX, ${JIRA_PROJECT_KEY}-YYY, ${JIRA_PROJECT_KEY}-ZZZ]
-- **Summary**: Created N atomic tasks with API signatures and UI guides
 - **Next Step**: Implementation Mode (select a task to start)
-
-> **⏸️ APPROVAL REQUIRED**: Please review the tasks in Jira. Reply with:
-> - `Approve` to begin implementation (then select a task)
-> - `Revise [feedback]` to adjust tasks
-> - `Cancel` to stop workflow
-```
