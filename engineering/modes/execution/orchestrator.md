@@ -71,6 +71,53 @@ Based on task labels, description, or file targets, determine implementation tra
 
 ---
 
+## Phase 0.6: Full-Stack Coordination Protocol (If Full-Stack Track)
+
+> **Purpose**: Ensure proper handoff between Backend and Frontend tracks to prevent stale contracts.
+
+### Pre-Execution Snapshot
+
+Before starting Backend track:
+1. **Capture Original Contract**: Save the API contract from Task description as `[TaskKey]_original_contract.json`
+2. **Note Frontend Dependencies**: List which Frontend elements depend on this API response
+
+### Backend-to-Frontend Handoff (MANDATORY)
+
+After Backend Completion (Phase 3B), before starting Frontend:
+
+1. **Contract Integrity Check**:
+   - Compare final implementation against `[TaskKey]_original_contract.json`
+   - **IF contract unchanged**: Proceed to Frontend track
+   - **IF contract changed**: Execute Contract Change Protocol below
+
+2. **Contract Change Protocol**:
+   ```
+   STOP before Frontend implementation.
+   
+   Document changes:
+   - Original: { response schema from task }
+   - Final: { actual implementation schema }
+   - Reason: [why it changed]
+   
+   Actions:
+   A) Update Task description with new contract
+   B) Notify user: "API contract changed during implementation. Frontend context refreshed."
+   C) Re-extract API contract for Frontend track context
+   ```
+
+3. **Frontend Context Refresh**:
+   - Re-read the (potentially updated) Task description
+   - Verify API response structure matches Frontend expectations
+   - Update any TypeScript interfaces/types to match new contract
+
+### Shared State Between Tracks
+
+| Artifact | Created By | Used By | Purpose |
+|----------|------------|---------|---------|
+| `[TaskKey]_original_contract.json` | Orchestrator | Backend, Handoff | Contract drift detection |
+| `[TaskKey]_final_contract.json` | Backend | Frontend | Actual implementation contract |
+| `[TaskKey]_api_response_sample.json` | Backend | Frontend | Mock data for frontend tests |
+
 ## Phase 1: Queue Management
 
 ### Step 1.1: Determine Scope

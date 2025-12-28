@@ -18,6 +18,7 @@ Enable rapid implementation of small, well-defined Jira Tasks without full plann
 | 4 | **Has Pattern** | References existing file or `${COPILOT_INSTRUCTIONS_PATH}` | Keyword scan |
 | 5 | **No Schema** | No DB migrations | Keyword: "migration" |
 | 6 | **No API Contract** | No new endpoints | Keyword: "new endpoint" |
+| 7 | **Single Service** | No cross-service dependencies | Check workspace URIs |
 
 ### Eligibility Check Logic
 
@@ -38,7 +39,13 @@ Enable rapid implementation of small, well-defined Jira Tasks without full plann
    → WARN: "No pattern reference found. Recommend adding one."
    → PROCEED with warning
 
-6. ELSE → PROCEED
+6. IF file paths span multiple workspace roots (e.g., wg-search-api AND wg-booking-api)
+   → REJECT: "Cross-service changes require full planning workflow and TechSpec."
+
+7. IF description contains "cross-service" OR "inter-service" OR "API call to [other-service]"
+   → REJECT: "Cross-service integration requires TechSpec for contract alignment."
+
+8. ELSE → PROCEED
 ```
 
 ---
@@ -114,4 +121,5 @@ If eligibility fails, suggest appropriate mode:
 | Too many files | TaskPlanning (split into sub-tasks) |
 | Has migrations | TechSpec |
 | Has API changes | TechSpec |
+| Cross-service | TechSpec (contract alignment required) |
 | Missing context | ProductSpecReview |
