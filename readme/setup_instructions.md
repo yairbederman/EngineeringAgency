@@ -1,33 +1,27 @@
-# Global Workflows
+# New Developer Setup
 
-AI agent workflows for code generation, architecture extraction, and feature lifecycle management.
-
----
-
-## 🚀 New Developer Setup
-
-### Prerequisites
+## Prerequisites
 
 - [ ] VS Code installed with an AI assistant extension (e.g., GitHub Copilot, Antigravity, Cursor)
 - [ ] Access to WG3 project repositories
 - [ ] Atlassian account (for Jira/Confluence integration)
 - [ ] Figma account (for design token extraction)
 
-### Step 0: Configure MCP Servers
+## Step 0: Configure MCP Servers
 
 The agents require two MCP (Model Context Protocol) servers for full functionality:
 
-#### Atlassian MCP Server (Required)
+### Atlassian MCP Server (Required)
 
 Provides Jira and Confluence integration for epics, tasks, and specs.
 
 - [ ] Install the Atlassian MCP server extension
 - [ ] Configure authentication with your Atlassian account
-- [ ] Verify access to the WG3 Jira project and Confluence space (see [`engineering/configuration.md`](engineering/configuration.md) for keys)
+- [ ] Verify access to the WG3 Jira project and Confluence space (see [`engineering/configuration.md`](../engineering/configuration.md) for keys)
 
 **Test**: Run `mcp_atlassian-mcp-server_atlassianUserInfo` to verify your connection.
 
-#### Figma MCP Server (Optional - Required for Frontend Tasks)
+### Figma MCP Server (Optional - Required for Frontend Tasks)
 
 Provides design token extraction for pixel-perfect UI implementation.
 
@@ -41,7 +35,7 @@ Provides design token extraction for pixel-perfect UI implementation.
 > MCP servers are configured in your VS Code settings or `.vscode/mcp.json`.
 > Ask your team lead for the MCP server configuration files.
 
-### Step 1: Clone Repositories
+## Step 1: Clone Repositories
 
 ```bash
 # 1. Create your workspace directory (choose your preferred location)
@@ -61,9 +55,9 @@ git clone <wg-cms-api-repo>
 git clone <this-repo> <YOUR_WORKFLOWS_PATH>
 ```
 
-### Step 2: Configure Workspace Root
+## Step 2: Configure Workspace Root
 
-- [ ] Open [`shared/configuration.md`](shared/configuration.md)
+- [ ] Open [`shared/configuration.md`](../shared/configuration.md)
 - [ ] Note down your local projects directory (this is your `WORKSPACE_ROOT`)
 
 | Platform | Example `WORKSPACE_ROOT` |
@@ -76,17 +70,17 @@ git clone <this-repo> <YOUR_WORKFLOWS_PATH>
 > All paths in the agents use variable substitution (e.g., `${WORKSPACE_ROOT}/wg-client`).
 > The agents resolve these at runtime based on your VS Code workspace.
 
-### Step 3: VS Code Workspace Setup
+## Step 3: VS Code Workspace Setup
 
 - [ ] Open VS Code
-- [ ] **File → Add Folder to Workspace...** for each project listed in [`shared/configuration.md`](shared/configuration.md)
+- [ ] **File → Add Folder to Workspace...** for each project listed in [`shared/configuration.md`](../shared/configuration.md)
 - [ ] **File → Save Workspace As...** → Save as `WG3.code-workspace`
 
-### Step 4: Verify Setup
+## Step 4: Verify Setup
 
 Run this quick verification:
 
-- [ ] All projects from [`shared/configuration.md`](shared/configuration.md) visible in VS Code Explorer sidebar
+- [ ] All projects from [`shared/configuration.md`](../shared/configuration.md) visible in VS Code Explorer sidebar
 - [ ] Each project has `.ai-instructions/` folder (if previously mapped)
 - [ ] Invoke `/engineering-agent` in your AI assistant to test
 
@@ -99,7 +93,10 @@ Run this quick verification:
 
 ```
 global_workflows/
-├── README.md                         # This file
+├── readme/
+│   ├── README.md                     # Entry point
+│   ├── setup_instructions.md         # This file
+│   └── agents_diagram.md             # Agent hierarchy and usage
 ├── shared/
 │   └── configuration.md              # 🔑 Project registry (SINGLE SOURCE OF TRUTH)
 │
@@ -116,9 +113,9 @@ global_workflows/
 │   └── configuration.md              # Output paths
 │
 ├── system-architecture-agent.md      # Cross-project architecture generator
-└── system-architecture/              # Phase files for system docs
-    └── configuration.md              # Output paths
-
+├── system-architecture/              # Phase files for system docs
+│   └── configuration.md              # Output paths
+│
 ├── manager-agent.md                  # Engineering Lead's Co-Pilot
 └── manager/                          # Manager agent configuration
     ├── configuration.md              # Manager settings
@@ -133,89 +130,18 @@ global_workflows/
 
 | File | What to Configure | When |
 |------|-------------------|------|
-| [`shared/configuration.md`](shared/configuration.md) | Add/remove projects | When new projects are added to the team |
-| [`engineering/configuration.md`](engineering/configuration.md) | Jira/Confluence settings | If Atlassian instance changes |
+| [`shared/configuration.md`](../shared/configuration.md) | Add/remove projects | When new projects are added to the team |
+| [`engineering/configuration.md`](../engineering/configuration.md) | Jira/Confluence settings | If Atlassian instance changes |
 
 ### Atlassian Configuration
 
-See [`engineering/configuration.md`](engineering/configuration.md) for current Jira/Confluence settings (project keys, space keys, folder IDs).
-
----
-
-## 🔄 Workflow Hierarchy
-
-```
-┌─────────────────────────┐
-│  /map-codebase-agent    │  ← Run per project (generates .ai-instructions/)
-└───────────┬─────────────┘
-            ↓
-┌─────────────────────────┐
-│/system-architecture-agent│ ← Run once (aggregates all projects)
-└───────────┬─────────────┘
-            ↓
-┌─────────────────────────┐
-│   /engineering-agent    │  ← Daily feature work (uses all above)
-└─────────────────────────┘
-            ↓
-┌─────────────────────────┐
-│     /manager-agent      │  ← Oversight & Risk Management (observes all above)
-└─────────────────────────┘
-```
-
-### When to Run Each Workflow
-
-| Workflow | Trigger | Output |
-|----------|---------|--------|
-| `/map-codebase-agent` | Project structure changes significantly | `.ai-instructions/` in project |
-| `/system-architecture-agent` | New project added or major API changes | `system-architecture/` docs |
-| `/engineering-agent` | Any feature work, bug fixes | Jira tasks, code, tests |
-| `/manager-agent` | Daily standup, Weekly sync, Executive reporting | Risk reports, status briefs |
-
----
-
-## ✅ Quick Start (Daily Use)
-
-### Start Feature Work
-```
-/engineering-agent
-```
-Guides you through: ProductSpecReview → DesignAnalysis → FeaturePlanning → TechSpec → TaskPlanning → Implementation
-
-### Approval Gates (7 Total)
-
-| # | Gate | Artifact | Action |
-|---|------|----------|--------|
-| 1 | ProductSpecReview | Gap Analysis | User selects option (post/answer/assume) |
-| 2 | DesignAnalysis | Design Report | Approve design tokens *(skip if no Figma)* |
-| 3 | FeaturePlanning | Jira Epic | Approve Epic |
-| 4 | TechSpec | Tech Spec → Jira Task | Approve + Inject to Jira |
-| 5a | TaskPlanning: Presentation | Proposed task list | Approve before Jira creation |
-| 5b | TaskPlanning: Pre-Impl | Traceability matrix | Confirm scope |
-| 5c | TaskPlanning: Final | Summary + handoff | Select first task |
-
-### Refresh Project Knowledge (When Needed)
-```
-/map-codebase-agent
-```
-Run on a specific project when its structure changes.
-
-### Refresh System Architecture (When Needed)
-```
-/system-architecture-agent
-```
-Run after adding new projects or major cross-service changes.
-
-### Manager Oversight (Daily/Weekly)
-```
-/manager-agent
-```
-Run to check team pulse (`/beat`) or assess delivery risk (`/risk`).
+See [`engineering/configuration.md`](../engineering/configuration.md) for current Jira/Confluence settings (project keys, space keys, folder IDs).
 
 ---
 
 ## ➕ Adding New Projects
 
-- [ ] Add project row to [`shared/configuration.md`](shared/configuration.md)
+- [ ] Add project row to [`shared/configuration.md`](../shared/configuration.md)
 - [ ] Run `/map-codebase-agent` on the new project
 - [ ] Run `/system-architecture-agent` to update cross-project docs
 - [ ] Add project folder to VS Code workspace
