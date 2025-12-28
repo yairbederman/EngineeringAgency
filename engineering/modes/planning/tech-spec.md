@@ -118,6 +118,20 @@ For **each affected project**:
 - Define **API contracts** if cross-service or frontend-backend communication needed
 - Specify **validation rules** (where validated: frontend, backend, or both)
 
+> [!CAUTION]
+> **Data Availability Verification (MANDATORY)**
+> For EACH required data field in the Epic, you MUST:
+> 1. **Search** for the field in frontend types/classes (e.g., `grep_search` for `fieldName`)
+> 2. **Verify** it EXISTS in the data model (class properties, type definitions)
+> 3. **Trace** the data path: API → Redux → Component
+> 
+> If field is **MISSING**:
+> - Mark as **BLOCKER** in Tech Spec
+> - Identify required change: Backend API addition OR frontend extraction
+> - Add to **Assumptions Log** with High Risk
+> 
+> Do NOT leave as `[INVESTIGATE]` TODO. Complete the investigation NOW.
+
 **For each Acceptance Criterion**:
 - Define **testability approach**: unit, integration, E2E
 - Map test to specific component/service
