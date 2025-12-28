@@ -107,10 +107,13 @@ Document at least ONE call chain for each detected flow:
 }
 ```
 
-### 4. Backend Cross-Project Dependency Verification (BLOCKING for Backend Projects)
+### 4. Cross-Project Dependency Verification (Conditional)
 
-> [!CAUTION]
-> **⛔ BLOCKING**: For backend projects, EVERY claimed cross-project dependency MUST be verified with code evidence before inclusion in `function-registry.json`.
+> [!IMPORTANT]
+> **Constraint**: This step applies based on the `detectedStack` from Phase 1.
+
+**IF `detectedStack.type` includes "Backend" (JVM, Python, Go, Node-Backend):**
+> **⛔ BLOCKING**: EVERY claimed cross-project dependency MUST be verified with code evidence.
 
 **Step 1: Detect HTTP Client Patterns** (Framework-Agnostic)
 
@@ -223,9 +226,11 @@ If a config key exists but NO active code usage is found:
 }
 ```
 
-### Entity Usage Map (MANDATORY for /engineering-agent TechSpec)
+### Entity Usage Map (Conditional Requirement)
 
-> **⛔ BLOCKING**: `_entityUsage` section MUST be present in `function-registry.json`. Omission is a Phase 4.5 gate failure.
+> **Constraint**: Required if `detectedStack` involves frontend/client logic or complex data flow.
+
+> **⛔ BLOCKING**: If required by stack, `_entityUsage` section MUST be present in `function-registry.json`.
 
 Build `_entityUsage` by cross-referencing:
 1. For EACH entity in `entity-contracts.json` with `kind: "class"` or frequently-used interfaces:

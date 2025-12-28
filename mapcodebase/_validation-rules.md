@@ -8,12 +8,12 @@ Run these checks after all phases complete to ensure extraction quality.
 
 ## Minimum Coverage Thresholds
 
-| Category | Minimum | Action if Below |
-|----------|---------|----------------|
-| Hooks | 80% | WARN and list undocumented files |
-| Classes | 70% | WARN and list undocumented files |
-| State Modules | 100% | FAIL extraction |
-| API Endpoints | 100% | FAIL extraction |
+| Category | Minimum | Action if Below | Condition |
+|----------|---------|-----------------|-----------|
+| Hooks | 80% | WARN and list undocumented files | IF `detectedStack.hasFrontend` |
+| Classes | 70% | WARN and list undocumented files | IF `detectedStack.hasBackend` |
+| State Modules | 100% | FAIL extraction | IF `detectedStack.hasStateManagement` |
+| API Endpoints | 100% | FAIL extraction | IF `detectedStack.hasAPI` |
 
 If threshold not met, output:
 - List of undocumented files
@@ -96,12 +96,12 @@ If count doesn't match external calls count → FAIL
 
 Compare `source-structure.json` counts against extraction results:
 
-| Source (Phase 1) | Extraction Output | Required Match |
-|------------------|-------------------|----------------|
-| `fileCount.classes` | `entity-contracts` entities with `kind: "class"` | ≥70% |
-| `fileCount.hooks.total` | `function-registry.hooks` count | ≥80% |
-| `fileCount.apis` | `api-contracts` endpoints (non-empty clients) | 100% |
-| `fileCount.state.slices` | `function-registry.stateModules` count | 100% |
+| Source (Phase 1) | Extraction Output | Required Match | Condition |
+|------------------|-------------------|----------------|-----------|
+| `fileCount.classes` | `entity-contracts` entities with `kind: "class"` | ≥70% | IF `stack.isObjectOriented` |
+| `fileCount.hooks.total` | `function-registry.hooks` count | ≥80% | IF `stack.hasHooks` |
+| `fileCount.apis` | `api-contracts` endpoints (non-empty clients) | 100% | IF `stack.hasAPI` |
+| `fileCount.state.slices` | `function-registry.stateModules` count | 100% | IF `stack.hasState` |
 
 **On Mismatch Detected**:
 1. DO NOT proceed to Phase 5
