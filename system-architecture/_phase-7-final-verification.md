@@ -111,7 +111,7 @@ documented_calls = cross-service-apis.json.crossServiceCalls.length
 
 For `${OUTPUT_FILE}`:
 1. Verify file exists
-2. Open in browser using `browser_subagent`:
+2. Open in browser using `${MCP_BROWSER_ACTION}`:
    - Navigate to `file:///${OUTPUT_ROOT}/${OUTPUT_FILE}`
    - Verify Mermaid diagrams render (no syntax errors)
    - Verify sidebar shows all projects

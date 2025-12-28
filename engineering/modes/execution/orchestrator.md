@@ -10,7 +10,7 @@
 
 **Inputs**:
 - **Target**: Task Key (e.g., `PROJ-123`) OR Epic Key (e.g., `PROJ-100`).
-- **Context**: The "Context-Rich Task" details (fetched via Jira `mcp0_getJiraIssue` or active memory).
+- **Context**: The "Context-Rich Task" details (fetched via Jira `${MCP_ATLASSIAN_GET_ISSUE}` or active memory).
 
 ---
 
@@ -21,7 +21,7 @@
 **Read**: `fast-track.md`
 
 IF user request is "Implement [TaskKey]" AND issueType is Task/Sub-task:
-1. Fetch task via `mcp0_getJiraIssue`
+1. Fetch task via `${MCP_ATLASSIAN_GET_ISSUE}`
 2. Run eligibility check (see `fast-track.md` criteria)
 3. **IF eligible** → Skip to Phase 2 (Execution Loop) with minimal context
 4. **IF not eligible** → Fall back to standard workflow (continue below)
@@ -73,6 +73,8 @@ Based on task labels, description, or file targets, determine implementation tra
 **Track-Specific Context**:
 - **Frontend** → Load `frontend.md` for Figma capture, visual verification
 - **Backend** → Load `backend.md` for API validation, service testing
+  - **Evidence**: List files checked for API contract
+
 
 ---
 
@@ -158,7 +160,7 @@ After Backend Completion (Phase 3B), before starting Frontend:
 ### Step 2.1: Context & Branching
 
 Execute in **PARALLEL** where possible:
-- Read the current task using `mcp0_getJiraIssue`
+- Read the current task using `${MCP_ATLASSIAN_GET_ISSUE}`
 - Read Target Files (if MODIFY action)
 - Read Reference Files (from Pattern Context)
 - Create git branch (if new): `git checkout -b feature/[TaskKey]-[Short-Summary]`
@@ -233,6 +235,8 @@ Before running tests, validate code quality:
 
 - **IF Frontend** → Execute Step 6F (Visual Verification) from `frontend.md`
 - **IF Backend** → Execute Step 6B (API Validation) from `backend.md`
+  - **Evidence**: List validation logic files
+
 
 ---
 
@@ -258,7 +262,7 @@ Run **All Related Tests** (not just new ones) to ensure no side effects:
 ### Step 3.2: Commit & Publish
 
 - **Commit**: Follow format in `./templates/commit-conventions.md`
-- **Jira Transition**: Update status to "In Review" via `mcp0_transitionJiraIssue`
+- **Jira Transition**: Update status to "In Review" via `${MCP_ATLASSIAN_TRANSITION_ISSUE}`
 
 ### Step 3.2.5: Artifact Cleanup (Full-Stack Only)
 
@@ -271,7 +275,7 @@ rm -f [TaskKey]_api_response_sample.json
 
 ### Step 3.3: Publish Completion to Jira (MANDATORY)
 
-Post implementation summary as comment using `mcp0_addCommentToJiraIssue`:
+Post implementation summary as comment using `${MCP_ATLASSIAN_ADD_COMMENT}`:
 - Branch name
 - Tests passed count
 - Deviations (if frontend)

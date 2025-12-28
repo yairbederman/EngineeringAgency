@@ -78,7 +78,7 @@ The "Brain" of the Beat mode applies these rules to the raw data:
 ## 5. Execution Steps for Agent
 
 1.  **Parse Request**: Identify project.
-2.  **Jira Query**: Run `mcp0_searchJiraIssuesUsingJql`.
+2.  **Jira Query**: Run `${MCP_ATLASSIAN_SEARCH_JQL}`.
 3.  **Process Data**: Iterate through issues, applying heuristics in memory.
 4.  **Format Output**: Generate Markdown table.
 5.  **Present**: Display summary table in chat using the template below.

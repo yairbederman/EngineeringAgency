@@ -37,7 +37,7 @@
   - [ ] Include validation rules and constraints
 - [ ] **Frontend Tasks**:
   - [ ] Check if Figma link exists in Epic
-  - [ ] If Figma exists: Use `mcp_figma-dev-mode-mcp-server_get_design_context` with node ID extracted from URL
+  - [ ] If Figma exists: Use `${MCP_FIGMA_GET_DESIGN}` with node ID extracted from URL
   - [ ] Extract Figma tokens: colors, spacing, typography, layout structure
   - [ ] Map Figma values to project tokens (from `tailwind.config.js` or theme files)
   - [ ] Populate "UI Implementation Guide" section with mapped tokens
@@ -60,7 +60,7 @@ Before publishing, verify EVERY task has:
 **Flow**:
 
 ### Step 1: Read Tech Spec (The Blueprint)
-- Fetch Tech Spec from Confluence using `mcp0_getConfluencePage`
+- Fetch Tech Spec from Confluence using `${MCP_ATLASSIAN_GET_PAGE}`
 - **Extract Key Sections**:
   - § 2 **Architecture & Patterns**: Per-project compliance, pattern reuse with file paths
   - § 5.3 **API Contracts**: Endpoint signatures, service methods with ownership
@@ -133,7 +133,7 @@ For **each layer** in order (Database → Service → API → Frontend → State
 
 **For Frontend Tasks**:
 1. **Check Figma** (from Epic):
-   - If Figma link exists in Epic: Use `mcp_figma-dev-mode-mcp-server_get_design_context` with node ID
+   - If Figma link exists in Epic: Use `${MCP_FIGMA_GET_DESIGN}` with node ID
    - Extract Figma tokens: colors, spacing, typography, layout structure
    - Map to project tokens (from `tailwind.config.js`)
 
@@ -254,7 +254,7 @@ Before publishing, verify EVERY task has:
 
 ### Step 8: Publish to Jira (Execution)
 - **Condition**: Only proceed after user approval.
-- Create Jira Issues using `mcp0_createJiraIssue` with:
+- Create Jira Issues using `${MCP_ATLASSIAN_CREATE_ISSUE}` with:
   - `projectKey`: "${JIRA_PROJECT_KEY}"
   - `issueTypeName`: "Task" or "Story"
   - `parent`: Epic key (to link tasks to Epic)
@@ -270,7 +270,7 @@ Before publishing, verify EVERY task has:
 
 
 ### Step 9: Verify Links
-- Use `mcp0_getJiraIssueRemoteIssueLinks` to verify:
+- Use `${MCP_ATLASSIAN_GET_ISSUE_LINKS}` to verify:
   - All tasks linked to Epic (parent field)
   - All tasks reference Tech Spec Confluence page
 
@@ -289,6 +289,8 @@ Before publishing, verify EVERY task has:
 
 - **Technical Readiness Checklist**:
   - [ ] Data availability verified in codebase
+    - **Evidence**: `path/to/entity.ts` checked
+
   - [ ] Aggregation methods exist or will be added
   - [ ] UI patterns identified
   - [ ] Design tokens mapped from Figma

@@ -147,7 +147,7 @@ Verify for each task type:
 
 **Frontend Task**:
 - [ ] Figma link checked in Epic
-- [ ] If Figma exists: `mcp_figma-dev-mode-mcp-server_get_design_context` called with correct node ID
+- [ ] If Figma exists: `${MCP_FIGMA_GET_DESIGN}` called with correct node ID
 - [ ] Figma tokens extracted and mapped to project tokens
 - [ ] "UI Implementation Guide" section fully populated
 
@@ -213,6 +213,12 @@ When information is unknown, use explicit placeholders:
 - [ ] Product Spec Confluence page has link to Tech Spec
 - [ ] All Tasks reference Epic (Jira parent field)
 - [ ] All Tasks reference Tech Spec (Confluence link in description)
+
+### Evidence Protocol (For "Verified" Checks)
+Any item marked as "Verified" must include a lightweight evidence block:
+- [ ] **Files Consulted**: List relative file paths
+- [ ] **URLs Read**: List Jira/Confluence/Figma URLs
+- [ ] **Visuals**: List Screenshots/Frames referenced (if UI)
 
 ---
 

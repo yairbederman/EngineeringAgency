@@ -114,7 +114,7 @@ useEffect(() => {
 
 IF visual evidence not already captured in BugReport:
 ```
-browser_subagent:
+`${MCP_BROWSER_ACTION}`:
   Task: "Navigate to [component URL], capture screenshot of buggy state"
   RecordingName: "[bugkey]_pre_fix"
 ```
@@ -125,7 +125,7 @@ Save to: `[BugKey]_pre_fix.png`
 
 After implementing fix:
 ```
-browser_subagent:
+`${MCP_BROWSER_ACTION}`:
   Task: "Navigate to [component URL], capture screenshot of fixed state"
   RecordingName: "[bugkey]_post_fix"
 ```
@@ -220,6 +220,8 @@ describe('<ComponentName />', () => {
    **Track**: Frontend
    **Tests**: [X] component tests passed
    **Visual**: Pre/post comparison verified
+   - **Evidence**: `[screenshot_pre.png]`, `[screenshot_post.png]`
+
    
    **Fix Summary**: [Brief description of what was fixed]
    **Root Cause**: [What caused the bug]

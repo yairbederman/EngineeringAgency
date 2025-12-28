@@ -257,6 +257,8 @@ Check before completion:
    **Track**: Backend
    **Tests**: [X] unit, [Y] integration passed
    **API**: [endpoint] verified
+   - **Evidence**: `curl` output or test result file
+
    
    **Fix Summary**: [Brief description of what was fixed]
    **Root Cause**: [What caused the bug]

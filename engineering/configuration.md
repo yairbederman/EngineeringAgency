@@ -100,27 +100,7 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 
 ## MCP Tool References
 
-### Atlassian (mcp0_*)
-
-| Tool | Purpose |
-|------|---------|
-| `mcp0_getConfluencePage` | Read Confluence pages |
-| `mcp0_createConfluencePage` | Create new Confluence pages |
-| `mcp0_updateConfluencePage` | Update Confluence pages |
-| `mcp0_createConfluenceFooterComment` | Add comments to pages |
-| `mcp0_getJiraIssue` | Read Jira issues |
-| `mcp0_createJiraIssue` | Create Jira issues (Epic/Task) |
-| `mcp0_editJiraIssue` | Update Jira issues |
-| `mcp0_addCommentToJiraIssue` | Add comments to issues |
-| `mcp0_transitionJiraIssue` | Change issue status |
-| `mcp0_searchJiraIssuesUsingJql` | Search issues with JQL |
-
-### Figma (mcp_figma-dev-mode-mcp-server_*)
-
-| Tool | Purpose |
-|------|---------|
-| `mcp_figma-dev-mode-mcp-server_get_design_context` | Extract design tokens from Figma frame |
-| `mcp_figma-dev-mode-mcp-server_get_screenshot` | Capture screenshot of Figma node |
-| `mcp_figma-dev-mode-mcp-server_get_metadata` | Get node metadata (structure overview) |
-| `mcp_figma-dev-mode-mcp-server_get_variable_defs` | Get variable definitions (colors, spacing) |
+> **Source**: [shared/mcp-config.md](../shared/mcp-config.md)
+>
+> All MCP tool references are now centralized in the shared MCP configuration file.
 

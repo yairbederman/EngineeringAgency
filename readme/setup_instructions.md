@@ -19,7 +19,7 @@ Provides Jira and Confluence integration for epics, tasks, and specs.
 - [ ] Configure authentication with your Atlassian account
 - [ ] Verify access to the WG3 Jira project and Confluence space (see [`engineering/configuration.md`](../engineering/configuration.md) for keys)
 
-**Test**: Run `mcp_atlassian-mcp-server_atlassianUserInfo` to verify your connection.
+**Test**: Run `${MCP_ATLASSIAN_GET_USER_INFO}` to verify your connection.
 
 ### Figma MCP Server (Optional - Required for Frontend Tasks)
 
@@ -29,7 +29,7 @@ Provides design token extraction for pixel-perfect UI implementation.
 - [ ] Configure authentication with your Figma account
 - [ ] Verify access to WG3 design files
 
-**Test**: Use `mcp_figma-dev-mode-mcp-server_get_design_context` on a Figma link to verify.
+**Test**: Use `${MCP_FIGMA_GET_DESIGN}` on a Figma link to verify.
 
 > [!TIP]
 > MCP servers are configured in your VS Code settings or `.vscode/mcp.json`.

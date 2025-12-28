@@ -33,7 +33,7 @@ Before starting, ensure:
 ### Step 1: Node Selection
 
 1. Parse Figma URLs from spec (extract node-id if present)
-2. If no node-id, call `mcp_figma-dev-mode-mcp-server_get_metadata` to list frames
+2. If no node-id, call `${MCP_FIGMA_GET_METADATA}` to list frames
 3. Match frames to feature areas described in spec
 
 ### Step 2: Structural Discovery (CRITICAL)
@@ -73,7 +73,7 @@ Execute based on Step 2 decision:
 
 ### Step 5: Extract Variables & Tokens
 
-1. Call `mcp_figma-dev-mode-mcp-server_get_variable_defs` for semantic tokens
+1. Call `${MCP_FIGMA_GET_VARS}` for semantic tokens
 2. Map Figma values to project design system:
    - Priority: Figma Variables > Style Names > Algorithmic match
 3. Flag any tokens not in project system
@@ -468,7 +468,7 @@ className="flex-col gap-2 p-4 md:flex-row md:gap-4 md:p-6 lg:gap-6 lg:p-8"
 
 ### MCP Tool Failure
 
-If `mcp_figma-dev-mode-mcp-server_get_design_context` fails:
+If `${MCP_FIGMA_GET_DESIGN}` fails:
 1. Request screenshot from user
 2. Perform visual analysis instead
 3. Mark report as `[MANUAL - from screenshot]`

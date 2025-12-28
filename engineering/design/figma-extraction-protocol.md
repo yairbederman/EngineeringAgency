@@ -26,7 +26,7 @@
 
 > **Purpose**: Document the expected response structure from Figma MCP tools to ensure accurate parsing.
 
-### `mcp_figma-dev-mode-mcp-server_get_design_context` Response
+### `${MCP_FIGMA_GET_DESIGN}` Response
 
 ```json
 {
@@ -174,7 +174,7 @@ If the Product Spec contains **multiple** Figma links/Node IDs:
 Does URL contain node-id?
 ├── YES → Use node ID directly → Go to Step 2
 └── NO
-    └── Call mcp_figma-dev-mode-mcp-server_get_metadata to list all frames on the page
+    └── Call `${MCP_FIGMA_GET_METADATA}` to list all frames on the page
         └── How many top-level frames?
             ├── 1 frame → Use that frame → Go to Step 2
             ├── 2-10 frames → Try automatic matching (Step 1C)
@@ -190,7 +190,7 @@ When multiple frames exist and **no explicit Node ID** was linked:
 
 2.  **Filter frame names** using fuzzy matching:
     ```
-    Frame list from mcp_figma-dev-mode-mcp-server_get_metadata:
+    Frame list from `${MCP_FIGMA_GET_METADATA}`:
     - "[FeatureName]"              ← EXACT MATCH
     - "[FeatureName]/Desktop"      ← VARIANT MATCH
     - "[FeatureName]/Mobile"       ← VARIANT MATCH
@@ -245,7 +245,7 @@ Please specify which frame to use for task "[TaskName]":
 #### The Solution: Smart Recursion with Filtering
 
 **Step 1: Parent Metadata (Discovery)**
-- **Call**: `mcp_figma-dev-mode-mcp-server_get_metadata(parentNodeId)`
+- **Call**: `${MCP_FIGMA_GET_METADATA}(parentNodeId)`
 - **Goal**: unique ID list of all children (Variants, nested Frames).
 
 **Step 2: Recursive Child Extraction (Filtering & Throttling)**
@@ -478,10 +478,10 @@ If Figma MCP can't access image data:
 
 **Step 2G.1: Call Variable Extraction**
 
-After extracting design context, call `mcp_figma-dev-mode-mcp-server_get_variable_defs` with the same node ID:
+After extracting design context, call `${MCP_FIGMA_GET_VARS}` with the same node ID:
 
 ```
-mcp_figma-dev-mode-mcp-server_get_variable_defs(nodeId: "[node-id]")
+`${MCP_FIGMA_GET_VARS}`(nodeId: "[node-id]")
 ```
 
 **Step 2G.2: Parse Variable Response**
@@ -537,7 +537,7 @@ Enhance the Token Mapping table with variable source:
 
 | Scenario | Action |
 |----------|--------|
-| `mcp_figma-dev-mode-mcp-server_get_variable_defs` fails | Proceed with Style Names and algorithmic matching |
+| `${MCP_FIGMA_GET_VARS}` fails | Proceed with Style Names and algorithmic matching |
 | No variables defined in Figma | Note: "Figma Variables not configured" |
 | Partial variables | Use available, fallback for rest |
 
@@ -551,10 +551,10 @@ Enhance the Token Mapping table with variable source:
 
 **Step 2H.1: Capture Design Screenshot**
 
-For each extracted frame, call `mcp_figma-dev-mode-mcp-server_get_screenshot`:
+For each extracted frame, call `${MCP_FIGMA_GET_SCREENSHOT}`:
 
 ```
-mcp_figma-dev-mode-mcp-server_get_screenshot(nodeId: "[node-id]")
+`${MCP_FIGMA_GET_SCREENSHOT}`(nodeId: "[node-id]")
 ```
 
 **Step 2H.2: Screenshot Capture Strategy**
@@ -608,7 +608,7 @@ When capturing, add inline annotations for:
 
 **Step 2I.1: Extract Component Variants (States)**
 
-From `mcp_figma-dev-mode-mcp-server_get_design_context` response, parse `variants` field:
+From `${MCP_FIGMA_GET_DESIGN}` response, parse `variants` field:
 
 ```json
 "variants": {
@@ -1355,7 +1355,7 @@ Before creating Frontend Jira task, verify ALL sections are populated:
 
 ### 1. MCP Tool Failure
 
-**If `mcp_figma-dev-mode-mcp-server_get_design_context` fails** (timeout, auth, unreachable):
+**If `${MCP_FIGMA_GET_DESIGN}` fails** (timeout, auth, unreachable):
 
 1. Add placeholder sections:
    ```markdown

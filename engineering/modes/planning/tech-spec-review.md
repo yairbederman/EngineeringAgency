@@ -19,8 +19,12 @@
 
 **Critical Rules**:
 1.  **Validation**: Every architecture decision must reference either:
-    - `${COPILOT_INSTRUCTIONS_PATH}` section, or
-    - Existing pattern from Context7
+    - A specific section from `${COPILOT_INSTRUCTIONS_PATH}`
+    - An existing pattern from Context7 (provide file path)
+    
+    > **Evidence Required**:
+    > - File paths consulted
+    > - Code snippets verified
 2.  **API Contracts**: Must define strict TypeScript interfaces for ALL endpoints/services
 3.  **Data Model**: Must define migration strategy if DB changes required
 4.  **No Guessing**: Use `[TBD – requires input from Backend]` if schema/API is unknown
@@ -30,7 +34,7 @@
 **Flow**:
 
 ### Step 1: Read and Deconstruct Epic (Understand Requirements)
-- Fetch Epic from Jira using `mcp0_getJiraIssue`
+- Fetch Epic from Jira using `${MCP_ATLASSIAN_GET_ISSUE}`
 - **Deconstruct Epic into Components**:
   - Extract all **Functional Flows** (Happy Path, Error paths, Edge cases)
   - Extract **Acceptance Criteria** (Given/When/Then scenarios)
@@ -143,16 +147,16 @@ For **each affected project**:
 > This ensures Tasks have all design context needed for pixel-perfect implementation.
 
 > [!TIP]
-> **Tool Priority**: Always prioritize **Figma MCP tools** (`mcp_figma-dev-mode-mcp-server_*`) over browser subagent.
+> **Tool Priority**: Always prioritize **Figma MCP tools** (`${MCP_FIGMA_GET_DESIGN}`, etc.) over browser subagent.
 > MCP provides structured data extraction (tokens, variables, component properties) directly.
 > Use browser subagent only as fallback when MCP is unavailable or for screenshot capture.
 
 **For EACH Figma Link in Epic**:
 
 1. **Extract via Figma MCP** (PREFERRED):
-   - Use `mcp_figma-dev-mode-mcp-server_get_design_context` to get component structure and tokens
-   - Use `mcp_figma-dev-mode-mcp-server_get_variable_defs` for design system variables
-   - Use `mcp_figma-dev-mode-mcp-server_get_screenshot` for visual reference
+   - Use `${MCP_FIGMA_GET_DESIGN}` to get component structure and tokens
+   - Use `${MCP_FIGMA_GET_VARS}` for design system variables
+   - Use `${MCP_FIGMA_GET_SCREENSHOT}` for visual reference
    - **Fallback**: If MCP unavailable, use browser subagent to navigate and capture
 
 2. **Extract Component Structure**:
@@ -190,7 +194,7 @@ For **each affected project**:
    > **Screenshot Quality Checklist** - Screenshots should enable pixel-perfect implementation:
    
    **Via Figma MCP** (PREFERRED):
-   - Use `mcp_figma-dev-mode-mcp-server_get_screenshot` with specific node ID
+   - Use `${MCP_FIGMA_GET_SCREENSHOT}` with specific node ID
    - This captures the exact component at proper resolution
    
    **Via Browser Subagent** (FALLBACK):
@@ -350,7 +354,7 @@ Fill `tech-spec.md` template with:
 **Condition**: Only proceed if the user explicitly confirms "Inject to Jira".
 
 **Create Jira Task (Epic Child)**:
-1. Create a **Jira Task** under the Epic using `mcp0_createJiraIssue`:
+1. Create a **Jira Task** under the Epic using `${MCP_ATLASSIAN_CREATE_ISSUE}`:
    - `projectKey`: "${JIRA_PROJECT_KEY}"
    - `issueTypeName`: "Task"
    - `parent`: [Epic Key]
@@ -360,8 +364,8 @@ Fill `tech-spec.md` template with:
 2. **Verify** the Task is linked as a child of the Epic.
 
 **Link Back (Bidirectional Traceability)**:
-- Update Product Spec Links table with Tech Spec Jira link via `mcp0_createConfluenceFooterComment`.
-- Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link.
+- Update Product Spec Links table with Tech Spec Jira link via `${MCP_ATLASSIAN_ADD_FOOTER_COMMENT}`.
+- Update Epic description using `${MCP_ATLASSIAN_EDIT_ISSUE}` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link.
 
 ### Step 8: Standard Approval & Gate
 

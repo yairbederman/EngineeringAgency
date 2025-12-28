@@ -97,7 +97,7 @@ Proceed with the task using the loaded context and mode-specific rules.
     - **🟠 HIGH RISK**: Likely to cause rework (e.g., ambiguous edge cases).
     - **🟢 LOW RISK**: Minor clarifications.
   - **User Options**:
-    - **Option A**: Post questions to Confluence using `mcp0_createConfluenceFooterComment` and wait for PM response
+    - **Option A**: Post questions to Confluence using `${MCP_ATLASSIAN_ADD_FOOTER_COMMENT}` and wait for PM response
     - **Option B**: User provides answers directly in chat
     - **Option C**: Proceed with provisional assumptions (see Assumption Logging Protocol in `product-spec-review.md` § 6)
 - **Gate**: STOP until user selects an option
@@ -125,7 +125,7 @@ Proceed with the task using the loaded context and mode-specific rules.
 #### After FeaturePlanning
 - **Artifact**: Jira Epic
 - **Action**:
-  - Create Epic using `mcp0_createJiraIssue`
+  - Create Epic using `${MCP_ATLASSIAN_CREATE_ISSUE}`
   - Update Product Spec Confluence page's Links section with Epic link
   - If assumptions were logged, Epic must include "Assumptions Log" section and `needs-validation` label
 - **Gate**: STOP until user approves Epic
@@ -136,9 +136,9 @@ Proceed with the task using the loaded context and mode-specific rules.
 - **Action (Conditional)**:
   - **MANDATORY**: Ask the user if they want to "Inject to Jira" (create as Epic child Task).
   - **DO NOT** perform the following unless explicitly authorized:
-    - Create Jira Task under Epic using `mcp0_createJiraIssue`
+    - Create Jira Task under Epic using `${MCP_ATLASSIAN_CREATE_ISSUE}`
     - Update Product Spec Confluence page's Links section with Tech Spec Task link
-    - Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link
+    - Update Epic description using `${MCP_ATLASSIAN_EDIT_ISSUE}` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link
 
 #### After TaskPlanning (3 Internal Gates)
 
@@ -170,7 +170,7 @@ TaskPlanning has **three sequential gates** before proceeding to Implementation:
   - [ ] Pattern Context with **Reference File** path and **Rationale**
   
   **For Frontend Tasks**:
-  - [ ] **MANDATORY**: If Epic contains Figma link, extract tokens using `mcp1_get_design_context`
+  - [ ] **MANDATORY**: If Epic contains Figma link, extract tokens using `${MCP_FIGMA_GET_DESIGN}`
   - [ ] **UI Implementation Guide** section populated with:
     - Structure description (e.g., "Flex-col layout")
     - Key Tokens: Background, Spacing, Typography, Colors, Borders/Shadows

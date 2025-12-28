@@ -59,7 +59,7 @@ Enable rapid implementation of small, well-defined Jira Tasks without full plann
 ### Step 1: Read Task
 
 ```
-mcp0_getJiraIssue(key)
+${MCP_ATLASSIAN_GET_ISSUE}(key)
 ```
 
 Extract:
@@ -99,8 +99,8 @@ Standard TDD loop with mandatory static analysis:
 
 1. **Run tests**: All related tests must pass
 2. **Commit**: `[${JIRA_PROJECT_KEY}-XXX] [Summary]`
-3. **Jira**: Transition to "In Review" via `mcp0_transitionJiraIssue`
-4. **Comment**: Post implementation summary via `mcp0_addCommentToJiraIssue`
+3. **Jira**: Transition to "In Review" via `${MCP_ATLASSIAN_TRANSITION_ISSUE}`
+4. **Comment**: Post implementation summary via `${MCP_ATLASSIAN_ADD_COMMENT}`
 
 ---
 

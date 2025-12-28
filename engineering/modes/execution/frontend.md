@@ -16,7 +16,7 @@
    ```
    STOP. Return to TaskPlanning mode or generate now:
    "This frontend task requires a UI Implementation Guide. Options:
-   A) Run Figma extraction: mcp_figma-dev-mode-mcp-server_get_design_context
+    A) Run Figma extraction: `${MCP_FIGMA_GET_DESIGN}`
    B) Return to TaskPlanning to add UI context"
    ```
 
@@ -41,21 +41,21 @@ Parse from UI Implementation Guide's "Figma Reference" field:
 ### Step B: Capture Design Screenshot
 
 ```
-mcp_figma-dev-mode-mcp-server_get_screenshot(nodeId: "[node-id]")
+`${MCP_FIGMA_GET_SCREENSHOT}`(nodeId: "[node-id]")
 ```
 
 Save to artifacts: `[TaskKey]_figma_reference.png`
 
 ### Step C: Extract Design Dimensions
 
-From `mcp_figma-dev-mode-mcp-server_get_design_context`:
+From `${MCP_FIGMA_GET_DESIGN}`:
 - Width: `[X]px`
 - Height: `[Y]px`
 - Sets expected viewport for browser comparison
 
 ### Fallback
 
-If `mcp_figma-dev-mode-mcp-server_get_screenshot` fails:
+If `${MCP_FIGMA_GET_SCREENSHOT}` fails:
 ```markdown
 > ⚠️ Figma screenshot unavailable. Visual comparison based on Token Mapping table only.
 ```
@@ -220,7 +220,7 @@ If implementation differs from Figma:
 
 For significant UI implementations:
 ```
-browser_subagent:
+`${MCP_BROWSER_ACTION}`:
   Task: "Navigate to [URL], demonstrate [user flow], capture recording"
   RecordingName: "[taskkey]_user_flow"
 ```

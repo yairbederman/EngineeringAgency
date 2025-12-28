@@ -68,10 +68,10 @@ Rules:
 
 1.  **Extract, Don't Guess**: Use Figma MCP to read the frame properties.
 
-2.  **Extract Variables First**: Call `mcp_figma-dev-mode-mcp-server_get_variable_defs` to get designer-defined semantic tokens (highest priority).
+2.  **Extract Variables First**: Call `${MCP_FIGMA_GET_VARS}` to get designer-defined semantic tokens (highest priority).
 
 3.  **Capture Screenshots (Visual Grounding)**:
-    - Call `mcp_figma-dev-mode-mcp-server_get_screenshot` for each frame
+    - Call `${MCP_FIGMA_GET_SCREENSHOT}` for each frame
     - Embed screenshots in Design Review Report and Task descriptions
     - Add visual annotations for pinned elements, scroll areas, visual rhythm
     - **Strict Rule**: LLMs need to "see" the design, not just parse tokens
@@ -106,7 +106,7 @@ Rules:
 **Workflow**:
 
 1. **Extract Component Instances from Figma**:
-   - When `mcp_figma-dev-mode-mcp-server_get_design_context` returns component instances, extract their names
+   - When `${MCP_FIGMA_GET_DESIGN}` returns component instances, extract their names
    - Common patterns: `Button/Primary`, `Icon/Search`, `Avatar/Medium`, `Card/Default`
 
 2. **Cross-Reference with Project Component Registry**:
@@ -405,3 +405,20 @@ Read task → Check eligibility → PROCEED or REJECT with guidance
 ```
 
 **If NOT eligible**: Reject with specific guidance (e.g., "Task has migrations, needs TechSpec").
+
+### 2.7 Evidence Protocol (MANDATORY)
+
+Whenever you state that a fact, assumption, or code path has been **"verified"**, you **MUST** provide a lightweight evidence block immediately following the statement.
+
+**Format**:
+```markdown
+**Evidence**:
+- **Files**: `src/path/to/file.ts` (checked line 45)
+- **URLs**: `[Jira Key](url)`
+- **Visuals**: `[screenshot_name.png]`
+```
+
+**triggers**:
+- "Verified against codebase"
+- "Checked existing patterns"
+- "Validated schema"
