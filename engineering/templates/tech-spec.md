@@ -6,6 +6,26 @@
 
 ---
 
+## 0. Quick Reference
+
+### Component Summary
+
+| Project | Component | Type | Action |
+|---------|-----------|------|--------|
+| `[project-name]` | `[ComponentName]` | [React Component / Service / Controller / Entity / Class] | NEW |
+| `[project-name]` | `[ClassName]` | [Class / Service] | MODIFY (add method) |
+| `[project-name]` | `[ServiceName]` | [Service] | MODIFY |
+
+### Step-by-Step Flow
+
+```
+1. [Trigger] → [Component/Action]
+2. [Component] calls [Method/Service] → [Result]
+3. [Data] formatted + [Final Action]
+```
+
+---
+
 ## 1. Epic Deconstruction (Requirements Summary)
 
 ### Functional Flows

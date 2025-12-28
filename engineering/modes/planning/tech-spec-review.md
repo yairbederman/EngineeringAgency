@@ -15,8 +15,7 @@
 
 **Output**:
 - **Tech Spec**: Detailed Markdown content for user review.
-- **Confluence Page (Optional)**: Published ONLY after explicit user authorization.
-- **Confluence Update (Optional)**: Product Spec updated ONLY after explicit user authorization.
+- **Jira Task**: Created as Epic child after user approval of the content.
 
 **Critical Rules**:
 1.  **Validation**: Every architecture decision must reference either:
@@ -344,21 +343,13 @@ Fill `tech-spec.md` template with:
 
 1. Display the full Tech Spec markdown in the chat.
 2. Explicitly ask for approval of the content.
-3. **MANDATORY**: Ask if the user wants to "Inject to Atlassian" (Confluence/Jira).
+3. **MANDATORY**: Ask if the user wants to "Inject to Jira" (create as Epic child Task).
 
-### Step 7: Inject to Atlassian (ONLY IF AUTHORIZED)
+### Step 7: Inject to Jira (ONLY IF AUTHORIZED)
 
-**Condition**: Only proceed if the user explicitly confirms "Inject to Atlassian".
+**Condition**: Only proceed if the user explicitly confirms "Inject to Jira".
 
-**Option A: Confluence (Primary)**
-- Use `mcp0_createConfluencePage` with:
-  - `cloudId`: Extract from workspace context
-  - `spaceId`: ${CONFLUENCE_SPACE_KEY} space ID
-  - `parentId`: `${TECH_SPECS_FOLDER_ID}` (Tech Specs folder)
-  - `title`: "Tech Spec: [Feature Name]"
-  - `body`: Generated tech spec content (markdown)
-
-**Option B: Jira Task (Fallback - IF authorized but Confluence fails)**
+**Create Jira Task (Epic Child)**:
 1. Create a **Jira Task** under the Epic using `mcp0_createJiraIssue`:
    - `projectKey`: "${JIRA_PROJECT_KEY}"
    - `issueTypeName`: "Task"
@@ -366,11 +357,11 @@ Fill `tech-spec.md` template with:
    - `summary`: "Tech Spec: [Feature Name]"
    - `description`: The full Tech Spec markdown content
    - `additional_fields`: `{"customfield_10225": {"id": "10635"}}` (Cross-Project Impact = None)
-2. **Verify** linking.
+2. **Verify** the Task is linked as a child of the Epic.
 
 **Link Back (Bidirectional Traceability)**:
-- Update Product Spec Links table with Tech Spec link via `mcp0_createConfluenceFooterComment`.
-- Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec link.
+- Update Product Spec Links table with Tech Spec Jira link via `mcp0_createConfluenceFooterComment`.
+- Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link.
 
 ### Step 8: Standard Approval & Gate
 

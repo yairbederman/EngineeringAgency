@@ -321,5 +321,5 @@ Before publishing, verify EVERY task has:
 - **STOP** and wait for user instruction.
 
 > **⏸️ ACTION REQUIRED**: "Jira tasks have been created. Which task would you like to start implementing?"
-> - Wait for user to select a task (e.g., "Start with W0-1021").
+> - Wait for user to select a task (e.g., "Start with ${JIRA_PROJECT_KEY}-XXX").
 > - Do **NOT** auto-proceed to Execution Mode.

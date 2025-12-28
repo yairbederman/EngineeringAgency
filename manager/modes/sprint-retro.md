@@ -64,15 +64,15 @@ For each user in the **Dynamic Roster**:
 
 | Key | Created | Type | Assignee | Impact |
 |-----|---------|------|----------|--------|
-| [W0-1011] | [Date] | Bug | Shiran | 🔴 Sprint Crash |
+| [${JIRA_PROJECT_KEY}-XXXX] | [Date] | Bug | [Assignee] | 🔴 Sprint Crash |
 
 ## 2. 👥 Team Performance (Accomplishments vs Misses)
 
 ### 👤 [User Name]
 *   **🏆 Accomplishments**:
-    *   `W0-889`: Markup TF (Ready for QA)
+    *   `${JIRA_PROJECT_KEY}-XXX`: [Task Name] (Ready for QA)
 *   **🥀 Misses**:
-    *   `W0-896`: Search API (Blocked by Env)
+    *   `${JIRA_PROJECT_KEY}-XXX`: [Task Name] (Blocked by Env)
 *   **🐛 Quality**: Fixed 2 bugs, Created 0.
 
 ### 👤 [Next User...]

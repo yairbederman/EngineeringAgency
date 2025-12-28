@@ -388,3 +388,20 @@ If any of the above is missing:
   - ProductSpecReview, or
   - FeaturePlanning, or
   - TechSpec
+
+### 2.6 Fast Track Bypass (Small Tasks)
+
+**Read**: `${AGENT_ROOT}/modes/execution/fast-track.md`
+
+You may bypass Planning modes IF all conditions are met:
+
+1. **Trigger**: User provides a Jira Task key (not Epic) with "implement", "fix", or "build"
+2. **Issue Type**: Task or Sub-task (verified via `mcp0_getJiraIssue`)
+3. **Eligibility**: Task meets all criteria in `fast-track.md`
+
+**Fast Track Entry**:
+```
+Read task → Check eligibility → PROCEED or REJECT with guidance
+```
+
+**If NOT eligible**: Reject with specific guidance (e.g., "Task has migrations, needs TechSpec").

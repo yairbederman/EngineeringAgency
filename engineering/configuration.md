@@ -29,7 +29,11 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 | Feature Planning | `modes/planning/feature-planning.md` |
 | Tech Spec | `modes/planning/tech-spec-review.md` |
 | Task Planning | `modes/planning/task-planning.md` |
-| Implementation | `modes/implementation.md` |
+| **Fast Track** | `modes/execution/fast-track.md` |
+| **Execution** | |
+| Execution (Orchestrator) | `modes/execution/orchestrator.md` |
+| Execution Backend Track | `modes/execution/backend.md` |
+| Execution Frontend Track | `modes/execution/frontend.md` |
 | BugFix | `modes/bugfix.md` |
 | Figma Extraction Protocol | `design/figma-extraction-protocol.md` |
 | Cross-Project | `modes/cross-project.md` |

@@ -39,6 +39,7 @@ Load from configuration.md:
 ### 2. Identify Mode
 
 Determine which mode the user wants:
+- **Fast Track**: Small Jira Task implementation (bypasses planning)
 - **Planning**: ProductSpecReview, DesignAnalysis, FeaturePlanning, TechSpec, TaskPlanning
 - **Implementation**: Implementation, Testing
 - **BugFix**: BugReport, BugFix
@@ -133,15 +134,19 @@ Proceed with the task using the loaded context and mode-specific rules.
 - **Artifact**: Tech Spec Markdown content
 - **Gate**: **STOP**. Present the generated Tech Spec content to the user.
 - **Action (Conditional)**:
-  - **MANDATORY**: Ask the user if they want to "Inject to Atlassian" (Confluence/Jira).
+  - **MANDATORY**: Ask the user if they want to "Inject to Jira" (create as Epic child Task).
   - **DO NOT** perform the following unless explicitly authorized:
-    - Create Confluence page using `mcp0_createConfluencePage` (parent ID: 259883024)
-    - Update Product Spec Confluence page's Links section with Tech Spec link
-    - Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec link
+    - Create Jira Task under Epic using `mcp0_createJiraIssue`
+    - Update Product Spec Confluence page's Links section with Tech Spec Task link
+    - Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link
 
-#### After TaskPlanning
-- **Artifact**: List of Jira Tasks
-- **Pre-Creation Validation** (MANDATORY - Run BEFORE creating Jira tasks):
+#### After TaskPlanning (3 Internal Gates)
+
+TaskPlanning has **three sequential gates** before proceeding to Implementation:
+
+**Gate 5a: Presentation Gate (Step 7)**
+- **Artifact**: Proposed task list with dependency order
+- **Validation**: Pre-Creation Validation (Run BEFORE creating Jira tasks):
   
   **For EVERY Task, verify the following checklist is complete**:
   
@@ -180,7 +185,7 @@ Proceed with the task using the loaded context and mode-specific rules.
   - [ ] Test file path specified
   
   **5. Dependencies Section (REQUIRED)**:
-  - [ ] Format: "Depends On: Task X (W0-XXX): [Description] ([Layer])"
+  - [ ] Format: "Depends On: Task X (${JIRA_PROJECT_KEY}-XXX): [Description] ([Layer])"
   - [ ] OR "Depends On: None (first layer)" if no dependencies
   
   **6. Pattern Context (REQUIRED)**:
@@ -190,14 +195,22 @@ Proceed with the task using the loaded context and mode-specific rules.
   
   **7. Acceptance Criteria (REQUIRED)**:
   - [ ] Copy relevant Gherkin scenario from Epic that this task addresses
-  
+
+- **Gate**: STOP → User approves task list before Jira creation
+
+**Gate 5b: Pre-Implementation Gate (Step 10)**
+- **Trigger**: After Jira tasks are created (Step 8) and links verified (Step 9)
+- **Artifact**: Traceability Matrix + Technical Readiness Checklist
 - **Action**:
-  - **ONLY AFTER** all validation checks pass for all tasks:
-  - Create Tasks using `mcp0_createJiraIssue` (linked to Epic as parent)
-  - **REQUIRED FIELD**: Set `additional_fields: {"customfield_10225": {"id": "10635"}}` (Cross-Project Impact) for ALL tasks
-  - Ensure all task descriptions reference Tech Spec URL
-  - Use task template from `${AGENT_ROOT}/templates/task.md`
-- **Gate**: STOP until user approves Tasks
+  - Generate Epic → Tech Spec → Task traceability matrix
+  - Verify scope boundaries (In Scope vs Out of Scope)
+  - Complete technical readiness checklist
+- **Gate**: STOP → User confirms scope before implementation
+
+**Gate 5c: Final Readiness (Step 11)**
+- **Artifact**: Summary with task keys, layer breakdown, dependency order
+- **Action**: Display final summary and handoff
+- **Gate**: STOP → User selects first task to implement (do NOT auto-proceed)
 
 ---
 
@@ -225,7 +238,7 @@ Maintain **Bidirectional Traceability** between Product Spec, Epic, and Tech Spe
 ### Linking Rules (MANDATORY)
 
 1. **Product Spec Page**: Must contain links to:
-   - **Epic**: `[W0-XXX](Epic URL)`
+   - **Epic**: `[${JIRA_PROJECT_KEY}-XXX](Epic URL)`
    - **Tech Spec**: `[Tech Spec Title](Tech Spec URL)`
 
 2. **Jira Epic**: Must contain links to:

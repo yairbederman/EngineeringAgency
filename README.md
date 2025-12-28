@@ -8,7 +8,7 @@ AI agent workflows for code generation, architecture extraction, and feature lif
 
 ### Prerequisites
 
-- [ ] VS Code installed with GitHub Copilot extension
+- [ ] VS Code installed with an AI assistant extension (e.g., GitHub Copilot, Antigravity, Cursor)
 - [ ] Access to WG3 project repositories
 - [ ] Atlassian account (for Jira/Confluence integration)
 - [ ] Figma account (for design token extraction)
@@ -54,8 +54,11 @@ git clone <wg-client-repo>
 git clone <wg-cms-api-repo>
 # ... etc.
 
-# 3. Clone this workflows repository
-git clone <this-repo> ~/.gemini/antigravity/global_workflows
+# 3. Clone this workflows repository to your preferred location
+# Common locations:
+#   - Antigravity: ~/.gemini/antigravity/global_workflows
+#   - General: ~/ai-workflows or C:\ai-workflows
+git clone <this-repo> <YOUR_WORKFLOWS_PATH>
 ```
 
 ### Step 2: Configure Workspace Root
@@ -85,7 +88,10 @@ Run this quick verification:
 
 - [ ] All projects from [`shared/configuration.md`](shared/configuration.md) visible in VS Code Explorer sidebar
 - [ ] Each project has `.ai-instructions/` folder (if previously mapped)
-- [ ] Type `/engineering-agent` in Copilot chat to test
+- [ ] Invoke `/engineering-agent` in your AI assistant to test
+
+> [!NOTE]
+> These workflows work with any AI assistant that supports slash commands and MCP (Model Context Protocol).
 
 ---
 
@@ -101,6 +107,7 @@ global_workflows/
 ├── engineering/                      # Configuration & mode files
 │   ├── configuration.md              # 🔧 Atlassian config (Jira/Confluence)
 │   ├── core-rules.md                 # Agent behavior rules
+│   ├── design/                       # Figma extraction protocol
 │   ├── modes/                        # Mode-specific instructions
 │   └── templates/                    # Epic, Tech Spec, Task templates
 │
@@ -172,7 +179,19 @@ See [`engineering/configuration.md`](engineering/configuration.md) for current J
 ```
 /engineering-agent
 ```
-Guides you through: ProductSpecReview → FeaturePlanning → TechSpec → Implementation
+Guides you through: ProductSpecReview → DesignAnalysis → FeaturePlanning → TechSpec → TaskPlanning → Implementation
+
+### Approval Gates (7 Total)
+
+| # | Gate | Artifact | Action |
+|---|------|----------|--------|
+| 1 | ProductSpecReview | Gap Analysis | User selects option (post/answer/assume) |
+| 2 | DesignAnalysis | Design Report | Approve design tokens *(skip if no Figma)* |
+| 3 | FeaturePlanning | Jira Epic | Approve Epic |
+| 4 | TechSpec | Tech Spec → Jira Task | Approve + Inject to Jira |
+| 5a | TaskPlanning: Presentation | Proposed task list | Approve before Jira creation |
+| 5b | TaskPlanning: Pre-Impl | Traceability matrix | Confirm scope |
+| 5c | TaskPlanning: Final | Summary + handoff | Select first task |
 
 ### Refresh Project Knowledge (When Needed)
 ```

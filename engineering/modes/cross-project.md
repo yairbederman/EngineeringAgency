@@ -30,7 +30,7 @@ Tasks across projects must be ordered by dependency layer:
 
 - Each project gets its own feature branch
 - Format: `feature/[EpicKey]-[project-name]`
-- Example: `feature/W0-123-wg-data-api`, `feature/W0-123-wg-client`
+- Example: `feature/${JIRA_PROJECT_KEY}-XXX-[project-name]`, `feature/${JIRA_PROJECT_KEY}-XXX-[project-name]`
 
 ---
 

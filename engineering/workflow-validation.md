@@ -1,8 +1,8 @@
-# Lognet Workflow – Quality Validation Checklist
+# Engineering Agent – Quality Validation Checklist
 
 ## Purpose
 
-This document defines quality gates for each mode in the Lognet workflow. Use this checklist before completing any mode to ensure artifact quality and completeness.
+This document defines quality gates for each mode in the Engineering Agent workflow. Use this checklist before completing any mode to ensure artifact quality and completeness.
 
 ---
 
