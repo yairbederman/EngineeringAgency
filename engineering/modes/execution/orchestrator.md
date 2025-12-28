@@ -26,10 +26,15 @@ IF user request is "Implement [TaskKey]" AND issueType is Task/Sub-task:
 3. **IF eligible** → Skip to Phase 2 (Execution Loop) with minimal context
 4. **IF not eligible** → Fall back to standard workflow (continue below)
 
-### Step 0.2: Load Project Context (MANDATORY)
+### Step 0.2: Load Project Context (MANDATORY, EPIC-CACHED)
 
-- Read `${COPILOT_INSTRUCTIONS_PATH}` for architecture, patterns, and conventions.
-- Read `${FILE_CATEGORIZATION_PATH}` for component categorization.
+> **Optimization**: Context is cached at Epic level to avoid re-reading for each task.
+
+- **IF Epic implementation AND context already loaded** → Skip to Step 0.3
+- **ELSE**:
+  - Read `${COPILOT_INSTRUCTIONS_PATH}` for architecture, patterns, and conventions
+  - Read `${FILE_CATEGORIZATION_PATH}` for component categorization
+  - Set `_CONTEXT_LOADED = [EpicKey or TaskKey]`
 
 ### Step 0.3: Circular Dependency Check (MANDATORY)
 
@@ -86,23 +91,36 @@ Before starting Backend track:
 After Backend Completion (Phase 3B), before starting Frontend:
 
 1. **Contract Integrity Check**:
-   - Compare final implementation against `[TaskKey]_original_contract.json`
-   - **IF contract unchanged**: Proceed to Frontend track
-   - **IF contract changed**: Execute Contract Change Protocol below
+   
+   **Compare the following fields** (in priority order):
+   | Field | Comparison Rule | Drift Type |
+   |-------|-----------------|------------|
+   | Endpoint path | Exact match required | BREAKING if changed |
+   | HTTP method | Exact match required | BREAKING if changed |
+   | Response status codes | All original codes must exist | BREAKING if removed |
+   | Response body schema | Field names and types match | BREAKING if removed/changed, OK if added |
+   | Request body schema | Field names and types match | BREAKING if removed/changed |
+   
+   **Drift Detection Result**:
+   - **BREAKING change** → Execute Contract Change Protocol (STOP)
+   - **NON-BREAKING** (added optional fields) → Log and proceed
+   - **No change** → Proceed to Frontend track
 
-2. **Contract Change Protocol**:
+2. **Contract Change Protocol** (If BREAKING):
    ```
    STOP before Frontend implementation.
    
    Document changes:
    - Original: { response schema from task }
    - Final: { actual implementation schema }
+   - Breaking fields: [list specific changes]
    - Reason: [why it changed]
    
    Actions:
    A) Update Task description with new contract
    B) Notify user: "API contract changed during implementation. Frontend context refreshed."
    C) Re-extract API contract for Frontend track context
+   D) Update TypeScript interfaces in shared types
    ```
 
 3. **Frontend Context Refresh**:
@@ -118,13 +136,16 @@ After Backend Completion (Phase 3B), before starting Frontend:
 | `[TaskKey]_final_contract.json` | Backend | Frontend | Actual implementation contract |
 | `[TaskKey]_api_response_sample.json` | Backend | Frontend | Mock data for frontend tests |
 
+---
+
 ## Phase 1: Queue Management
 
 ### Step 1.1: Determine Scope
 
 - **If Specific Task**: Set `Queue = [Target Task]`
 - **If Entire Epic**:
-  - Fetch all child tasks: `parent = [EpicKey] AND status = "To Do" ORDER BY customfield_10200 ASC`
+  - Fetch all child tasks: `parent = [EpicKey] AND status = "To Do" ORDER BY ${JIRA_RANK_FIELD} ASC`
+    > Note: `${JIRA_RANK_FIELD}` is defined in `configuration.md` (e.g., `customfield_10200`)
   - Sort by dependencies (Blockers first)
   - Set `Queue = [Sorted List]`
   - **Present Plan**: "I will implement these tasks: [List]. Shall I start?"
@@ -144,15 +165,19 @@ Execute in **PARALLEL** where possible:
 
 **Branch Naming**: Follow conventions in `./templates/commit-conventions.md`
 
-### Step 2.2: Track-Specific Pre-flight
+### Step 2.2: Track-Specific Pre-flight & Context (PARALLEL)
 
-- **IF Frontend** → Execute Phase 0F from `frontend.md`
-- **IF Backend** → Execute Phase 0B from `backend.md`
+> **Optimization**: Pre-flight and context loading run in parallel to save tokens.
 
-### Step 2.3: Track-Specific Context Loading
+Execute ALL applicable in **PARALLEL**:
 
-- **IF Frontend** → Execute Step 3F and Step 3.5F (Figma capture)
-- **IF Backend** → Execute Step 3B (API contract loading)
+| Track | Pre-flight | Context Load | Visual Capture |
+|-------|------------|--------------|----------------|
+| Frontend | Phase 0F from `frontend.md` | Step 3F | Step 3.5F (Figma) |
+| Backend | Phase 0B from `backend.md` | Step 3B | N/A |
+| Full-Stack (Backend first) | Phase 0B | Step 3B OR cached contract | N/A |
+
+**Full-Stack Optimization**: If contract was saved in Phase 0.6, load from `[TaskKey]_original_contract.json` instead of re-reading from task.
 
 ### Step 2.4: Test-First (TDD)
 
@@ -213,11 +238,14 @@ Before running tests, validate code quality:
 
 ## Phase 3: Completion & Transition
 
-### Step 3.1: Regression Check (BOUNDED)
+### Step 3.1: Regression Check (BOUNDED, CACHED)
+
+> **Optimization**: Skip tests that already passed in Step 2.7 to avoid duplicate runs.
 
 Run **All Related Tests** (not just new ones) to ensure no side effects:
 - Affected module tests
 - Integration tests touching modified APIs/components
+- **Skip tests** that passed in Step 2.7 (use test fingerprinting or track passed IDs)
 - If regression detected: Enter Auto-Fix Loop (same 3-retry limit)
 - **Rollback Option**: If regression fix breaks original after 3 attempts:
   ```
@@ -231,6 +259,15 @@ Run **All Related Tests** (not just new ones) to ensure no side effects:
 
 - **Commit**: Follow format in `./templates/commit-conventions.md`
 - **Jira Transition**: Update status to "In Review" via `mcp0_transitionJiraIssue`
+
+### Step 3.2.5: Artifact Cleanup (Full-Stack Only)
+
+Remove temporary handoff artifacts to prevent accumulation:
+```bash
+rm -f [TaskKey]_original_contract.json
+rm -f [TaskKey]_final_contract.json
+rm -f [TaskKey]_api_response_sample.json
+```
 
 ### Step 3.3: Publish Completion to Jira (MANDATORY)
 

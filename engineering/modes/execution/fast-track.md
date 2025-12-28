@@ -42,7 +42,11 @@ Enable rapid implementation of small, well-defined Jira Tasks without full plann
 6. IF file paths span multiple workspace roots (e.g., wg-search-api AND wg-booking-api)
    → REJECT: "Cross-service changes require full planning workflow and TechSpec."
 
-7. IF description contains "cross-service" OR "inter-service" OR "API call to [other-service]"
+7. IF description contains cross-service indicators:
+   - Explicit: "cross-service", "inter-service"
+   - API calls: "calls * API", "fetch from wg-*", "send to wg-*"
+   - HTTP: "HTTP call to", "REST call to", "POST/GET/PUT to [other-service]"
+   - Imports: import/require paths referencing other workspace roots
    → REJECT: "Cross-service integration requires TechSpec for contract alignment."
 
 8. ELSE → PROCEED
@@ -80,13 +84,16 @@ Apply criteria above. If any REJECT condition met, exit with guidance.
 
 **Skip**: Full pre-flight checks, Epic validation, Tech Spec lookup.
 
-### Step 4: Implement
+### Step 4: Implement & Verify
 
-Standard TDD loop:
+Standard TDD loop with mandatory static analysis:
 1. Write/update tests first
 2. Implement changes
-3. Run tests
-4. Fix until green
+3. **Run static analysis** (type check + lint) - MANDATORY
+   - Use commands from `${COPILOT_INSTRUCTIONS_PATH}` → Tooling section
+   - Must pass with 0 errors before proceeding
+4. Run tests
+5. Fix until green
 
 ### Step 5: Verify & Close
 

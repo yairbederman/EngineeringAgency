@@ -115,13 +115,17 @@ Run in sequence:
 
 ### Test Execution
 
-```bash
-# Run unit tests for affected module
-npm test -- --testPathPattern="[module-name]"
+Use test commands from `${COPILOT_INSTRUCTIONS_PATH}` → Testing section.
 
-# Run integration tests if applicable
-npm run test:integration -- --testPathPattern="[module-name]"
-```
+**Stack-Specific Defaults** (fallback if not defined in config):
+
+| Stack | Unit Tests | Integration Tests |
+|-------|------------|-------------------|
+| Node/TS | `npm test -- --testPathPattern=\"[module]\"` | `npm run test:integration` |
+| Java | `mvn test -Dtest=[TestClass]` | `mvn verify -Pit` |
+| Python | `pytest -k \"[module]\"` | `pytest -m integration` |
+| Go | `go test ./... -run [Test]` | `go test -tags=integration ./...` |
+| .NET | `dotnet test --filter [module]` | `dotnet test --filter Category=Integration` |
 
 ### API Contract Validation
 

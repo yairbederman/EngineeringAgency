@@ -156,10 +156,33 @@ Before creating new elements:
 
 ### Step 6A: Launch Component in Browser
 
-Use `browser_subagent`:
-1. Start dev server if not running: `npm run dev`
-2. Navigate to component URL (Storybook, dev page, or isolated route)
-3. Wait for component to fully render
+**Detect Available Environment** (in priority order):
+
+1. **Check for Storybook**:
+   - Look for `storybook` in package.json scripts
+   - If found: `npm run storybook` → Navigate to component story URL
+   
+2. **Check for Dev Server**:
+   - Look for `dev` or `start` in package.json scripts
+   - If found: Start server → Navigate to component route (from task description)
+   
+3. **Check for Demo/Examples**:
+   - Look for `demo/`, `examples/`, or `playground/` folder
+   - If found: Serve static files or use existing demo page
+   
+4. **Fallback**:
+   - If none found: STOP and ask user:
+     ```
+     "Cannot auto-detect component preview environment.
+     Options:
+     A) Provide URL where component is visible
+     B) Provide command to start preview server
+     C) Skip visual verification (document as limitation)"
+     ```
+
+**Once environment running**:
+- Navigate to component URL
+- Wait for component to fully render (check for loading indicators)
 
 ### Step 6B: Capture Implementation Screenshots
 
