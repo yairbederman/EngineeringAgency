@@ -196,7 +196,13 @@ Fill `tech-spec.md` template with:
 - **E2E Tests** (if applicable):
   - User flow tests: Map to Epic's Functional Flows
 
-### Step 6: Publish to Confluence
+### Step 6: Publish Tech Spec (MANDATORY)
+
+> [!IMPORTANT]
+> **You MUST create a Tech Spec artifact in Jira/Confluence before proceeding to Step 8.**
+> Do NOT skip this step. Do NOT just save locally.
+
+**Option A: Confluence (Primary)**
 - Use `mcp0_createConfluencePage` with:
   - `cloudId`: Extract from workspace context
   - `spaceId`: ${CONFLUENCE_SPACE_KEY} space ID
@@ -204,34 +210,42 @@ Fill `tech-spec.md` template with:
   - `title`: "Tech Spec: [Feature Name]"
   - `body`: Generated tech spec content (markdown)
 
-**Failure Handling (Fallback)**:
-- If Confluence publication fails (tool error, permission issue):
-  1. Create a **Jira Task** under the Epic using `mcp0_createJiraIssue`.
-     - `projectKey`: "${JIRA_PROJECT_KEY}"
-     - `issueTypeName`: "Task"
-     - `parent`: [Epic Key] (Attempt to link during creation)
-     - `summary`: "Tech Spec: [Feature Name]"
-     - `description`: The full Tech Spec markdown content.
-  2. **CRITICAL**: Verify the newly created task is linked to the Epic. If not automatically linked, use `mcp0_editJiraIssue` to set the `parent` field to the Epic Key immediately.
-  3. Treat this Jira Task URL as the "Tech Spec Artifact" for subsequent steps.
+**Option B: Jira Task (Fallback - MUST execute if Option A fails)**
+
+> [!CAUTION]
+> If Confluence publication fails, you **MUST IMMEDIATELY** execute this fallback.
+> Do not proceed to Step 7 or 8 without a Tech Spec artifact in Jira or Confluence.
+
+1. Create a **Jira Task** under the Epic using `mcp0_createJiraIssue`:
+   - `projectKey`: "${JIRA_PROJECT_KEY}"
+   - `issueTypeName`: "Task"
+   - `parent`: [Epic Key]
+   - `summary`: "Tech Spec: [Feature Name]"
+   - `description`: The full Tech Spec markdown content
+   - `additional_fields`: `{"customfield_10225": {"id": "10635"}}` (Cross-Project Impact = None)
+
+2. **Verify** the task is linked to the Epic. If not, use `mcp0_editJiraIssue` to set `parent`.
+
+3. Use the Jira Task URL as the "Tech Spec Artifact" for all subsequent steps.
 
 ### Step 7: Update Product Spec
 - Update Links table with Tech Spec link (mandatory)
 - Use `mcp0_createConfluenceFooterComment`
 
 ### Step 8: Presentation & Gate
-- Display created Tech Spec URL
+- Display created Tech Spec URL (Confluence OR Jira Task)
 - **STOP** and request approval
 
 **Standard Approval Format**:
 ```
 ✅ **TechSpec Complete**
-- **Artifact**: [Tech Spec Confluence URL]
+- **Artifact**: [Tech Spec Confluence URL or Jira Task URL]
 - **Summary**: Concrete action plan with [N] files across [X] project(s): dependency-ordered roadmap from DB → Services → API → UI
 - **Next Step**: TaskPlanning Mode
 
-> **⏸️ APPROVAL REQUIRED**: Please review the Tech Spec in Confluence. Reply with:
+> **⏸️ APPROVAL REQUIRED**: Please review the Tech Spec. Reply with:
 > - `Approve` to proceed to Task decomposition
 > - `Revise [feedback]` to make changes
 > - `Cancel` to stop workflow
 ```
+
