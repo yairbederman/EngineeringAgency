@@ -14,9 +14,9 @@
 - Figma (if UI-heavy feature)
 
 **Output**:
-- **Tech Spec** using the `tech-spec.md` template (Concrete Action Plan)
-- **Confluence Page**: Published as child of Tech Specs folder (Parent ID: ${TECH_SPECS_FOLDER_ID})
-- **Confluence Update**: Product Spec page updated with Tech Spec link
+- **Tech Spec**: Detailed Markdown content for user review.
+- **Confluence Page (Optional)**: Published ONLY after explicit user authorization.
+- **Confluence Update (Optional)**: Product Spec updated ONLY after explicit user authorization.
 
 **Critical Rules**:
 1.  **Validation**: Every architecture decision must reference either:
@@ -26,6 +26,7 @@
 3.  **Data Model**: Must define migration strategy if DB changes required
 4.  **No Guessing**: Use `[TBD – requires input from Backend]` if schema/API is unknown
 5.  **Multi-Project Awareness**: Identify which workspace project(s) are affected and review their specific architecture
+6.  **No Auto-Creation**: NEVER create Jira Tasks or Confluence Pages without explicit user approval.
 
 **Flow**:
 
@@ -335,11 +336,19 @@ Fill `tech-spec.md` template with:
 - **E2E Tests** (if applicable):
   - User flow tests: Map to Epic's Functional Flows
 
-### Step 6: Publish Tech Spec (MANDATORY)
+### Step 6: Present Tech Spec for Review
 
 > [!IMPORTANT]
-> **You MUST create a Tech Spec artifact in Jira/Confluence before proceeding to Step 8.**
-> Do NOT skip this step. Do NOT just save locally.
+> **DO NOT** create Confluence pages or update Jira issues yet.
+> You must first present the generated Tech Spec content to the user for review.
+
+1. Display the full Tech Spec markdown in the chat.
+2. Explicitly ask for approval of the content.
+3. **MANDATORY**: Ask if the user wants to "Inject to Atlassian" (Confluence/Jira).
+
+### Step 7: Inject to Atlassian (ONLY IF AUTHORIZED)
+
+**Condition**: Only proceed if the user explicitly confirms "Inject to Atlassian".
 
 **Option A: Confluence (Primary)**
 - Use `mcp0_createConfluencePage` with:
@@ -349,12 +358,7 @@ Fill `tech-spec.md` template with:
   - `title`: "Tech Spec: [Feature Name]"
   - `body`: Generated tech spec content (markdown)
 
-**Option B: Jira Task (Fallback - MUST execute if Option A fails)**
-
-> [!CAUTION]
-> If Confluence publication fails, you **MUST IMMEDIATELY** execute this fallback.
-> Do not proceed to Step 7 or 8 without a Tech Spec artifact in Jira or Confluence.
-
+**Option B: Jira Task (Fallback - IF authorized but Confluence fails)**
 1. Create a **Jira Task** under the Epic using `mcp0_createJiraIssue`:
    - `projectKey`: "${JIRA_PROJECT_KEY}"
    - `issueTypeName`: "Task"
@@ -362,29 +366,26 @@ Fill `tech-spec.md` template with:
    - `summary`: "Tech Spec: [Feature Name]"
    - `description`: The full Tech Spec markdown content
    - `additional_fields`: `{"customfield_10225": {"id": "10635"}}` (Cross-Project Impact = None)
+2. **Verify** linking.
 
-2. **Verify** the task is linked to the Epic. If not, use `mcp0_editJiraIssue` to set `parent`.
+**Link Back (Bidirectional Traceability)**:
+- Update Product Spec Links table with Tech Spec link via `mcp0_createConfluenceFooterComment`.
+- Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec link.
 
-3. Use the Jira Task URL as the "Tech Spec Artifact" for all subsequent steps.
+### Step 8: Standard Approval & Gate
 
-### Step 7: Update Product Spec
-- Update Links table with Tech Spec link (mandatory)
-- Use `mcp0_createConfluenceFooterComment`
-
-### Step 8: Presentation & Gate
-- Display created Tech Spec URL (Confluence OR Jira Task)
-- **STOP** and request approval
+Display the status and next steps using the standard format.
 
 **Standard Approval Format**:
 ```
-✅ **TechSpec Complete**
-- **Artifact**: [Tech Spec Confluence URL or Jira Task URL]
-- **Summary**: Concrete action plan with [N] files across [X] project(s): dependency-ordered roadmap from DB → Services → API → UI
+✅ **TechSpec Content Generated**
+- **Status**: [Content Ready | Injected to Atlassian]
+- **Artifact**: [Tech Spec URL or "Local Markdown Only"]
+- **Summary**: Concrete action plan with [N] files across [X] project(s).
 - **Next Step**: TaskPlanning Mode
 
 > **⏸️ APPROVAL REQUIRED**: Please review the Tech Spec. Reply with:
-> - `Approve` to proceed to Task decomposition
+> - `Approve` to trigger **Creation of Jira Task/Confluence Page** AND proceed to **Task Breakdown**.
 > - `Revise [feedback]` to make changes
-> - `Cancel` to stop workflow
 ```
 

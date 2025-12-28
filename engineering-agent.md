@@ -130,12 +130,14 @@ Proceed with the task using the loaded context and mode-specific rules.
 - **Gate**: STOP until user approves Epic
 
 #### After TechSpec
-- **Artifact**: Tech Spec in Confluence
-- **Action**:
-  - Create Confluence page using `mcp0_createConfluencePage` (parent ID: 259883024)
-  - Update Product Spec Confluence page's Links section with Tech Spec link
-  - Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec link
-- **Gate**: STOP until user approves Tech Spec
+- **Artifact**: Tech Spec Markdown content
+- **Gate**: **STOP**. Present the generated Tech Spec content to the user.
+- **Action (Conditional)**:
+  - **MANDATORY**: Ask the user if they want to "Inject to Atlassian" (Confluence/Jira).
+  - **DO NOT** perform the following unless explicitly authorized:
+    - Create Confluence page using `mcp0_createConfluencePage` (parent ID: 259883024)
+    - Update Product Spec Confluence page's Links section with Tech Spec link
+    - Update Epic description using `mcp0_editJiraIssue` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec link
 
 #### After TaskPlanning
 - **Artifact**: List of Jira Tasks
