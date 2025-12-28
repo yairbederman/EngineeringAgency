@@ -171,7 +171,53 @@ Fill `tech-spec.md` template with:
   - Signature: `public async methodName(arg: Type): Promise<Type>`
   - Which project: `${PROJECT_FRONTEND}`, `${PROJECT_CMS_API}`, `${PROJECT_DATA_API}`
 
-#### 5.4 Implementation Inventory (The Dependency-Ordered Roadmap)
+#### 5.4 Sequence Diagram (MANDATORY)
+
+**Purpose**: Visualize the proposed solution to enable quick understanding of the flow.
+
+> [!IMPORTANT]
+> Every Tech Spec MUST include an ASCII sequence diagram showing:
+> 1. **Participants**: User, UI Components, Services, APIs involved
+> 2. **Happy Path Flow**: Main success scenario interactions
+> 3. **Conditional Branches**: ALT/ELSE blocks for different states
+> 4. **Data Flow**: What data moves between participants
+
+**Format**: Use ASCII art in a code block (renders correctly in Jira/Confluence):
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     SEQUENCE DIAGRAM                             │
+│                   [Feature Name] Flow                            │
+└──────────────────────────────────────────────────────────────────┘
+
+     User              Component1              Component2         
+       │                    │                       │              
+       │   [Action]         │                       │              
+       │───────────────────>│                       │              
+       │                    │                       │              
+       │                    │   [Process]           │              
+       │                    │──────────────────────>│              
+       │                    │                       │              
+       │ ┌──────────────────┼───────────────────────┤              
+       │ │ ALT [Condition = true]                   │              
+       │ │<─────────────────┼─── [Success response]─│              
+       │ ├──────────────────┼───────────────────────┤              
+       │ │ ELSE [Condition = false]                 │              
+       │ │<─────────────────┼─── [Error response]  ─│              
+       │ └──────────────────┼───────────────────────┤              
+       │                    │                       │              
+```
+
+**ASCII Symbols**:
+- `│` Vertical line (lifeline)
+- `─` Horizontal line (message)
+- `>` Arrow direction
+- `┌┐└┘` Box corners
+- `├┤` Branch points
+
+---
+
+#### 5.5 Implementation Inventory (The Dependency-Ordered Roadmap)
 
 **Purpose**: This section IS the concrete action plan - a step-by-step roadmap ordered by dependency.
 

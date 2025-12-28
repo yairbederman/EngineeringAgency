@@ -157,7 +157,35 @@ class ApiClient {
 
 ---
 
-## 5. Implementation Inventory (Concrete Action Plan)
+## 5. Sequence Diagram
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     SEQUENCE DIAGRAM                             │
+│                   [Feature Name] Flow                            │
+└──────────────────────────────────────────────────────────────────┘
+
+     User              [Component1]            [Component2]        
+       │                    │                       │              
+       │   [Action]         │                       │              
+       │───────────────────>│                       │              
+       │                    │                       │              
+       │                    │   [Process]           │              
+       │                    │──────────────────────>│              
+       │                    │                       │              
+       │ ┌──────────────────┼───────────────────────┤              
+       │ │ ALT [Condition = true]                   │              
+       │ │<─────────────────┼─── [Success response]─│              
+       │ ├──────────────────┼───────────────────────┤              
+       │ │ ELSE [Condition = false]                 │              
+       │ │<─────────────────┼─── [Error response]  ─│              
+       │ └──────────────────┼───────────────────────┤              
+       │                    │                       │              
+```
+
+---
+
+## 6. Implementation Inventory (Concrete Action Plan)
 
 **Purpose**: This is the dependency-ordered roadmap. Execute top-to-bottom.
 
@@ -218,7 +246,7 @@ class ApiClient {
 
 ---
 
-## 6. Verification Strategy
+## 7. Verification Strategy
 
 ### Unit Tests
 
