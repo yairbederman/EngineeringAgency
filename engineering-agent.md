@@ -57,7 +57,7 @@ Read `${AGENT_ROOT}/core-rules.md` for:
 - **ProductSpecReview**: Read `${AGENT_ROOT}/modes/planning/product-spec-review.md`
 - **DesignAnalysis**: Read `${AGENT_ROOT}/modes/planning/design-analysis.md`
 - **FeaturePlanning**: Read `${AGENT_ROOT}/modes/planning/feature-planning.md`
-- **TechSpec**: Read `${AGENT_ROOT}/modes/planning/tech-spec.md`
+- **TechSpec**: Read `${AGENT_ROOT}/modes/planning/tech-spec-review.md`
 - **TaskPlanning**: Read `${AGENT_ROOT}/modes/planning/task-planning.md`
 - Read `${AGENT_ROOT}/templates/epic.md`
 - Read `${AGENT_ROOT}/templates/tech-spec.md`

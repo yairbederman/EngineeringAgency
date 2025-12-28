@@ -136,9 +136,88 @@ For **each affected project**:
 - Define **testability approach**: unit, integration, E2E
 - Map test to specific component/service
 
+### Step 4.5: UI Design Extraction (MANDATORY if Figma Links Present)
+
+> [!IMPORTANT]
+> **If the Epic contains Figma links**, you MUST extract and document all UI design specifications.
+> This ensures Tasks have all design context needed for pixel-perfect implementation.
+
+> [!TIP]
+> **Tool Priority**: Always prioritize **Figma MCP tools** (`mcp_figma-dev-mode-mcp-server_*`) over browser subagent.
+> MCP provides structured data extraction (tokens, variables, component properties) directly.
+> Use browser subagent only as fallback when MCP is unavailable or for screenshot capture.
+
+**For EACH Figma Link in Epic**:
+
+1. **Extract via Figma MCP** (PREFERRED):
+   - Use `mcp_figma-dev-mode-mcp-server_get_design_context` to get component structure and tokens
+   - Use `mcp_figma-dev-mode-mcp-server_get_variable_defs` for design system variables
+   - Use `mcp_figma-dev-mode-mcp-server_get_screenshot` for visual reference
+   - **Fallback**: If MCP unavailable, use browser subagent to navigate and capture
+
+2. **Extract Component Structure**:
+
+   ```text
+   ComponentName
+   ├── Header (optional)
+   │   └── Title / Controls
+   └── Body
+       ├── Row/Item (repeated)
+       │   ├── Icon
+       │   └── TextStack
+       └── Footer (optional)
+   ```
+
+3. **Extract Design Tokens** (map Figma values → project tokens):
+   - Background colors, text colors, accent colors
+   - Border radius, shadows
+   - Spacing (padding, margins, gaps)
+
+4. **Extract Typography**:
+   - Font family, sizes, weights for each text element
+
+5. **Extract Icons**:
+   - List icons with color variants
+   - Cross-reference with project icon library
+
+6. **Document RTL/Responsive Behavior**:
+   - RTL text alignment requirements
+   - Mobile/touch interaction differences
+
+7. **Capture Screenshots** (MANDATORY for UI implementation accuracy):
+
+   > [!TIP]
+   > **Screenshot Quality Checklist** - Screenshots should enable pixel-perfect implementation:
+   
+   **Via Figma MCP** (PREFERRED):
+   - Use `mcp_figma-dev-mode-mcp-server_get_screenshot` with specific node ID
+   - This captures the exact component at proper resolution
+   
+   **Via Browser Subagent** (FALLBACK):
+   - **Zoom to 100%** before capturing (avoid zoomed-out canvas views)
+   - **Dismiss login/modal popups** before screenshot
+   - **Select the specific component** to focus the view
+   - **Capture each state separately** (e.g., hover, default, error)
+   
+   **Screenshot Requirements**:
+   - [ ] Component fills most of the frame (not tiny in large canvas)
+   - [ ] All text is readable
+   - [ ] Color accuracy preserved (no compression artifacts)
+   - [ ] Each variant/state has its own screenshot
+   - [ ] Save to artifacts directory with descriptive names (e.g., `baggage_tooltip_included.png`, `baggage_tooltip_paid.png`)
+   
+   **Embed in Tech Spec**:
+   ```markdown
+   ![Component Name - State](path/to/screenshot.png)
+   ```
+
+**Output**: Add "UI Design Specifications" section to Tech Spec document.
+
+
 ### Step 5: Generate Concrete Action Plan (Tech Spec Document)
 
 Fill `tech-spec.md` template with:
+
 
 #### 5.1 Architecture & Patterns
 - **Per-Project Compliance**:

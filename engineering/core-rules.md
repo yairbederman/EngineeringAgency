@@ -4,7 +4,18 @@
 
 You have MCP tools that extend your context beyond the current editor. Use them whenever they materially affect correctness.
 
+> [!IMPORTANT]
+> **MCP-First Principle**: When retrieving external data (Jira, Confluence, Figma, codebase patterns), **always attempt MCP tools first** before falling back to alternative approaches (browser subagent, HTTP requests, manual user input).
+> 
+> **Priority Order**:
+> 1. **MCP Tools** - Structured data, authentication handled, faster, more reliable
+> 2. **Browser Subagent** - Fallback for visual context or when MCP unavailable
+> 3. **Manual User Input** - Last resort when all automated tools fail
+> 
+> This applies to: Atlassian (Jira/Confluence), Figma, Context7, and any other MCP-enabled services.
+
 ### 0.1 Context7 – Repo Knowledge
+
 
 Purpose: discover existing patterns, utilities, and legacy constraints.
 

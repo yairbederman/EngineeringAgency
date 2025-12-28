@@ -55,7 +55,68 @@ Scenario: [Name]
 
 ---
 
+## 2.5 UI Design Specifications (If Figma Links Present)
+
+> **Note**: This section is MANDATORY when the Epic contains Figma links. Remove if not applicable.
+
+### Figma References
+
+| State/Variant | Figma Link | Screenshot |
+|---------------|------------|------------|
+| [State 1 Name] | [Figma URL] | ![Screenshot](path/to/screenshot.png) |
+| [State 2 Name] | [Figma URL] | ![Screenshot](path/to/screenshot.png) |
+
+### Component Structure
+
+```text
+[ComponentName]
+├── Header (optional)
+│   └── [Title / Controls]
+└── Body
+    ├── [Row/Item] (repeated)
+    │   ├── [Icon]
+    │   └── [TextStack]
+    └── Footer (optional)
+```
+
+### Design Token Mapping
+
+| Property | Figma Value | Project Token |
+|----------|-------------|---------------|
+| Background Color | `#FFFFFF` | `--bg-white` |
+| Primary Color | `[Hex]` | `--color-primary` |
+| Success Color | `[Hex]` | `--color-success` |
+| Warning Color | `[Hex]` | `--color-error` |
+| Text Primary | `[Hex]` | `--text-primary` |
+| Text Secondary | `[Hex]` | `--text-secondary` |
+| Border Radius | `[Npx]` | `--radius-[size]` |
+| Padding | `[Npx]` | `--spacing-[N]` |
+| Shadow | `[CSS shadow]` | `--shadow-[size]` |
+
+### Typography
+
+| Element | Font Family | Size | Weight |
+|---------|-------------|------|--------|
+| Header Title | [Family] | [Npx] | [Weight] |
+| Body Text | [Family] | [Npx] | [Weight] |
+| Caption | [Family] | [Npx] | [Weight] |
+
+### Icons Used
+
+| Icon | Purpose | Color Variant | Project Component |
+|------|---------|---------------|-------------------|
+| [Icon name] | [Purpose] | [Color] | `<IconResolver type="[Type]" />` |
+
+### RTL & Responsive Behavior
+
+- **RTL Layout**: [Yes/No] - [Text alignment requirements]
+- **Mobile Touch**: [Hover vs Click behavior on mobile]
+- **Breakpoints**: [Any layout changes at specific breakpoints]
+
+---
+
 ## 3. Data Model (Schema & Storage)
+
 
 ### New Entities
 

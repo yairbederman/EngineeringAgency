@@ -27,7 +27,7 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 | Product Spec Review | `modes/planning/product-spec-review.md` |
 | Design Analysis | `modes/planning/design-analysis.md` |
 | Feature Planning | `modes/planning/feature-planning.md` |
-| Tech Spec | `modes/planning/tech-spec.md` |
+| Tech Spec | `modes/planning/tech-spec-review.md` |
 | Task Planning | `modes/planning/task-planning.md` |
 | Implementation | `modes/implementation.md` |
 | BugFix | `modes/bugfix.md` |
