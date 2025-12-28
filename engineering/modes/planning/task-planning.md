@@ -258,16 +258,61 @@ Before publishing, verify EVERY task has:
   - `projectKey`: "${JIRA_PROJECT_KEY}"
   - `issueTypeName`: "Task" or "Story"
   - `parent`: Epic key (to link tasks to Epic)
-  - `summary`: Task title (e.g., "Layer: Create FeatureService.ts")
+  - `summary`: **MUST include [BE] or [FE] prefix** to indicate Backend or Frontend
+    - Format: `[Order] [BE|FE]: Task Title`
+    - Examples:
+      - `[1/5] [BE]: Add aggregation methods to SDK`
+      - `[2/5] [FE]: Create Tooltip Component`
+      - `[3/5] [FE]: Integrate Component into Parent`
+
   - `description`: Fully populated task template content (backend or frontend)
 - Add Tech Spec Confluence link to each task description
+
 
 ### Step 9: Verify Links
 - Use `mcp0_getJiraIssueRemoteIssueLinks` to verify:
   - All tasks linked to Epic (parent field)
   - All tasks reference Tech Spec Confluence page
 
-### Step 10: Final Readiness
+### Step 10: Pre-Implementation Gate (MANDATORY)
+
+**Purpose**: Cross-reference Epic → Tech Spec → Tasks before implementation begins.
+
+- **Generate Traceability Matrix**:
+  | Epic Requirement | Tech Spec Section | Task | Status |
+  |------------------|-------------------|------|--------|
+  | [Requirement 1]  | § [Section]       | [Key]| ✅/⚠️/❌ |
+
+- **Verify Scope Boundaries**:
+  - Document what is **In Scope** vs **Out of Scope**
+  - Flag any deferred items (e.g., "Price: Backend gap, OOS")
+
+- **Technical Readiness Checklist**:
+  - [ ] Data availability verified in codebase
+  - [ ] Aggregation methods exist or will be added
+  - [ ] UI patterns identified
+  - [ ] Design tokens mapped from Figma
+  - [ ] All tasks linked to Epic
+
+- **STOP** and present summary to user.
+
+**Standard Gate Format**:
+```
+🔒 **Pre-Implementation Gate**
+
+### Requirement → Tech Spec → Task Traceability
+| Epic Requirement | Tech Spec | Task |
+|------------------|-----------|------|
+| [Requirement]    | § [X]     | [Key]|
+
+### Scope Confirmed
+- ✅ [In Scope items]
+- ❌ [Out of Scope items]
+
+> **⏸️ APPROVAL REQUIRED**: Reply `Approve` to begin implementation.
+```
+
+### Step 11: Final Readiness
 - **Display Summary**:
   - Total tasks created: [N]
   - Jira Keys: [List of Keys]
