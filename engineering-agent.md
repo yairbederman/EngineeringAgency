@@ -152,8 +152,8 @@ TaskPlanning has **three sequential gates** before proceeding to Implementation:
   
   **1. File Paths (BLOCKER if incomplete)**:
   - [ ] ALL file paths are ABSOLUTE from project root (no `...` placeholders)
-  - [ ] Example: `wg-client/src/ui/sites/base/components/SearchWidget/SearchWidget.tsx`
-  - [ ] NOT acceptable: `wg-client/src/.../SearchWidget.tsx`
+  - [ ] Example: `my-project/src/ui/sites/base/components/SearchWidget/SearchWidget.tsx`
+  - [ ] NOT acceptable: `my-project/src/.../SearchWidget.tsx`
   - [ ] Verify paths against project structure from copilot-instructions.md
   
   **2. Category Field (REQUIRED)**:

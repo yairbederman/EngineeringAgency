@@ -73,7 +73,7 @@ Cross-project mode is automatically activated when **any** of these conditions a
 
 | Condition | Detection |
 |-----------|-----------|
-| Epic mentions multiple projects | e.g., "wg-client" AND "wg-data-api" in description |
+| Epic mentions multiple projects | e.g., "project-frontend" AND "project-backend" in description |
 | TechSpec identifies 2+ project roots | Step 2 returns multiple `${PROJECT_*}` variables |
 | Feature involves both Frontend + Backend | Any UI change + API change |
 | Service topology shows dependencies | `callsServices` or `calledBy` is non-empty for affected service |

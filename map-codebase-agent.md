@@ -52,6 +52,13 @@ Before running any phases, validate the target project:
 > [!WARNING]
 > **THIS PHASE IS NOT OPTIONAL.** Skipping this phase will result in stale files remaining. The agent MUST execute the delete command before any analysis.
 
+**Step 0: User Confirmation (MANDATORY)**
+
+> [!CRITICAL]
+> **STOP**: You are about to permanently delete files.
+> **Ask the user**: "I am about to delete the `.ai-instructions` folder for [Project Name] to ensure a clean extraction. Do I have your approval to proceed?"
+> **Wait** for explicit "Yes" or "Approved".
+
 **Step 1: Delete existing artifacts**
 
 For EACH target project, execute:

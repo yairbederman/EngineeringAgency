@@ -44,8 +44,8 @@ mkdir <YOUR_WORKSPACE_ROOT>   # e.g., ~/WG3 or C:\Projects\WG3
 # 2. Clone all WG3 project repositories into this directory
 cd <YOUR_WORKSPACE_ROOT>
 # Clone all projects listed in shared/configuration.md
-git clone <wg-client-repo>
-git clone <wg-cms-api-repo>
+git clone <project-frontend-repo>
+git clone <project-backend-repo>
 # ... etc.
 
 # 3. Clone this workflows repository to your preferred location
@@ -67,7 +67,7 @@ git clone <this-repo> <YOUR_WORKFLOWS_PATH>
 | Linux | `/home/yourname/WG3` |
 
 > [!NOTE]
-> All paths in the agents use variable substitution (e.g., `${WORKSPACE_ROOT}/wg-client`).
+> All paths in the agents use variable substitution (e.g., `${WORKSPACE_ROOT}/project-frontend`).
 > The agents resolve these at runtime based on your VS Code workspace.
 
 ## Step 3: VS Code Workspace Setup

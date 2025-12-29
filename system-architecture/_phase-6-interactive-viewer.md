@@ -177,7 +177,7 @@ Construct the JavaScript `diagrams` array for the HTML.
 
 **Crucial**: You must generate a `links` object for the System Overview diagram.
 - `links`: A map of `{ "NodeID": "TargetDiagramID" }`
-- Example: `{ "WG_ORDER": "wg-ordermanager-api", "CLIENT": "wg-client" }`
+- Example: `{ "<NODE_ID>": "<target-project-name>" }`
 - This enables the double-click drill-down functionality.
 
 ```javascript

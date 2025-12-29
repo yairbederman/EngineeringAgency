@@ -39,12 +39,17 @@ Enable rapid implementation of small, well-defined Jira Tasks without full plann
    → WARN: "No pattern reference found. Recommend adding one."
    → PROCEED with warning
 
-6. IF file paths span multiple workspace roots (e.g., wg-search-api AND wg-booking-api)
-   → REJECT: "Cross-service changes require full planning workflow and TechSpec."
+6. IF file paths span multiple workspace roots (e.g., project-a AND project-b)
+   - Cross-project dependencies detected: **REJECT Fast Track**.
+   - Use `/engineering-agent` Planning Mode instead.
 
-7. IF description contains cross-service indicators:
-   - Explicit: "cross-service", "inter-service"
-   - API calls: "calls * API", "fetch from wg-*", "send to wg-*"
+### 2. Auto-Detection Logic
+
+Analyze the request for keywords:
+- **Complexity indicators**: "refactor", "migration", "breaking change", "security"
+- **Scope indicators**:
+   - Multiple files mentioned: `path/to/a.ts` AND `path/to/b.ts`
+   - API calls: "calls * API", "fetch from service-*", "send to service-*"
    - HTTP: "HTTP call to", "REST call to", "POST/GET/PUT to [other-service]"
    - Imports: import/require paths referencing other workspace roots
    → REJECT: "Cross-service integration requires TechSpec for contract alignment."
