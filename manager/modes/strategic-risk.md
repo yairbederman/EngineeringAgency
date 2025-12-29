@@ -1,79 +1,36 @@
 # Strategic Risk Mode (`/risk`)
+Goal: weekly radar for threats to predictable delivery (next 1–2 weeks).
 
-**Goal**: Predictive analysis for Engineering Managers/Directors.
-**Frequency**: Weekly (or Ad-Hoc for Board Meetings).
-**Scope**: Epics, Initiatives, and Cross-Project dependencies.
+## Data Fetch (JQL)
+- Active sprint + next sprint (if exists)
+- Epics / initiatives in flight (if your org uses Epic Link)
 
-## 1. Input parameters
+## Signals to report
+1) Scope creep trend (added after sprint start)
+2) Rollover trend (carryover + aging WIP)
+3) Dependency drag (blocked/links)
+4) Review SLA breakdown (queueing)
+5) Quality drag (bugs created / reopened) — only if data exists
 
-*   `Target`: Project Key (e.g., `WG3`, `W0`).
-*   `Horizon`: "Quarter" (default) or specific targeted "Epic Link".
-
-## 2. Analysis Heuristics
-
-The "Risk Radar" applies these rules to long-running items (Epics):
-
-### 📈 Scope Creep Rule
-*   **Logic**: Compare `Total Story Points` at `Epic Start Date` vs. `current`.
-*   **Threshold**: If growth > 20% post-start.
-*   **Diagnosis**: "Scope Explosion". Feature is growing uncontrollably.
-*   **Action**: Flag for "Change Control Review".
-
-### 📉 Timeline Slippage (Monte Carlo Lite)
-*   **Logic**: 
-    1. Calculate `Avg Velocity` (last 3 sprints).
-    2. Calculate `Remaining Points` in Epic.
-    3. `Projected End` = Today + (Remaining / Velocity).
-*   **Check**: Is `Projected End` > `Due Date`?
-*   **Diagnosis**: "Miss Risk".
-*   **Severity**: 
-    *   < 1 Sprint slippage = 🟡 Low
-    *   > 2 Sprints slippage = 🔴 Critical
-
-### 🔗 Dependency Web
-*   **Logic**: Scan active Epics for `is blocked by` links where the blocker is in a *different* project.
-*   **Diagnosis**: "External Risk". We are not in control of our destiny.
-*   **Action**: List external owners to ping.
-
-### 🧟 Zombie Epic Rule
-*   **Logic**: Epic status is "In Progress" but `Done Ratio` < 10% after 4 weeks.
-*   **Diagnosis**: "Zombie Feature". Resources allocated but nothing shipping.
-*   **Action**: Suggest "Kill or Rescue".
-
-## 3. Output: Risk Radar Report
-
-**File**: `${MANAGER_ROOT}/reports/risk-{date}.md`
-
-### Template
-
+## Output Template
 ```markdown
-# 📡 Risk Radar: Q1 Analysis
-**Project**: [Key] | **Velocity**: [N] pts/sprint
+# Risk Radar — {TARGET} — Horizon {HORIZON}
 
-## 🔴 Critical Risks (Requires Intervention)
+## 🔴 Critical (commitment risk)
+| Risk | Evidence | Impact | Mitigation | Owner |
+|---|---|---|---|---|
+| {risk_1} | {facts} | {impact} | {plan} | {owner} |
 
-| Epic | Risk Type | Details | projected Delay |
-|------|-----------|---------|-----------------|
-| [WG3-900] Payments | **Scope Creep** | grew +40% (20 -> 28pts). | +1.5 Sprints |
-| [WG3-850] Search | **Dependency** | Blocked by `LTS-CORE` API refactor. | Unknown |
+## 🟠 Watchlist
+- {item}: {why trending}
 
-## 🟡 Watchlist (Trending Negative)
-*   **[WG3-700] Mobile UI**: Velocity slowed by 50% last sprint.
-*   **Zombies**: [WG3-600] has been open 8 weeks with 5% completion.
+## Leading Indicators
+- Scope creep: {trend}
+- Rollover candidates: {trend}
+- Blocked aging: {trend}
+- Review SLA breaches: {trend}
 
-## 📉 Timeline Projection
-*   **Optimistic Finish**: Feb 15
-*   **Likely Finish**: Mar 01 (⚠️ Misses Launch Date)
-*   **Pessimistic Finish**: Mar 15
-
-## 💡 Recommendations
-1.  **De-scope [WG3-900]**: Cut the "Crypto" feature to save 8pts.
-2.  **Escalate [WG3-850]**: Meeting needed with Core Team Lead.
+## Decisions / Asks
+- {ask_1}
+- {ask_2}
 ```
-
-## 4. Execution Steps
-
-1.  **Parse Request**: Determine scope (Project or specific Epics).
-2.  **Jira Query**: Fetch Epics, their children stats, and Sprint Velocity.
-3.  **Process Data**: Run Slippage and Creep calculations.
-4.  **Format Output**: Generate Markdown report.

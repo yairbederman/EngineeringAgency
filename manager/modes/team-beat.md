@@ -1,84 +1,55 @@
 # Team Beat Mode (`/beat`)
+Goal: daily sprint health focused on **commitment accuracy**.
 
-**Goal**: Instant operational health check for the current sprint.
-**Frequency**: Daily (Morning Standup prep).
-
-## 1. Input parameters
-
-*   `Target`: Project Key (e.g., `WG3`) or specific Board ID.
-*   `Sprint`: Defaults to "Active Sprint".
-
-## 2. Data Fetching Protocol
-
-**JQL Query Strategy**:
+## Data Fetch (JQL baseline)
 ```jql
-project = {TARGET} AND sprint in openSprints() AND statusCategory in ("In Progress", "To Do")
+project = {TARGET} AND sprint in openSprints()
 ```
 
-**Required Fields**:
-*   `status`: To group by lane.
-*   `assignee`: To calculate load.
-*   `updated`: To calculate staleness (Last Updated Date).
-*   `issuelinks`: To identify Blockers (`blocks`, `is blocked by`).
-*   `customfield_[dev_status]`: (If available) to check for commit activity.
+Optional (if your Jira supports it well):
 
-## 3. Analysis Heuristics
+* Stale: `updated < -{STALE_DAYS}d`
+* In review: `status in ({IN_REVIEW_STATUSES})`
+* Blocked: `status in ("Blocked","On Hold") OR labels in ("blocked","needs-input","waiting") OR Flagged is not EMPTY`
 
-The "Brain" of the Beat mode applies these rules to the raw data:
+## Rollover Candidates (definition)
 
-### 🟠 Stagnation Rule (The "Rot" Check)
-*   **Logic**: IF `status` == "In Progress" AND `updated` < (Today - 3 days).
-*   **Diagnosis**: "Stalled". The ticket is likely abandoned or stuck without visibility.
-*   **Action**: Flag for "Immediate Update Required".
+An issue is a rollover candidate if any:
 
-### 🔴 Overload Rule (The "Jam" Check)
-*   **Logic**: IF `assignee` has > 3 tickets with `status` == "In Progress".
-*   **Diagnosis**: "Context Switching Warning". Developer efficiency drops significantly after 2 concurrent tasks.
-*   **Action**: Suggest moving lowest priority item to "To Do".
+* In Progress > {AGING_WIP_DAYS} days
+* Blocked > {BLOCKED_DAYS} days
+* In Review > {REVIEW_SLA_HOURS} hours
+* Has blocking link unresolved (if links used)
 
-### 🔎 Review Rot Rule
-*   **Logic**: IF `status` == "In Review" AND `updated` < (Today - 2 days).
-*   **Diagnosis**: "Bottle-neck". Code is waiting for peers.
-*   **Action**: Ping reviewers.
-
-### ⛓️ Blocker Chain Rule
-*   **Logic**: IF Task A `is blocked by` Task B, AND Task B is `blocked by` Task C.
-*   **Diagnosis**: "Dependency Hell".
-*   **Action**: Elevate to Team Lead immediately.
-
-## 4. Output: Daily Pulse Report
-
-**Output**: Present directly in Chat.
-
-### Template
+## Output Template
 
 ```markdown
-# 💓 Daily Pulse: [Date]
-**Sprint Goal**: [Goal Text] | **Days Left**: [N]
+# Team Beat — {TARGET} — Sprint {SPRINT}
 
-## 🚨 Immediate Attention (Red Flags)
-| Issue | Owner | Problem | Recommendation |
-|-------|-------|---------|----------------|
-| [WG3-101] | @Sarah | Stalled (5d) | Ask for update or move to Backlog |
-| [WG3-202] | @Mike | Overloaded (5 active) | Focus on [WG3-202], pause others |
+## Delivery Confidence: {🟢/🟠/🔴}
+Why:
+- {evidence_1}
+- {evidence_2}
 
-## ⚠️ Potential Risks (Yellow Flags)
-*   **Review Queue**: 4 items waiting in "Review" > 48hrs.
-*   **Unassigned Work**: 2 "In Progress" tickets have no owner.
+## Commitment Snapshot
+- Planned: {PLANNED} | Done: {DONE} | Remaining: {REMAINING} | Days left: {DAYS_LEFT}
+- Scope creep: {ADDED_AFTER_START} ({SCOPE_CREEP_RATIO})
+- Rollover candidates: {ROLLOVER_CANDIDATES} ({ROLLOVER_CANDIDATE_RATIO})
+- Flow issues: Blocked {BLOCKED_COUNT} | Review > SLA {REVIEW_BREACH_COUNT} | Stale {STALE_COUNT}
 
-## 📊 Team Load (WIP Limits)
-*   Sarah: [|||||] (5) - 🔴 High
-*   David: [||] (2) - 🟢 Healthy
-*   Jessica: [] (0) - ⚪ Free
+## Top 3 Threats (with interventions)
+1) {THREAT}
+   - Evidence: {facts}
+   - Intervention: {action} (Owner: {owner}, by: {date})
+2) ...
+3) ...
 
-## ✅ Recent Wins (Last 24h)
-*   [WG3-305] Moved to Done
+## Today’s Minimal Focus (max 3)
+- Unblock: {item/area}
+- Finish: {item/area}
+- Review: {item/area}
+
+## Wins (last 24–48h)
+- {win_1}
+- {win_2}
 ```
-
-## 5. Execution Steps for Agent
-
-1.  **Parse Request**: Identify project.
-2.  **Jira Query**: Run `${MCP_ATLASSIAN_SEARCH_JQL}`.
-3.  **Process Data**: Iterate through issues, applying heuristics in memory.
-4.  **Format Output**: Generate Markdown table.
-5.  **Present**: Display summary table in chat using the template below.
