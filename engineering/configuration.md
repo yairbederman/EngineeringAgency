@@ -57,8 +57,8 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 |----------|---------|-------|
 | `${PRODUCT_SPECS_FOLDER_ID}` | Product Specs Folder ID | `260177923` |
 | `${TECH_SPECS_FOLDER_ID}` | Tech Specs Folder ID | `259883024` |
-| | Product Specs URL | [Folder](https://lognetsystems.atlassian.net/wiki/spaces/WGPro30/folder/260177923) |
-| | Tech Specs URL | [Folder](https://lognetsystems.atlassian.net/wiki/spaces/WGPro30/folder/259883024) |
+| | Product Specs URL | [Folder](https://${ATLASSIAN_CLOUD_ID}/wiki/spaces/${CONFLUENCE_SPACE_KEY}/folder/${PRODUCT_SPECS_FOLDER_ID}) |
+| | Tech Specs URL | [Folder](https://${ATLASSIAN_CLOUD_ID}/wiki/spaces/${CONFLUENCE_SPACE_KEY}/folder/${TECH_SPECS_FOLDER_ID}) |
 
 ### Custom Fields
 

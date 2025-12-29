@@ -186,7 +186,7 @@ For EACH claimed route → backend mapping in `api-contracts.json._nextApiRoutes
 
 **If evidence fails quality check:**
 1. Run `grep_search` to find actual code evidence for the dependency
-2. For library dependencies: search for specific import statements (e.g., `import com.lognet.lts.common`)
+2. For library dependencies: search for specific import statements (e.g., `import com.example.common`)
 3. For HTTP dependencies: search for client class usage or URL construction
 4. If no high-quality evidence found → **Exclude from `dependencies[]`** and add to `_warnings[]`:
    ```json
@@ -203,7 +203,7 @@ For EACH claimed route → backend mapping in `api-contracts.json._nextApiRoutes
 For dependencies of type `library`, evidence MUST include:
 - Specific import statement with package path
 - File and line number where import occurs
-- Example: `BookingService.java:8 - import com.lognet.lts.common.model.SessionData`
+- Example: `BookingService.java:8 - import com.example.common.model.SessionData`
 
 **Do NOT use generic evidence like:**
 - ❌ "Standard Spring Boot dependency pattern"
