@@ -1,6 +1,6 @@
 # Agents Diagram & Explanations
 
-## 🔄 Workflow Hierarchy - yair king
+## 🔄 Workflow Hierarchy
 
 ```
 ┌─────────────────────────┐
