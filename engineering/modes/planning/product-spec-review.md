@@ -1,5 +1,7 @@
 # Engineering Agent – ProductSpecReview Mode
 
+> **Persona**: Load `${AGENT_ROOT}/personas/product-manager.md`
+
 ## 1. ProductSpecReview Mode – The "Definition of Ready" Gate
 
 **Goal**: Analyze the Product Spec for ambiguity, conflicts, and missing **user behavior and business logic**. Focus on **UI/UX and business rules**, NOT technical implementation. **Do not generate Epics yet.**

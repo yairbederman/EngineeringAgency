@@ -105,6 +105,22 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 - No `any` without resolution attempt → `_unresolved`
 - Track coverage
 
+### Phase 2.5: Extract Database Schema (Backend Only)
+**Read**: `${ARCHITECT_ROOT}/_phase-2.5-extract-database-schema.md`
+**Output**: `analysis/database-schema.json`
+- **Trigger**: Only for Backend projects with ORM/database layer (JPA, TypeORM, Prisma, etc.)
+- Extract table definitions, columns, constraints, indexes
+- Map entity-to-table relationships
+- Document migration framework if present
+
+### Phase 2.6: Extract Validation Schemas (Conditional)
+**Read**: `${ARCHITECT_ROOT}/_phase-2.6-extract-validation-schemas.md`
+**Output**: `analysis/validation-schemas.json`
+- **Trigger**: Only when validation libraries detected (Zod, Yup, Joi, class-validator, etc.)
+- Extract field-level validation rules
+- Map schemas to entities
+- Document custom validators
+
 ### Phase 3: Extract APIs
 **Read**: `${ARCHITECT_ROOT}/_phase-3-extract-apis.md`
 **Output**: `analysis/api-contracts.json`
@@ -127,6 +143,14 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 - Generate Figma-to-component mappings automatically
 - Used by `/engineering-agent` for component instance matching
 
+### Phase 3.7: Extract State Contracts (Frontend Only)
+**Read**: `${ARCHITECT_ROOT}/_phase-3.7-extract-state-contracts.md`
+**Output**: `analysis/state-contracts.json`
+- **Trigger**: Only for Frontend projects with Redux/Zustand/Pinia/MobX/Recoil
+- Extract full action payloads with typed parameters
+- Document async thunk lifecycle (pending/fulfilled/rejected)
+- Extract selector return types and dependencies
+
 ### Phase 4: Map Dependencies
 **Read**: `${ARCHITECT_ROOT}/_phase-4-map-dependencies.md`
 **Output**: `analysis/function-registry.json`, `deep-dive/*` (all deep-dive files)
@@ -134,6 +158,30 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 - Map controller → service → external service chains
 - Document cross-project dependencies (calls to other APIs)
 - Generate ALL deep-dive documentation files
+
+### Phase 4.2: Extract Inter-Service Contracts (Backend Only)
+**Read**: `${ARCHITECT_ROOT}/_phase-4.2-extract-inter-service-contracts.md`
+**Output**: `analysis/inter-service-contracts.json`
+- **Trigger**: Only for Backend projects calling other internal services
+- Extract full request/response DTOs for inter-service calls
+- Verify contracts against target service's api-contracts (if available)
+- Document resilience patterns (circuit breaker, retry, timeout)
+
+### Phase 4.3: Extract External Integrations (Conditional)
+**Read**: `${ARCHITECT_ROOT}/_phase-4.3-extract-external-integrations.md`
+**Output**: `analysis/external-integrations.json`
+- **Trigger**: Only when third-party SDKs detected (Stripe, SendGrid, AWS, etc.)
+- Extract wrapper methods with parameter and return types
+- Document configuration requirements (env vars)
+- Map webhook handlers if present
+
+### Phase 4.4: Extract Error Taxonomy (Universal)
+**Read**: `${ARCHITECT_ROOT}/_phase-4.4-extract-error-taxonomy.md`
+**Output**: `analysis/error-taxonomy.json`
+- Extract custom error classes with fields
+- Document error codes and their meanings
+- Map HTTP status code conventions
+- Document error propagation patterns across layers
 
 ### Phase 4.5: Enforcement Gate (BLOCKING)
 **Before proceeding to Phase 5**, check coverage thresholds based on project type:
@@ -248,7 +296,13 @@ After successful execution, the following files **MUST** exist in `${AI_INSTRUCT
 .ai-instructions/
 ├── analysis/
 │   ├── design-tokens.json        # (Frontend only) CSS/Tailwind tokens
-│   └── component-registry.json   # (Frontend only) React/Vue components
+│   ├── component-registry.json   # (Frontend only) React/Vue components
+│   ├── state-contracts.json      # (Frontend only) Redux/Zustand full action payloads
+│   ├── database-schema.json      # (Backend only) Table definitions + migrations
+│   ├── validation-schemas.json   # (Conditional) Zod/Yup/Joi validation rules
+│   ├── inter-service-contracts.json  # (Backend only) Microservice call DTOs
+│   ├── external-integrations.json    # (Conditional) Third-party SDK wrappers
+│   └── error-taxonomy.json       # (Universal) Error codes + response shapes
 └── deep-dive/
     ├── component-registry.md     # (Frontend only) Component documentation
     ├── debugging-guide.md        # (If complex error handling exists)

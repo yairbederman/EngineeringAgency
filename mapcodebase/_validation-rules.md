@@ -47,6 +47,42 @@ files in discoveredLocations.state
   == modules in function-registry.json.stateModules
 ```
 
+### 5. Database Schema Coverage (Backend Only)
+```
+IF detectedStack.hasORM:
+  entities in entity-contracts.json with ORM annotations
+    == tables in database-schema.json
+```
+
+### 6. Validation Schema Coverage (Conditional)
+```
+IF detectedStack.hasValidation:
+  schemas in validation-schemas.json
+    >= 80% of DTOs in entity-contracts.json with validation decorators
+```
+
+### 7. Inter-Service Contract Coverage (Backend Only)
+```
+IF detectedStack.callsExternalServices:
+  targets in inter-service-contracts.json
+    == unique services called in function-registry.json.crossProjectDependencies
+```
+
+### 8. External Integration Coverage (Conditional)
+```
+IF detectedStack.hasThirdPartySDKs:
+  integrations in external-integrations.json
+    == third-party packages in package.json/pom.xml with wrapper usage
+```
+
+### 9. Error Taxonomy Completeness (Universal)
+```
+error classes in error-taxonomy.json
+  >= custom error/exception classes in codebase
+error codes documented
+  >= error codes used in error responses
+```
+
 ## Quality Checks
 
 | Check | Rule | Fail Action |
@@ -64,6 +100,11 @@ files in discoveredLocations.state
 1. **API → Entity**: All types in `api-contracts.json` exist in `entity-contracts.json`
 2. **Hook → State**: All state reads in `function-registry.json` reference valid state modules
 3. **Hook → API**: All API calls in hooks reference documented API clients
+4. **State → API** (NEW): All async thunks in `state-contracts.json` reference valid API clients
+5. **DB → Entity** (NEW): All tables in `database-schema.json` map to entities in `entity-contracts.json`
+6. **Validation → Entity** (NEW): All schemas in `validation-schemas.json` link to entities
+7. **InterService → Config** (NEW): All targets in `inter-service-contracts.json` exist in `shared/configuration.md`
+8. **Error → API** (NEW): Error codes in `error-taxonomy.json` appear in API error responses
 
 ## Code Evidence Requirement (For Cross-Service Accuracy)
 
@@ -156,6 +197,28 @@ grep '_entityUsage' function-registry.json
 grep 'Feature Patterns' copilot-instructions.md
 ```
 **If NO match found**: HALT, return to Phase 5, generate feature patterns table.
+
+### Check 5: New Contract Artifacts (Conditional)
+```bash
+# For Backend projects with ORM
+IF detectedStack.hasORM: ls database-schema.json || FAIL
+
+# For projects with validation libraries
+IF detectedStack.hasValidation: ls validation-schemas.json || FAIL
+
+# For Frontend with state management  
+IF detectedStack.hasStateManagement: ls state-contracts.json || FAIL
+
+# For Backend calling other services
+IF detectedStack.callsExternalServices: ls inter-service-contracts.json || FAIL
+
+# For projects with third-party SDKs
+IF detectedStack.hasThirdPartySDKs: ls external-integrations.json || FAIL
+
+# Universal - always required
+ls error-taxonomy.json || FAIL
+```
+**If any conditional artifact missing when condition is met**: HALT and return to appropriate phase.
 
 ## Self-Check Command
 

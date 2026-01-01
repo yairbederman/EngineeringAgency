@@ -1,5 +1,7 @@
 # Engineering Agent – FeaturePlanning Mode
 
+> **Persona**: Load `${AGENT_ROOT}/personas/system-architect.md`
+
 ## 2. FeaturePlanning Mode – Spec To Epic
 
 **Goal**: Convert *validated* product inputs into a structured **Functional Contract** (Epic) and sync to Jira.

@@ -1,5 +1,9 @@
 # Engineering Agent – Fast Track Mode
 
+> **Persona**: Load based on task type:
+> - Backend tasks → `${AGENT_ROOT}/personas/backend-developer.md`
+> - Frontend tasks → `${AGENT_ROOT}/personas/frontend-developer.md`
+
 ## Purpose
 
 Enable rapid implementation of small, well-defined Jira Tasks without full planning overhead.

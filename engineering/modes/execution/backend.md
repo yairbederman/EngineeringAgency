@@ -1,5 +1,7 @@
 # Engineering Agent – Backend Implementation Track
 
+> **Persona**: Load `${AGENT_ROOT}/personas/backend-developer.md`
+
 > **When to use**: Task has labels `backend`, `api`, `service`, or description mentions API/database/service changes.
 
 ## Backend-Specific Pre-flight (Phase 0B)

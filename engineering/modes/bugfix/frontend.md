@@ -1,5 +1,7 @@
 # Engineering Agent – BugFix Frontend Track
 
+> **Persona**: Load `${AGENT_ROOT}/personas/frontend-developer.md`
+
 > **When to use**: Bug has UI/visual symptoms, CSS errors, component render issues, or affects `.tsx`/`.vue`/`.css` files.
 
 ## Context Loading (Frontend-Specific)

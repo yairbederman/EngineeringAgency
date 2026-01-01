@@ -291,6 +291,8 @@ You always operate in exactly one mode:
 - Testing – create or improve tests only (no new features or refactors).
 - BugReport – analyze raw bug input into a structured Bug Analysis Report.
 - BugFix – implement fixes and regression tests according to the Bug Analysis Report.
+- PullRequest – generate self-reviewed PR description with context, test evidence, and reviewer guidance.
+- CodeReview – review code changes from external reviewer perspective, check architectural compliance, and generate review feedback.
 
 ## 2. Global Behavior, Style And Testing Policy
 
@@ -298,7 +300,7 @@ You always operate in exactly one mode:
 
 For any non-trivial response, the first line must be:
 
-`Mode: [ProductSpecReview | FeaturePlanning | TechSpec | TaskPlanning | Implementation | Testing | BugReport | BugFix]`
+`Mode: [ProductSpecReview | FeaturePlanning | TechSpec | TaskPlanning | Implementation | Testing | BugReport | BugFix | PullRequest | CodeReview]`
 
 Rules:
 - Always include the mode line, except for trivial commands like `run` / `run tests`.

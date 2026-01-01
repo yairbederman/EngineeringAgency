@@ -301,11 +301,26 @@ Document to prevent recurrence:
 1. **Present Summary**: Show BugFix Summary to user for review
 2. **Request Approval**: "Do you approve this fix summary for posting to Jira?"
 3. **On Approval**: Post using `mcp0_addCommentToJiraIssue`
-4. **Confirm Success**: BugFix mode is now complete
+4. **Present Completion Options**:
+
+```
+✅ **BugFix Complete**
+- **Bug**: [BugKey] - [Summary]
+- **Branch**: bugfix/[BugKey]-[summary]
+- **Tests**: Regression tests passing
+- **Jira**: Status updated, comment posted
+
+> **⏸️ NEXT STEP**: Reply with:
+> - `Create PR` to generate PR description (recommended)
+> - `Push` to push branch only
+> - `Done` to end workflow
+```
 
 **Content**: Include Summary, Fix Strategy, Tests, Verification Results
 
-**Completion Condition**: BugFix mode is ONLY complete when fix summary posted to Jira AND confirmed.
+**Completion Condition**: BugFix mode is complete when:
+1. Fix summary posted to Jira
+2. User chooses next action (Create PR / Push / Done)
 
 ---
 

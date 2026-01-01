@@ -26,6 +26,41 @@ IF user request is "Implement [TaskKey]" AND issueType is Task/Sub-task:
 3. **IF eligible** → Skip to Phase 2 (Execution Loop) with minimal context
 4. **IF not eligible** → Fall back to standard workflow (continue below)
 
+### Step 0.1.5: Dependency Health Check (MANDATORY)
+
+> **Purpose**: Ensure clean build environment before implementation.
+
+1. **Fresh Install**:
+   ```bash
+   npm ci  # or yarn install --frozen-lockfile, pnpm install --frozen-lockfile
+   ```
+   - **IF fails** → STOP. Report dependency resolution issues:
+     ```
+     "Dependency installation failed:
+     [error message]
+     
+     Options:
+     A) Fix package.json/lock file manually
+     B) Run `npm install` to update lock file
+     C) Abort implementation"
+     ```
+
+2. **Security Audit** (Non-blocking warning):
+   ```bash
+   npm audit --production
+   ```
+   - **IF critical vulnerabilities** → WARN user:
+     ```
+     ⚠️ Security vulnerabilities detected:
+     - [X] critical, [Y] high
+     
+     Proceeding with caution. Consider running `npm audit fix` after implementation.
+     ```
+
+3. **Lock File Check**:
+   - Verify lock file exists (package-lock.json, yarn.lock, pnpm-lock.yaml)
+   - **IF missing** → WARN: "No lock file found. Builds may be non-reproducible."
+
 ### Step 0.2: Load Project Context (MANDATORY, EPIC-CACHED)
 
 > **Optimization**: Context is cached at Epic level to avoid re-reading for each task.
@@ -159,6 +194,39 @@ After Backend Completion (Phase 3B), before starting Frontend:
 
 ### Step 2.1: Context & Branching
 
+#### Step 2.1.1: Stale Branch Detection (MANDATORY)
+
+> **Purpose**: Prevent merge conflicts by ensuring branch is based on latest main.
+
+1. **Fetch Latest**:
+   ```bash
+   git fetch origin main
+   ```
+
+2. **Check Divergence**:
+   ```bash
+   git log HEAD..origin/main --oneline
+   ```
+
+3. **IF output shows commits** (local is behind):
+   ```
+   ⚠️ Main branch has [X] new commits since your local.
+   
+   Recent changes:
+   - [commit1] [message1]
+   - [commit2] [message2]
+   
+   Options:
+   A) Rebase now: `git pull --rebase origin main` (recommended)
+   B) Proceed anyway (merge conflict risk)
+   C) Abort and review changes first
+   ```
+   - **Wait for user choice** before proceeding
+
+4. **IF no divergence** → Proceed to branching
+
+#### Step 2.1.2: Create Branch
+
 Execute in **PARALLEL** where possible:
 - Read the current task using `${MCP_ATLASSIAN_GET_ISSUE}`
 - Read Target Files (if MODIFY action)
@@ -251,13 +319,41 @@ Run **All Related Tests** (not just new ones) to ensure no side effects:
 - Integration tests touching modified APIs/components
 - **Skip tests** that passed in Step 2.7 (use test fingerprinting or track passed IDs)
 - If regression detected: Enter Auto-Fix Loop (same 3-retry limit)
-- **Rollback Option**: If regression fix breaks original after 3 attempts:
-  ```
-  "Regression fix breaking original functionality. Options:
-  A) Rollback to pre-fix state
-  B) Seek guidance
-  C) Merge with known regression (document in Jira)"
-  ```
+
+#### Rollback Protocol (If Regression Persists After 3 Attempts)
+
+> **Purpose**: Safely revert to last known good state without losing work.
+
+**Step A: Capture Current State**
+```bash
+# Save current work to stash
+git stash push -m "[TaskKey] Failed implementation attempt"
+
+# Record last green commit
+LAST_GREEN=$(git log --oneline -1 --before="[implementation-start-time]")
+```
+
+**Step B: Revert to Green State**
+```bash
+# Reset to last passing commit
+git checkout [last-green-commit]
+```
+
+**Step C: Present Options**
+```
+⚠️ **Implementation Reverted**
+
+- **Last green commit**: [commit-hash] [message]
+- **Failed changes**: Saved in git stash
+
+> **⏸️ OPTIONS**:
+> A) `Review stash` - Show what was attempted: `git stash show -p`
+> B) `Retry different approach` - Start fresh from green state
+> C) `Escalate` - Document blockers and seek guidance
+> D) `Abandon task` - Return task to backlog
+```
+
+**FORBIDDEN**: Option to "Merge with known regression" has been removed. Shipping known regressions is not acceptable.
 
 ### Step 3.2: Commit & Publish
 
@@ -285,7 +381,20 @@ Post implementation summary as comment using `${MCP_ATLASSIAN_ADD_COMMENT}`:
 
 - **STOP**
 - **If Queue has more items**: Ask "Task [Current] done. Shall I continue to [Next Task]?"
-- **If Queue empty**: Ask "All tasks complete. Ready to push branches?"
+- **If Queue empty**: Present completion options:
+
+```
+✅ **Implementation Complete**
+- **Tasks**: [X] completed
+- **Branch**: feature/[TaskKey]-[summary]
+- **Tests**: All passing
+- **Jira**: Status updated to "In Review"
+
+> **⏸️ NEXT STEP**: Reply with:
+> - `Create PR` to generate PR description (recommended)
+> - `Push` to push branch only
+> - `Done` to end workflow
+```
 
 ---
 
@@ -298,7 +407,10 @@ Post implementation summary as comment using `${MCP_ATLASSIAN_ADD_COMMENT}`:
   2. Check last Jira comment for progress
   3. Resume from last known step
 
-**Completion Condition**: Implementation mode ONLY complete when Jira status updated and comment posted.
+**Completion Condition**: Implementation mode is complete when:
+1. Jira status updated to "In Review"
+2. Comment posted to Jira
+3. User chooses next action (Create PR / Push / Done)
 
 ---
 

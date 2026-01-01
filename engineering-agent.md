@@ -2,15 +2,28 @@
 description: Activates the Engineering Agent Role
 ---
 
-## Planning Phase Flow
+## Workflow Flow
 
 ```
-ProductSpecReview → DesignAnalysis → FeaturePlanning → TechSpec → TaskPlanning
-       ⬇️               ⬇️              ⬇️             ⬇️           ⬇️
-  [APPROVE]       [APPROVE]      [APPROVE Epic]  [APPROVE Spec] [APPROVE Tasks]
-       |               ↓                                              ⬇️
-   (if no Figma,   Design Report                               Implementation
-    can skip)      + Token Map
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              PLANNING PHASE                                      │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│ ProductSpecReview → DesignAnalysis → FeaturePlanning → TechSpec → TaskPlanning  │
+│       ⬇️               ⬇️              ⬇️             ⬇️           ⬇️            │
+│   [APPROVE]       [APPROVE]      [APPROVE Epic]  [APPROVE Spec] [APPROVE Tasks] │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                            EXECUTION PHASE                                       │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                      Implementation / BugFix                                     │
+│                              ⬇️                                                  │
+│                         [CODE COMPLETE]                                          │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                            COMPLETION PHASE                                      │
+├─────────────────────────────────────────────────────────────────────────────────┤
+│                         Pull Request                                             │
+│                              ⬇️                                                  │
+│                         [PR READY]                                               │
+└─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 
@@ -43,6 +56,7 @@ Determine which mode the user wants:
 - **Planning**: ProductSpecReview, DesignAnalysis, FeaturePlanning, TechSpec, TaskPlanning
 - **Implementation**: Implementation, Testing
 - **BugFix**: BugReport, BugFix
+- **Completion**: PullRequest, CodeReview
 
 ### 3. Load Core Rules
 
@@ -51,6 +65,26 @@ Read `${AGENT_ROOT}/core-rules.md` for:
 - Tool failure handling
 
 > **Note**: `AGENT_ROOT` is defined in configuration.md
+
+### 3.5. Load Persona (NEW)
+
+Load the appropriate persona based on the identified mode:
+
+| Mode | Persona File |
+|------|-------------|
+| ProductSpecReview | `${AGENT_ROOT}/personas/product-manager.md` |
+| DesignAnalysis | `${AGENT_ROOT}/personas/designer.md` |
+| FeaturePlanning | `${AGENT_ROOT}/personas/system-architect.md` |
+| TechSpec | `${AGENT_ROOT}/personas/system-architect.md` |
+| TaskPlanning | `${AGENT_ROOT}/personas/system-architect.md` |
+| Implementation (Backend) | `${AGENT_ROOT}/personas/backend-developer.md` |
+| Implementation (Frontend) | `${AGENT_ROOT}/personas/frontend-developer.md` |
+| BugFix (Backend) | `${AGENT_ROOT}/personas/backend-developer.md` |
+| BugFix (Frontend) | `${AGENT_ROOT}/personas/frontend-developer.md` |
+| PullRequest | `${AGENT_ROOT}/personas/system-architect.md` |
+| CodeReview | `${AGENT_ROOT}/personas/system-architect.md` |
+
+> **Purpose**: Personas provide domain-specific expertise, quality standards, and thinking approach for each mode. See `${AGENT_ROOT}/personas/_index.md` for details.
 
 ### 4. Load Mode-Specific Rules
 
@@ -69,6 +103,10 @@ Read `${AGENT_ROOT}/core-rules.md` for:
 
 **If BugFix Mode** (BugReport, BugFix):
 - Read `${AGENT_ROOT}/modes/bugfix.md`
+
+**If Completion Mode** (PullRequest, CodeReview):
+- **PullRequest**: Read `${AGENT_ROOT}/modes/completion/pull-request.md`
+- **CodeReview**: Read `${AGENT_ROOT}/modes/completion/code-review.md`
 
 ### 5. Execute
 
@@ -211,6 +249,24 @@ TaskPlanning has **three sequential gates** before proceeding to Implementation:
 - **Artifact**: Summary with task keys, layer breakdown, dependency order
 - **Action**: Display final summary and handoff
 - **Gate**: STOP → User selects first task to implement (do NOT auto-proceed)
+
+#### After Implementation/BugFix
+
+**Gate 6: Pull Request (Completion Phase)**
+- **Trigger**: After Implementation or BugFix completes (Jira status = "In Review")
+- **Artifact**: PR Description with self-review checklist
+- **Action**:
+  - Complete self-review checklist
+  - Generate PR description with context
+  - Detect breaking changes
+  - Provide reviewer guidance
+- **Output**: Ready-to-submit PR with:
+  - Summary and linked Jira issues
+  - Screenshots/recordings (for Frontend)
+  - Test evidence
+  - Breaking change warnings (if applicable)
+  - Rollback plan
+- **Gate**: STOP → User creates PR or requests revisions
 
 ---
 

@@ -1,5 +1,7 @@
 # Engineering Agent – BugFix Backend Track
 
+> **Persona**: Load `${AGENT_ROOT}/personas/backend-developer.md`
+
 > **When to use**: Bug has API errors (4xx, 5xx), database issues, service failures, or affects `.controller.`/`.service.`/`.repository.` files.
 
 ## Context Loading (Backend-Specific)

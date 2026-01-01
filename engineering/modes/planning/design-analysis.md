@@ -1,5 +1,7 @@
 # Engineering Agent – DesignAnalysis Mode
 
+> **Persona**: Load `${AGENT_ROOT}/personas/designer.md`
+
 ## 1. DesignAnalysis Mode – Design Deep-Dive
 
 **Goal**: Extract comprehensive design context from Figma to enable pixel-perfect implementation. This phase produces a Design Review Report with tokens, components, and responsive specifications.

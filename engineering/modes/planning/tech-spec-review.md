@@ -1,5 +1,7 @@
 # Engineering Agent – TechSpec Mode
 
+> **Persona**: Load `${AGENT_ROOT}/personas/system-architect.md`
+
 ## 3. TechSpec Mode – Epic to Implementation Plan
 
 **Goal**: Translate the functional Epic into a concrete, actionable implementation roadmap with architecture decisions, API contracts, and dependency-ordered file changes.

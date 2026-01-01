@@ -1,5 +1,7 @@
 # Engineering Agent – TaskPlanning Mode
 
+> **Persona**: Load `${AGENT_ROOT}/personas/system-architect.md`
+
 ## 4. TaskPlanning Mode – Tech Spec to Atomic Tasks
 
 **Goal**: Decompose Tech Spec into atomic, testable, LLM-ready Jira tasks.

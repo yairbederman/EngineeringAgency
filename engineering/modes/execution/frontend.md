@@ -1,5 +1,7 @@
 # Engineering Agent – Frontend Implementation Track
 
+> **Persona**: Load `${AGENT_ROOT}/personas/frontend-developer.md`
+
 > **When to use**: Task has labels `frontend`, `ui`, `component`, or description mentions UI/component/design changes.
 
 ## Frontend-Specific Pre-flight (Phase 0F)
