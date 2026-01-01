@@ -8,6 +8,8 @@
 
 - `${ANALYSIS_DIR}/service-topology.json` (from Phase 2)
 - Each project's `api-contracts.json`
+- Each project's `inter-service-contracts.json` **(NEW - if available)**
+- Each project's `error-taxonomy.json` **(NEW - if available)**
 
 ## Output
 
@@ -27,10 +29,43 @@ For each dependency edge from Phase 2:
 
 Find the specific endpoints called.
 
+### Step 1.5: Check for Pre-Extracted Inter-Service Contracts (NEW)
+
+> [!TIP]
+> **If the caller project has `inter-service-contracts.json`**, use it as the primary source for cross-service calls. This file contains pre-verified contracts with full request/response DTOs.
+
+For each caller project:
+1. Check if `.ai-instructions/analysis/inter-service-contracts.json` exists
+2. If YES:
+   - Use `outboundCalls` as the definitive list of inter-service calls
+   - DTOs are already fully expanded with field definitions
+   - Resilience patterns (circuit breaker, retry) are documented
+3. If NO:
+   - Fall back to extracting from `api-contracts.json` + code analysis
+
 ### Step 2: Extract API Contracts
 
 **From Client Side (caller)**:
-- Search for API client code (fetch, axios, SDK)
+
+**Primary Source (if available)**: `inter-service-contracts.json`
+```json
+{
+  "outboundCalls": {
+    "[TargetService]": {
+      "calls": [
+        {
+          "httpMethod": "POST",
+          "path": "/api/v1/orders",
+          "requestDto": { "name": "[DtoName]", "fields": {...} },
+          "responseDto": { "name": "[DtoName]", "fields": {...} }
+        }
+      ]
+    }
+  }
+}
+```
+
+**Fallback Source**: Search for API client code (fetch, axios, SDK)
 - Match URL patterns to backend endpoints
 - Extract request parameters and expected response types
 

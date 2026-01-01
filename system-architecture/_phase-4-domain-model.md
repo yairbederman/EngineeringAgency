@@ -8,6 +8,7 @@
 
 - `${ANALYSIS_DIR}/project-inventory.json` (from Phase 1)
 - Each project's `entity-contracts.json`
+- Each project's `database-schema.json` **(NEW - if available for backend projects)**
 
 ## Output
 
@@ -22,6 +23,10 @@
 For each `ready` project:
 - Read `entity-contracts.json`
 - Extract all entities with their fields
+- **NEW**: If `database-schema.json` exists:
+  - Enrich entities with table mappings
+  - Add column types and constraints
+  - Flag entity-table discrepancies
 
 ### Step 2: Group by Entity Name
 
