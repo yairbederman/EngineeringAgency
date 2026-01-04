@@ -175,9 +175,13 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 - Document configuration requirements (env vars)
 - Map webhook handlers if present
 
-### Phase 4.4: Extract Error Taxonomy (Universal)
+### Phase 4.4: Extract Error Taxonomy (MANDATORY - Universal)
 **Read**: `${ARCHITECT_ROOT}/_phase-4.4-extract-error-taxonomy.md`
 **Output**: `analysis/error-taxonomy.json`
+
+> [!IMPORTANT]
+> **This phase is ALWAYS executed** for ALL project types. Error handling patterns exist in every codebase and must be documented.
+
 - Extract custom error classes with fields
 - Document error codes and their meanings
 - Map HTTP status code conventions
@@ -242,6 +246,7 @@ Check EACH required file (see "Generated Artifacts Summary" below):
 | `analysis/api-contracts.json` | [ ] Exists |
 | `analysis/function-registry.json` | [ ] Exists |
 | `analysis/file-categorization.json` | [ ] Exists |
+| `analysis/error-taxonomy.json` | [ ] Exists |
 | `deep-dive/dependency-chains.md` | [ ] Exists |
 | `deep-dive/data-flow.md` | [ ] Exists |
 
@@ -280,11 +285,12 @@ After successful execution, the following files **MUST** exist in `${AI_INSTRUCT
 ├── copilot-instructions.md       # Master AI instructions (entry point)
 ├── analysis/
 │   ├── techstack.md              # Stack detection results
-│   ├── source-structure.json     # Discovered locations + file counts
+│   ├── source-structure.json     # Discovered locations + file counts + detectedCapabilities
 │   ├── entity-contracts.json     # Type definitions with fields
 │   ├── api-contracts.json        # REST endpoints with validation
 │   ├── function-registry.json    # Service dependencies
-│   └── file-categorization.json  # Files grouped by layer
+│   ├── file-categorization.json  # Files grouped by layer
+│   └── error-taxonomy.json       # Error codes + response shapes (UNIVERSAL)
 └── deep-dive/
     ├── dependency-chains.md      # Controller → Service → External chains
     └── data-flow.md              # Data object transformations
@@ -302,7 +308,7 @@ After successful execution, the following files **MUST** exist in `${AI_INSTRUCT
 │   ├── validation-schemas.json   # (Conditional) Zod/Yup/Joi validation rules
 │   ├── inter-service-contracts.json  # (Backend only) Microservice call DTOs
 │   ├── external-integrations.json    # (Conditional) Third-party SDK wrappers
-│   └── error-taxonomy.json       # (Universal) Error codes + response shapes
+│   # error-taxonomy.json moved to Required Files (always generated)
 └── deep-dive/
     ├── component-registry.md     # (Frontend only) Component documentation
     ├── debugging-guide.md        # (If complex error handling exists)

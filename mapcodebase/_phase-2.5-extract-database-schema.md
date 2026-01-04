@@ -8,7 +8,10 @@ description: Phase 2.5 - Extract database schema contracts for migration-aware f
 Extract database table/collection definitions with columns, constraints, and entity mappings—enabling Tech Specs to determine if migrations are needed.
 
 ## Trigger Condition
-**Execute this phase IF** `source-structure.json.detectedStack` includes:
+
+**Execute this phase IF** `source-structure.json.detectedCapabilities.hasORM` is `true`.
+
+**How Phase 1 detects ORM**:
 - JPA/Hibernate annotations (`@Entity`, `@Table`, `@Column`)
 - TypeORM decorators (`@Entity`, `@Column`, `@PrimaryGeneratedColumn`)
 - Prisma schema (`schema.prisma`)
@@ -16,7 +19,7 @@ Extract database table/collection definitions with columns, constraints, and ent
 - SQLAlchemy models (`Base`, `Column`, `relationship`)
 - Django models (`models.Model`)
 
-**Skip IF**: No ORM/database layer detected.
+**Skip IF**: `detectedCapabilities.hasORM` is `false` or missing.
 
 ## Input
 Use `source-structure.json.discoveredLocations.entities` and scan for database annotations.

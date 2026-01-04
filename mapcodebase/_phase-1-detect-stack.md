@@ -121,8 +121,55 @@ Scan for patterns indicating multiple site/theme variants:
 }
 ```
 
+### Step 5: Detect Capabilities (NEW - MANDATORY)
+Scan for capability indicators that trigger conditional phases. Output in `source-structure.json.detectedCapabilities`:
+
+| Capability | Detection Patterns | Triggers Phase |
+|------------|-------------------|----------------|
+| `hasORM` | `@Entity`, `@Table`, `schema.prisma`, `new Schema`, `models.Model` | Phase 2.5 |
+| `hasValidation` | `zod`, `yup`, `joi`, `class-validator`, `@IsString`, `@IsNotEmpty` | Phase 2.6 |
+| `hasStateManagement` | `createSlice`, `createStore`, `defineStore`, `atom(`, `observable` | Phase 3.7 |
+| `hasDesignTokens` | `tailwind.config`, `theme.ts`, `tokens.json`, CSS custom properties | Phase 3.5 |
+| `hasComponentLibrary` | `React.FC`, `defineComponent`, `@Component`, `.svelte` files | Phase 3.6 |
+| `callsExternalServices` | `HttpClient`, `fetch(`, `axios`, `RestTemplate`, `WebClient` | Phase 4.2 |
+| `hasThirdPartySDKs` | `stripe`, `sendgrid`, `aws-sdk`, `twilio`, `@google-cloud` | Phase 4.3 |
+| `hasCustomErrors` | `extends Error`, `extends Exception`, `extends RuntimeException` | Phase 4.4 |
+
+**Detection Algorithm**:
+```
+For EACH capability:
+  1. Search codebase for detection patterns
+  2. If ANY pattern found → set capability to true
+  3. Store evidence (file:line) for verification
+```
+
+**Output in `source-structure.json`**:
+```json
+{
+  "detectedCapabilities": {
+    "hasORM": true,
+    "hasValidation": false,
+    "hasStateManagement": false,
+    "hasDesignTokens": false,
+    "hasComponentLibrary": false,
+    "callsExternalServices": true,
+    "hasThirdPartySDKs": false,
+    "hasCustomErrors": true,
+    "_evidence": {
+      "hasORM": ["src/main/java/entity/User.java:12 (@Entity)"],
+      "hasCustomErrors": ["src/main/java/exception/BookingException.java:5"]
+    }
+  }
+}
+```
+
+> [!IMPORTANT]
+> **Phase 4.4 (Error Taxonomy) is ALWAYS required** regardless of `hasCustomErrors` flag.
+> The flag only indicates if custom error classes exist; the phase documents ALL error handling patterns.
+
 ## Critical Rules
 1. **Exhaustive discovery**: Count files in each location for later coverage validation
 2. **No hardcoded frameworks**: Detect by patterns, not specific library names
 3. **Multi-directory support**: Projects may have multiple API/hook/state directories
 4. **Mandatory fileCount fields**: `hooks.total`, `state.slices`, `classes`, `apis` are REQUIRED for Phase 4.5 enforcement
+5. **Mandatory detectedCapabilities**: MUST output `detectedCapabilities` object for conditional phase triggers

@@ -49,28 +49,28 @@ files in discoveredLocations.state
 
 ### 5. Database Schema Coverage (Backend Only)
 ```
-IF detectedStack.hasORM:
+IF detectedCapabilities.hasORM:
   entities in entity-contracts.json with ORM annotations
     == tables in database-schema.json
 ```
 
 ### 6. Validation Schema Coverage (Conditional)
 ```
-IF detectedStack.hasValidation:
+IF detectedCapabilities.hasValidation:
   schemas in validation-schemas.json
     >= 80% of DTOs in entity-contracts.json with validation decorators
 ```
 
 ### 7. Inter-Service Contract Coverage (Backend Only)
 ```
-IF detectedStack.callsExternalServices:
+IF detectedCapabilities.callsExternalServices:
   targets in inter-service-contracts.json
     == unique services called in function-registry.json.crossProjectDependencies
 ```
 
 ### 8. External Integration Coverage (Conditional)
 ```
-IF detectedStack.hasThirdPartySDKs:
+IF detectedCapabilities.hasThirdPartySDKs:
   integrations in external-integrations.json
     == third-party packages in package.json/pom.xml with wrapper usage
 ```
@@ -198,27 +198,33 @@ grep 'Feature Patterns' copilot-instructions.md
 ```
 **If NO match found**: HALT, return to Phase 5, generate feature patterns table.
 
-### Check 5: New Contract Artifacts (Conditional)
+### Check 5: Contract Artifacts Verification
+
+**Universal (ALWAYS Required)**:
+```bash
+# Error taxonomy is MANDATORY for ALL projects
+ls error-taxonomy.json || FAIL "Phase 4.4 did not generate error-taxonomy.json"
+```
+
+**Conditional (Based on detectedCapabilities)**:
 ```bash
 # For Backend projects with ORM
-IF detectedStack.hasORM: ls database-schema.json || FAIL
+IF detectedCapabilities.hasORM: ls database-schema.json || FAIL
 
 # For projects with validation libraries
-IF detectedStack.hasValidation: ls validation-schemas.json || FAIL
+IF detectedCapabilities.hasValidation: ls validation-schemas.json || FAIL
 
 # For Frontend with state management  
-IF detectedStack.hasStateManagement: ls state-contracts.json || FAIL
+IF detectedCapabilities.hasStateManagement: ls state-contracts.json || FAIL
 
 # For Backend calling other services
-IF detectedStack.callsExternalServices: ls inter-service-contracts.json || FAIL
+IF detectedCapabilities.callsExternalServices: ls inter-service-contracts.json || FAIL
 
 # For projects with third-party SDKs
-IF detectedStack.hasThirdPartySDKs: ls external-integrations.json || FAIL
-
-# Universal - always required
-ls error-taxonomy.json || FAIL
+IF detectedCapabilities.hasThirdPartySDKs: ls external-integrations.json || FAIL
 ```
-**If any conditional artifact missing when condition is met**: HALT and return to appropriate phase.
+
+**If any artifact missing when condition is met**: HALT and return to appropriate phase.
 
 ## Self-Check Command
 
