@@ -7,11 +7,20 @@
 
 ---
 
+## ⚠️ Setup Required
+
+> [!IMPORTANT]
+> **Before first use**, you MUST configure the values in this file for your environment.
+> All placeholder values (`<PLACEHOLDER>`) must be replaced with your organization's settings.
+> See [readme/setup_instructions.md](../readme/setup_instructions.md) for detailed setup guide.
+
+---
+
 ## Global Constants
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `SYSTEM_NAME` | `WG3` | Global system identifier |
+| `SYSTEM_NAME` | `<YOUR_SYSTEM_NAME>` | Global system identifier (e.g., `MySystem`) |
 | `SYSTEM_ARCH_OUTPUT_ROOT` | `${WORKSPACE_ROOT}/${SYSTEM_NAME}-system-architecture` | Contract path for system architecture artifacts |
 | `GLOBAL_WORKFLOWS_ROOT` | `.` | Root path for global_workflows directory |
 
@@ -19,44 +28,48 @@
 
 ## Atlassian Configuration
 
-> **Cloud ID**: `lognetsystems.atlassian.net` (Use `mcp0_getAccessibleAtlassianResources` to resolve UUID if needed)
+> **Cloud ID**: Use `mcp0_getAccessibleAtlassianResources` to discover your Cloud ID.
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `${ATLASSIAN_CLOUD_ID}` | `lognetsystems.atlassian.net` | Base Cloud ID |
-| `${JIRA_PROJECT_KEY}` | `W0` | Default Project Key |
-| `${CONFLUENCE_SPACE_KEY}` | `WGPro30` | Default Space Key |
+| `${ATLASSIAN_CLOUD_ID}` | `<YOUR_ORG>.atlassian.net` | Base Cloud ID (e.g., `mycompany.atlassian.net`) |
+| `${JIRA_PROJECT_KEY}` | `<PROJECT_KEY>` | Default Project Key (e.g., `PROJ`) |
+| `${CONFLUENCE_SPACE_KEY}` | `<SPACE_KEY>` | Default Space Key (e.g., `DOCS`) |
 
 ---
 
-## Configuration
+## Workspace Configuration
 
 > [!IMPORTANT]
 > **Team Setup Required**: Each team member must set `WORKSPACE_ROOT` to their local projects directory.
 
-| Variable | Description | Value |
-|----------|-------------|---------|
-| `${WORKSPACE_ROOT}` | Root directory containing all projects | `C:/My Projects/WG3` |
+| Variable | Description | Example Value |
+|----------|-------------|---------------|
+| `${WORKSPACE_ROOT}` | Root directory containing all projects | `C:/Projects/MySystem` or `/home/user/projects` |
 
 ---
 
 ## Registered Projects
 
+> **Instructions**: Add your project entries below. Each project should have:
+> - A unique variable name for reference in workflows
+> - The actual folder name
+> - Type: `Frontend`, `Backend`, `Library`, `Infrastructure`, etc.
+> - A brief role description
+> - Path relative to `${WORKSPACE_ROOT}`
+
 | Variable | Name | Type | Role | Path |
 |----------|------|------|------|------|
-| `${PROJECT_FRONTEND}` | wg-client | Frontend | Next.js web application | `${WORKSPACE_ROOT}/wg-client` |
-| `${PROJECT_CMS_API}` | wg-cms-api | Backend | CMS content management | `${WORKSPACE_ROOT}/wg-cms-api` |
-| `${PROJECT_DATA_API}` | wg-data-api | Backend | Site data and configuration | `${WORKSPACE_ROOT}/wg-data-api` |
-| `${PROJECT_ANCILLARY_API}` | wg-ancillary-api | Backend | Ancillary products & services | `${WORKSPACE_ROOT}/wg-ancillary-api` |
-| `${PROJECT_ORDERMANAGER_API}` | wg-ordermanager-api | Backend | Order processing & management | `${WORKSPACE_ROOT}/wg-ordermanager-api` |
-| `${PROJECT_PAYMENT_API}` | wg-payment-api | Backend | Payment transactions | `${WORKSPACE_ROOT}/wg-payment-api` |
-| `${PROJECT_SEARCH_API}` | wg-search-api | Backend | Search functionality | `${WORKSPACE_ROOT}/wg-search-api` |
-| `${PROJECT_TRIPDETAILS_API}` | wg-tripdetails-api | Backend | Trip details & itinerary | `${WORKSPACE_ROOT}/wg-tripdetails-api` |
-| `${PROJECT_BOOKING_API}` | wg-booking-api | Backend | Booking processing & management | `${WORKSPACE_ROOT}/wg-booking-api` |
-| `${PROJECT_EMAIL_API}` | wg-email-api | Backend | Email notifications & templates | `${WORKSPACE_ROOT}/wg-email-api` |
-| `${PROJECT_INVOICE_API}` | wg-invoice-api | Backend | Invoice generation & management | `${WORKSPACE_ROOT}/wg-invoice-api` |
-| `${PROJECT_PREORDER_API}` | wg-preorder-api | Backend | Pre-order processing & management | `${WORKSPACE_ROOT}/wg-preorder-api` |
-| `${PROJECT_LTS_CORE}` | lts-core | Library | Core shared utilities & integrations | `${WORKSPACE_ROOT}/lts-core` |
+| `${PROJECT_EXAMPLE_1}` | `<project-name-1>` | Frontend | Web application | `${WORKSPACE_ROOT}/<project-name-1>` |
+| `${PROJECT_EXAMPLE_2}` | `<project-name-2>` | Backend | API service | `${WORKSPACE_ROOT}/<project-name-2>` |
+| `${PROJECT_EXAMPLE_3}` | `<project-name-3>` | Library | Shared utilities | `${WORKSPACE_ROOT}/<project-name-3>` |
+
+> **Example entries** (replace with your actual projects):
+> ```
+> | `${PROJECT_FRONTEND}` | my-client | Frontend | React/Next.js web app | `${WORKSPACE_ROOT}/my-client` |
+> | `${PROJECT_API}` | my-api | Backend | Spring Boot API | `${WORKSPACE_ROOT}/my-api` |
+> | `${PROJECT_CORE}` | my-core | Library | Shared libraries | `${WORKSPACE_ROOT}/my-core` |
+> ```
 
 ---
 
@@ -70,19 +83,13 @@
 
 ## Project Selection Criteria
 
+> **Customize this table** based on your project structure.
+
 | Work Type | Use Project Variable |
 |-----------|---------------------|
 | Frontend work (UI, forms, displays) | `${PROJECT_FRONTEND}` |
-| CMS/Admin operations | `${PROJECT_CMS_API}` |
-| Data processing, external APIs | `${PROJECT_DATA_API}` |
-| Ancillary products & services | `${PROJECT_ANCILLARY_API}` |
-| Order processing & management | `${PROJECT_ORDERMANAGER_API}` |
-| Payment transactions & integration | `${PROJECT_PAYMENT_API}` |
-| Search functionality & indexing | `${PROJECT_SEARCH_API}` |
-| Trip details & itinerary service | `${PROJECT_TRIPDETAILS_API}` |
-| Booking processing & management | `${PROJECT_BOOKING_API}` |
-| Email notifications & templates | `${PROJECT_EMAIL_API}` |
-| Invoice generation & management | `${PROJECT_INVOICE_API}` |
+| API/Backend services | `${PROJECT_API}` |
+| Shared libraries/utilities | `${PROJECT_CORE}` |
 | Full-stack features | Multiple projects |
 
 ---

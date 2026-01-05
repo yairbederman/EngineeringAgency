@@ -42,6 +42,13 @@ Before running any phases, validate the target project:
 
 ## Execution
 
+> [!IMPORTANT]
+> **Lazy Phase Loading (Token Efficiency)**
+> - **DO NOT** read all phase files at workflow start
+> - Read ONLY the phase file for the phase you are about to execute
+> - After completing a phase, read the NEXT phase file only when transitioning
+> - This saves ~60KB of context per session
+
 > [!CAUTION]
 > **⛔ BLOCKING: Phase 0 MUST be executed first.** Do NOT proceed to any other phase until the `.ai-instructions/` folder has been deleted.
 

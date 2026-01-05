@@ -227,11 +227,11 @@ Check for BREAKING changes:
 For each significantly changed file, add inline context:
 
 ```markdown
-### File: `src/services/BookingService.ts`
+### File: `src/services/OrderService.ts`
 
 **Purpose of changes**: [Brief explanation]
 **Key logic**: Lines 45-67 contain the new validation
-**Test coverage**: `BookingService.test.ts`
+**Test coverage**: `OrderService.test.ts`
 ```
 
 ### 4.2 Sequence Diagram (Complex Changes)
@@ -298,7 +298,7 @@ After PR is created:
 ```
 
 Examples:
-- `[PROJ-123] Add booking confirmation email`
+- `[PROJ-123] Add order confirmation email`
 - `[PROJ-456] Fix null crash in payment flow`
 - `[PROJ-789] Refactor user service for performance`
 

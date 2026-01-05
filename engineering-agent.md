@@ -88,6 +88,12 @@ Load the appropriate persona based on the identified mode:
 
 ### 4. Load Mode-Specific Rules
 
+> [!IMPORTANT]
+> **Lazy Loading (Token Efficiency)**
+> - Load ONLY the files for the CURRENT mode (not all modes)
+> - Do NOT pre-load templates until needed for generation
+> - This saves ~30KB of context per session
+
 **If Planning Mode**:
 - **ProductSpecReview**: Read `${AGENT_ROOT}/modes/planning/product-spec-review.md`
 - **DesignAnalysis**: Read `${AGENT_ROOT}/modes/planning/design-analysis.md`

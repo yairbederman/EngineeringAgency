@@ -157,7 +157,7 @@ For EACH capability:
     "hasCustomErrors": true,
     "_evidence": {
       "hasORM": ["src/main/java/entity/User.java:12 (@Entity)"],
-      "hasCustomErrors": ["src/main/java/exception/BookingException.java:5"]
+      "hasCustomErrors": ["src/main/java/exception/OrderException.java:5"]
     }
   }
 }

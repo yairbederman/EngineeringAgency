@@ -362,7 +362,7 @@ Fill `tech-spec.md` template with:
    - `parent`: [Epic Key]
    - `summary`: "Tech Spec: [Feature Name]"
    - `description`: The full Tech Spec markdown content
-   - `additional_fields`: `{"customfield_10225": {"id": "10635"}}` (Cross-Project Impact = None)
+   - `additional_fields`: `{"${CROSS_PROJECT_IMPACT_FIELD}": {"id": "${CROSS_PROJECT_IMPACT_DEFAULT}"}}` (Cross-Project Impact = None, see configuration.md for field IDs)
 2. **Verify** the Task is linked as a child of the Epic.
 
 **Link Back (Bidirectional Traceability)**:

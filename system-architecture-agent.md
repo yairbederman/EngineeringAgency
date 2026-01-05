@@ -71,6 +71,13 @@ Where `SYSTEM_ARCH_ROOT` = `./system-architecture`
 Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
 
 > [!IMPORTANT]
+> **Lazy Phase Loading (Token Efficiency)**
+> - **DO NOT** read all phase files at workflow start
+> - Read ONLY the phase file for the phase you are about to execute
+> - After completing a phase, read the NEXT phase file only when transitioning
+> - This saves ~60KB of context per session
+
+> [!IMPORTANT]
 > **ALL phases are MANDATORY**. Do NOT stop after Phase 5. Phase 6 (Interactive Viewer) MUST be executed to complete the workflow.
 
 ### Phase 0: Clean Slate

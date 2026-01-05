@@ -40,8 +40,8 @@
 >
 > [!IMPORTANT]  
 > **Output Location**: The `OUTPUT_ROOT` resolves to:
-> - Example: If `WORKSPACE_ROOT = /path/to/your/projects` and `SYSTEM_NAME = WG3`, then
-> - `OUTPUT_ROOT = /path/to/your/projects/WG3-system-architecture/`
+> - Example: If `WORKSPACE_ROOT = /path/to/your/projects` and `SYSTEM_NAME = MySystem`, then
+> - `OUTPUT_ROOT = /path/to/your/projects/MySystem-system-architecture/`
 > - This places system architecture docs **alongside** the project folders, NOT inside `global_workflows`.
 
 > [!IMPORTANT]

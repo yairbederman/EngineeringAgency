@@ -3,9 +3,41 @@
 ## Prerequisites
 
 - [ ] VS Code installed with an AI assistant extension (e.g., GitHub Copilot, Antigravity, Cursor)
-- [ ] Access to WG3 project repositories
+- [ ] Access to your team's project repositories
 - [ ] Atlassian account (for Jira/Confluence integration)
 - [ ] Figma account (for design token extraction)
+
+---
+
+## ⚠️ First-Time Setup (REQUIRED)
+
+> [!IMPORTANT]
+> **Before using the agents**, you MUST configure the placeholder values in the configuration files.
+> The workflow files use `<PLACEHOLDER>` values that must be replaced with your organization's settings.
+
+### Configuration Files to Update
+
+| File | What to Configure | Priority |
+|------|-------------------|----------|
+| [`shared/configuration.md`](../shared/configuration.md) | System name, Atlassian settings, Workspace root, Projects registry | **Required** |
+| [`engineering/configuration.md`](../engineering/configuration.md) | Confluence folder IDs, Jira custom field IDs | **Required for Jira integration** |
+| [`manager/configuration.md`](../manager/configuration.md) | Sprint thresholds, Jira conventions | Optional (uses sensible defaults) |
+
+### Quick Configuration Checklist
+
+1. **Open `shared/configuration.md`** and replace:
+   - `<YOUR_SYSTEM_NAME>` → Your system identifier (e.g., `MyProject`, `TeamAlpha`)
+   - `<YOUR_ORG>.atlassian.net` → Your Atlassian Cloud ID
+   - `<PROJECT_KEY>` → Your Jira project key (e.g., `PROJ`, `DEV`)
+   - `<SPACE_KEY>` → Your Confluence space key
+   - Add your actual projects to the **Registered Projects** table
+
+2. **Open `engineering/configuration.md`** and replace:
+   - `<PRODUCT_SPECS_FOLDER_ID>` → Your Confluence folder ID for Product Specs
+   - `<TECH_SPECS_FOLDER_ID>` → Your Confluence folder ID for Tech Specs
+   - Configure custom fields if your Jira uses them (or remove if not needed)
+
+---
 
 ## Step 0: Configure MCP Servers
 
@@ -17,7 +49,7 @@ Provides Jira and Confluence integration for epics, tasks, and specs.
 
 - [ ] Install the Atlassian MCP server extension
 - [ ] Configure authentication with your Atlassian account
-- [ ] Verify access to the WG3 Jira project and Confluence space (see [`engineering/configuration.md`](../engineering/configuration.md) for keys)
+- [ ] Verify access to the Jira project and Confluence space
 
 **Test**: Run `${MCP_ATLASSIAN_GET_USER_INFO}` to verify your connection.
 
@@ -27,7 +59,7 @@ Provides design token extraction for pixel-perfect UI implementation.
 
 - [ ] Install the Figma MCP server extension
 - [ ] Configure authentication with your Figma account
-- [ ] Verify access to WG3 design files
+- [ ] Verify access to your team's design files
 
 **Test**: Use `${MCP_FIGMA_GET_DESIGN}` on a Figma link to verify.
 
@@ -35,15 +67,17 @@ Provides design token extraction for pixel-perfect UI implementation.
 > MCP servers are configured in your VS Code settings or `.vscode/mcp.json`.
 > Ask your team lead for the MCP server configuration files.
 
+---
+
 ## Step 1: Clone Repositories
 
 ```bash
 # 1. Create your workspace directory (choose your preferred location)
-mkdir <YOUR_WORKSPACE_ROOT>   # e.g., ~/WG3 or C:\Projects\WG3
+mkdir <YOUR_WORKSPACE_ROOT>   # e.g., ~/projects or C:\Projects
 
-# 2. Clone all WG3 project repositories into this directory
+# 2. Clone all project repositories into this directory
 cd <YOUR_WORKSPACE_ROOT>
-# Clone all projects listed in shared/configuration.md
+# Clone all projects you'll be working with
 git clone <project-frontend-repo>
 git clone <project-backend-repo>
 # ... etc.
@@ -58,31 +92,30 @@ git clone <this-repo> <YOUR_WORKFLOWS_PATH>
 ## Step 2: Configure Workspace Root
 
 - [ ] Open [`shared/configuration.md`](../shared/configuration.md)
-- [ ] Note down your local projects directory (this is your `WORKSPACE_ROOT`)
+- [ ] Set your `${WORKSPACE_ROOT}` value to match your local projects directory
 
 | Platform | Example `WORKSPACE_ROOT` |
 |----------|-------------------------|
-| Windows | `C:\My Projects\WG3` |
-| macOS | `/Users/yourname/WG3` |
-| Linux | `/home/yourname/WG3` |
+| Windows | `C:\Projects\MySystem` |
+| macOS | `/Users/yourname/projects` |
+| Linux | `/home/yourname/projects` |
 
 > [!NOTE]
-> All paths in the agents use variable substitution (e.g., `${WORKSPACE_ROOT}/project-frontend`).
-> The agents resolve these at runtime based on your VS Code workspace.
+> All paths in the agents use variable substitution (e.g., `${WORKSPACE_ROOT}/my-project`).
+> The agents resolve these at runtime based on your configured paths.
 
 ## Step 3: VS Code Workspace Setup
 
 - [ ] Open VS Code
-- [ ] **File → Add Folder to Workspace...** for each project listed in [`shared/configuration.md`](../shared/configuration.md)
-- [ ] **File → Save Workspace As...** → Save as `WG3.code-workspace`
+- [ ] **File → Add Folder to Workspace...** for each project listed in your configuration
+- [ ] **File → Save Workspace As...** → Save as `MySystem.code-workspace` (use your system name)
 
 ## Step 4: Verify Setup
 
 Run this quick verification:
 
-- [ ] All projects from [`shared/configuration.md`](../shared/configuration.md) visible in VS Code Explorer sidebar
-- [ ] Each project has `.ai-instructions/` folder (if previously mapped)
-- [ ] Invoke `/engineering-agent` in your AI assistant to test
+- [ ] All your configured projects visible in VS Code Explorer sidebar
+- [ ] Invoke `/engineering-agent` in your AI assistant to test (it should read configuration successfully)
 
 > [!NOTE]
 > These workflows work with any AI assistant that supports slash commands and MCP (Model Context Protocol).
@@ -98,7 +131,8 @@ global_workflows/
 │   ├── setup_instructions.md         # This file
 │   └── agents_diagram.md             # Agent hierarchy and usage
 ├── shared/
-│   └── configuration.md              # 🔑 Project registry (SINGLE SOURCE OF TRUTH)
+│   ├── configuration.md              # 🔑 Project registry (SINGLE SOURCE OF TRUTH)
+│   └── mcp-config.md                 # MCP tool references
 │
 ├── engineering-agent.md              # Feature lifecycle workflow
 ├── engineering/                      # Configuration & mode files
@@ -124,18 +158,25 @@ global_workflows/
 
 ---
 
-## 🔧 Configuration Values
+## 🔧 Configuration Reference
 
 ### Files You May Need to Update
 
 | File | What to Configure | When |
 |------|-------------------|------|
-| [`shared/configuration.md`](../shared/configuration.md) | Add/remove projects | When new projects are added to the team |
-| [`engineering/configuration.md`](../engineering/configuration.md) | Jira/Confluence settings | If Atlassian instance changes |
+| [`shared/configuration.md`](../shared/configuration.md) | System name, Atlassian settings, Projects | Initial setup + when projects are added |
+| [`engineering/configuration.md`](../engineering/configuration.md) | Confluence folder IDs, Jira custom fields | Initial setup + if Atlassian instance changes |
+| [`manager/configuration.md`](../manager/configuration.md) | Sprint thresholds, WIP limits | When tuning delivery metrics |
 
-### Atlassian Configuration
+### Finding Atlassian IDs
 
-See [`engineering/configuration.md`](../engineering/configuration.md) for current Jira/Confluence settings (project keys, space keys, folder IDs).
+| ID Type | How to Find |
+|---------|-------------|
+| Cloud ID | Run `${MCP_ATLASSIAN_GET_RESOURCES}` or check your Atlassian URL (e.g., `myorg.atlassian.net`) |
+| Jira Project Key | Look at issue keys (e.g., if issues are `PROJ-123`, the key is `PROJ`) |
+| Confluence Space Key | Check the URL when viewing a space (e.g., `.../spaces/DOCS/...`) |
+| Folder IDs | Navigate to folder in Confluence, extract numeric ID from URL |
+| Custom Field IDs | Use Jira REST API or Admin settings → Custom Fields |
 
 ---
 
@@ -153,6 +194,8 @@ See [`engineering/configuration.md`](../engineering/configuration.md) for curren
 | Issue | Solution |
 |-------|----------|
 | Agent can't find project | Verify project is in `shared/configuration.md` and added to VS Code workspace |
+| "Placeholder value" errors | Complete the configuration setup above - replace all `<PLACEHOLDER>` values |
 | `.ai-instructions/` not found | Run `/map-codebase-agent` on the project first |
-| Cross-project context missing | Run `/system-architecture-agent` to generate `system-architecture/` |
+| Cross-project context missing | Run `/system-architecture-agent` to generate system architecture docs |
 | Jira/Confluence errors | Check `engineering/configuration.md` for correct Atlassian settings |
+| MCP server errors | Verify MCP server is installed and authenticated |

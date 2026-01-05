@@ -5,6 +5,14 @@
 
 ---
 
+## ⚠️ Setup Required
+
+> [!IMPORTANT]
+> **Before first use**, configure the Atlassian folder IDs and custom fields for your Jira/Confluence instance.
+> All placeholder values (`<PLACEHOLDER>`) must be replaced with your organization's settings.
+
+---
+
 ## Installation
 
 After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`) by default. No update is required if the standard directory structure is maintained.
@@ -53,18 +61,30 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 
 ### Confluence Folders
 
+> **Instructions**: Replace placeholder values with your Confluence folder IDs.
+> To find folder IDs, navigate to the folder in Confluence and extract the ID from the URL.
+
 | Variable | Setting | Value |
 |----------|---------|-------|
-| `${PRODUCT_SPECS_FOLDER_ID}` | Product Specs Folder ID | `260177923` |
-| `${TECH_SPECS_FOLDER_ID}` | Tech Specs Folder ID | `259883024` |
+| `${PRODUCT_SPECS_FOLDER_ID}` | Product Specs Folder ID | `<PRODUCT_SPECS_FOLDER_ID>` |
+| `${TECH_SPECS_FOLDER_ID}` | Tech Specs Folder ID | `<TECH_SPECS_FOLDER_ID>` |
 | | Product Specs URL | [Folder](https://${ATLASSIAN_CLOUD_ID}/wiki/spaces/${CONFLUENCE_SPACE_KEY}/folder/${PRODUCT_SPECS_FOLDER_ID}) |
 | | Tech Specs URL | [Folder](https://${ATLASSIAN_CLOUD_ID}/wiki/spaces/${CONFLUENCE_SPACE_KEY}/folder/${TECH_SPECS_FOLDER_ID}) |
 
 ### Custom Fields
 
+> **Instructions**: Configure your Jira custom field IDs below.
+> To find custom field IDs, use Jira's REST API or check your Jira admin settings.
+> Remove or add rows based on your Jira configuration.
+
 | Variable | Field | ID | Value | Description |
 |----------|-------|-----|-------|-------------|
-| `${CROSS_PROJECT_IMPACT_FIELD}` | Cross-Project Impact | `customfield_10225` | `10635` (= "None") | Required for all tasks |
+| `${CROSS_PROJECT_IMPACT_FIELD}` | Cross-Project Impact | `<CUSTOM_FIELD_ID>` | `<DEFAULT_VALUE_ID>` | Required for all tasks (optional - remove if not used) |
+| `${JIRA_RANK_FIELD}` | Rank | `<RANK_FIELD_ID>` | N/A | Used for task ordering (e.g., `customfield_10019`) |
+
+> **Note**: Custom fields are organization-specific. If your Jira doesn't use these fields, you can:
+> 1. Remove references to them in the workflow files
+> 2. Leave placeholders and they will be ignored
 
 ---
 
@@ -103,4 +123,3 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 > **Source**: [shared/mcp-config.md](../shared/mcp-config.md)
 >
 > All MCP tool references are now centralized in the shared MCP configuration file.
-

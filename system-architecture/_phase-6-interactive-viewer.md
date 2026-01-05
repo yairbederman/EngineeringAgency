@@ -188,7 +188,7 @@ const diagrams = [
         // Map node IDs from the Mermaid code to their drill-down target IDs
         links: {
             // <NodeID>: <TargetDiagramID>
-            // e.g., 'CORE': 'lts-core'
+            // e.g., 'CORE': '<shared-library-project>'
         },
         code: `<generated-mermaid-from-step-2>`
     },

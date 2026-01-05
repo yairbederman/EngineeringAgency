@@ -140,7 +140,7 @@ For each canonical entity:
 
 Automatically group entities into domain areas based on:
 
-1. **Naming patterns**: `Booking*`, `Payment*`, `Search*`
+1. **Naming patterns**: `Order*`, `User*`, `Product*` (domain-specific prefixes)
 2. **Package structure**: Entities in same package
 3. **Usage patterns**: Entities used together in API calls
 

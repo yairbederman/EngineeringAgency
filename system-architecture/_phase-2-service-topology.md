@@ -203,7 +203,7 @@ For EACH claimed route → backend mapping in `api-contracts.json._nextApiRoutes
 For dependencies of type `library`, evidence MUST include:
 - Specific import statement with package path
 - File and line number where import occurs
-- Example: `BookingService.java:8 - import com.example.common.model.SessionData`
+- Example: `OrderService.java:8 - import com.example.common.model.SessionData`
 
 **Do NOT use generic evidence like:**
 - ❌ "Standard Spring Boot dependency pattern"
