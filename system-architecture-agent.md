@@ -6,6 +6,39 @@ description: Generate cross-project architecture documentation for multi-service
 
 Produces centralized documentation mapping service dependencies, cross-service APIs, and unified domain models—enabling `/engineering-agent` to create complete Tech Specs for multi-project features.
 
+## Workflow Flow
+
+```mermaid
+flowchart TB
+    subgraph PREP["PREPARATION"]
+        P0["Phase 0: Clean Slate<br/>Delete existing artifacts"]
+    end
+    
+    subgraph DISCOVER["DISCOVERY"]
+        P1["Phase 1: Project Inventory<br/>Scan all registered projects"]
+        P2["Phase 2: Service Topology<br/>Map dependencies"]
+    end
+    
+    subgraph ANALYZE["ANALYSIS"]
+        P3["Phase 3: Cross-Service APIs<br/>Extract API contracts"]
+        P4["Phase 4: Unified Domain Model<br/>Merge entity definitions"]
+    end
+    
+    subgraph GENERATE["GENERATION"]
+        P5["Phase 5: System Doc<br/>Mermaid + ASCII diagrams"]
+        P6["Phase 6: Interactive Viewer<br/>HTML viewer"]
+        P7["Phase 7: Final Verification<br/>Validate all artifacts"]
+    end
+    
+    P0 --> P1
+    P1 --> P2
+    P2 --> P3
+    P3 --> P4
+    P4 --> P5
+    P5 --> P6
+    P6 --> P7
+```
+
 ## Design Principles
 
 | Principle | Description |
@@ -14,6 +47,7 @@ Produces centralized documentation mapping service dependencies, cross-service A
 | **Exhaustive** | All registered projects must be scanned |
 | **Cross-Reference** | Types referenced across services are linked |
 | **Living Document** | Re-run when projects are added or significantly changed |
+
 
 ## Prerequisites
 
@@ -86,8 +120,9 @@ Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
 
 ### Phase 5: Generate System Documentation
 **Read**: `${SYSTEM_ARCH_ROOT}/_phase-5-generate-system-doc.md`
-**Output**: `system-architecture.md`, `deep-dive/end-to-end-flows.md`, `deep-dive/cross-cutting-concerns.md`
+**Output**: `system-architecture.md`, `deep-dive/end-to-end-flows.md`, `deep-dive/cross-cutting-concerns.md`, `deep-dive/ascii-architecture.md`
 - Generate Mermaid service topology diagram
+- **Generate ASCII architecture diagrams** (system overview + software layers)
 - Document cross-service API contracts
 - Surface unified domain model
 - List cross-cutting concerns (auth, error handling, etc.)
@@ -129,9 +164,12 @@ Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
 - [ ] Phase 4: `unified-domain-model.json` identifies canonical entities
 - [ ] Phase 5: `${SYSTEM_NAME}-system-architecture.md` contains:
   - Service topology Mermaid diagram
+  - **ASCII system architecture diagram**
+  - **ASCII software architecture diagram**
   - Project responsibilities table
   - Cross-service API reference
   - Domain model summary
+- [ ] Phase 5: `deep-dive/ascii-architecture.md` generated with full ASCII diagrams
 - [ ] **Phase 6: `${OUTPUT_FILE}` generated** with:
   - All projects as clickable nodes
   - Working drill-down navigation

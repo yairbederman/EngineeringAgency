@@ -106,6 +106,171 @@ graph TB
 - Count nodes in diagram MUST equal `internalModules.length`
 - If count doesn't match → diagram is INCOMPLETE
 
+### Step 1.7: Generate ASCII Architecture Diagrams (MANDATORY)
+
+> [!IMPORTANT]
+> **ASCII diagrams provide text-based visualization that works everywhere—terminals, emails, plain text docs.**
+> Generate BOTH system architecture AND software architecture ASCII diagrams.
+
+#### 1.7.1: ASCII System Architecture Diagram
+
+Generate a high-level system topology using box-drawing characters:
+
+```
+                            ┌─────────────────────────────────────────────────────────┐
+                            │                    SYSTEM OVERVIEW                       │
+                            └─────────────────────────────────────────────────────────┘
+
+    ┌─────────────────────────────────────────────────────────────────────────────────────┐
+    │                              PRESENTATION LAYER                                      │
+    │  ┌───────────────────────────────────────────────────────────────────────────────┐  │
+    │  │  <frontend-project>                                                            │  │
+    │  │  └── <description>                                                             │  │
+    │  └───────────────────────────────────────────────────────────────────────────────┘  │
+    └─────────────────────────────────────────────────────────────────────────────────────┘
+                                              │
+                                              ▼
+    ┌─────────────────────────────────────────────────────────────────────────────────────┐
+    │                                   API LAYER                                          │
+    │  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐                   │
+    │  │ <api-service-1>  │  │ <api-service-2>  │  │ <api-service-3>  │                   │
+    │  │ └── <desc>       │  │ └── <desc>       │  │ └── <desc>       │                   │
+    │  └────────┬─────────┘  └────────┬─────────┘  └────────┬─────────┘                   │
+    └───────────┼─────────────────────┼─────────────────────┼─────────────────────────────┘
+                │                     │                     │
+                ▼                     ▼                     ▼
+    ┌─────────────────────────────────────────────────────────────────────────────────────┐
+    │                              SHARED/INTEGRATION                                      │
+    │  ┌──────────────────────────────────────────────────────────────────────────────┐   │
+    │  │  <shared-lib>  ──────►  <integration-service>  ──────►  [External Systems]   │   │
+    │  └──────────────────────────────────────────────────────────────────────────────┘   │
+    └─────────────────────────────────────────────────────────────────────────────────────┘
+
+    ┌─────────────────────────────────────────────────────────────────────────────────────┐
+    │                                    LEGEND                                            │
+    │  ───────►  Service call / dependency      [ ]  External system                       │
+    │  └──       Description/role               │    Data flow direction                   │
+    └─────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Rules for ASCII System Diagram:**
+1. Group services by layer (Presentation, API, Shared, Integration)
+2. Use box-drawing characters: `┌ ┐ └ ┘ │ ─ ├ ┤ ┬ ┴ ┼ ▼ ► ◄ ▲`
+3. Show ALL services from `service-topology.json`
+4. Indicate data flow direction with arrows
+5. Include a legend
+
+#### 1.7.2: ASCII Software Architecture Diagram
+
+Generate a detailed component/module breakdown:
+
+```
+╔══════════════════════════════════════════════════════════════════════════════════════════╗
+║                              SOFTWARE ARCHITECTURE                                        ║
+╠══════════════════════════════════════════════════════════════════════════════════════════╣
+║                                                                                           ║
+║  CLIENT LAYER                                                                             ║
+║  ════════════                                                                             ║
+║  ┌────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │ <FRONTEND-PROJECT>                                                                  │  ║
+║  │                                                                                     │  ║
+║  │   Components      Services        State           API Clients                       │  ║
+║  │   ┌─────────┐    ┌───────────┐   ┌──────────┐    ┌──────────────────┐              │  ║
+║  │   │ Pages   │    │ Auth      │   │ Redux/   │    │ <api-1>-client   │              │  ║
+║  │   │ UI Comps│    │ Data      │   │ Context  │    │ <api-2>-client   │              │  ║
+║  │   │ Layouts │    │ Util      │   │ Hooks    │    │ <api-3>-client   │              │  ║
+║  │   └─────────┘    └───────────┘   └──────────┘    └──────────────────┘              │  ║
+║  └────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                         │                                                 ║
+║                                         │ HTTP/REST                                       ║
+║                                         ▼                                                 ║
+║  API LAYER                                                                                ║
+║  ═════════                                                                                ║
+║  ┌───────────────────────┐  ┌───────────────────────┐  ┌───────────────────────┐        ║
+║  │ <API-SERVICE-1>       │  │ <API-SERVICE-2>       │  │ <API-SERVICE-3>       │        ║
+║  │                       │  │                       │  │                       │        ║
+║  │ ┌───────────────────┐ │  │ ┌───────────────────┐ │  │ ┌───────────────────┐ │        ║
+║  │ │ Controllers       │ │  │ │ Controllers       │ │  │ │ Controllers       │ │        ║
+║  │ ├───────────────────┤ │  │ ├───────────────────┤ │  │ ├───────────────────┤ │        ║
+║  │ │ Services          │ │  │ │ Services          │ │  │ │ Services          │ │        ║
+║  │ ├───────────────────┤ │  │ ├───────────────────┤ │  │ ├───────────────────┤ │        ║
+║  │ │ Repositories      │ │  │ │ Repositories      │ │  │ │ Repositories      │ │        ║
+║  │ └───────────────────┘ │  │ └───────────────────┘ │  │ └───────────────────┘ │        ║
+║  └───────────┬───────────┘  └───────────┬───────────┘  └───────────┬───────────┘        ║
+║              │                          │                          │                     ║
+║              └──────────────────────────┼──────────────────────────┘                     ║
+║                                         ▼                                                 ║
+║  SHARED LIBRARY                                                                           ║
+║  ══════════════                                                                           ║
+║  ┌────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │ <SHARED-LIB>                                                                        │  ║
+║  │                                                                                     │  ║
+║  │   ┌────────────┐   ┌────────────┐   ┌────────────┐   ┌─────────────────────────┐   │  ║
+║  │   │ Core DTOs  │   │ Utilities  │   │ Clients    │   │ Error Handling          │   │  ║
+║  │   └────────────┘   └────────────┘   └────────────┘   └─────────────────────────┘   │  ║
+║  └────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                         │                                                 ║
+║                                         ▼                                                 ║
+║  EXTERNAL INTEGRATIONS                                                                    ║
+║  ═════════════════════                                                                    ║
+║  ┌────────────────────────────────────────────────────────────────────────────────────┐  ║
+║  │ [CMS]  [Payment Gateway]  [Email Service]  [Search Engine]  [Database]             │  ║
+║  └────────────────────────────────────────────────────────────────────────────────────┘  ║
+║                                                                                           ║
+╚══════════════════════════════════════════════════════════════════════════════════════════╝
+```
+
+**Rules for ASCII Software Diagram:**
+1. Use double-line box for outer frame: `╔ ╗ ╚ ╝ ║ ═ ╠ ╣ ╬`
+2. Use single-line box for components: `┌ ┐ └ ┘ │ ─ ├ ┤ ┬ ┴ ┼`
+3. Show internal structure of each project type
+4. Include layer labels with `════════` underlines
+5. Show data flow between layers
+
+#### 1.7.3: Generate `deep-dive/ascii-architecture.md`
+
+Create a dedicated file containing:
+
+```markdown
+# ASCII Architecture Diagrams
+
+> Generated: {timestamp}
+> Render correctly in: Terminal, Plain text editors, Markdown viewers
+
+## System Architecture
+
+{ASCII System Diagram from 1.7.1}
+
+## Software Architecture  
+
+{ASCII Software Diagram from 1.7.2}
+
+## Dependency Matrix (ASCII Table)
+
+| From ↓ / To → | <svc-1> | <svc-2> | <svc-3> | <lib> |
+|---------------|---------|---------|---------|-------|
+| <frontend>    |    ✓    |    ✓    |    ✓    |       |
+| <svc-1>       |         |         |         |   ✓   |
+| <svc-2>       |         |         |         |   ✓   |
+| <svc-3>       |    ✓    |         |         |   ✓   |
+
+## Legend
+
+| Symbol | Meaning |
+|--------|---------|
+| ──────►| Data flow / API call |
+| ┌─────┐| Service or component boundary |
+| [ ]   | External system |
+| ════  | Layer separator |
+```
+
+**Validation for Step 1.7:**
+- [ ] ASCII System Diagram includes ALL services from `service-topology.json`
+- [ ] ASCII Software Diagram shows internal layers for each project type
+- [ ] All box-drawing characters render correctly (UTF-8)
+- [ ] `deep-dive/ascii-architecture.md` generated
+- [ ] Dependency matrix matches `service-topology.json` edges
+
 ### Step 2: Generate Project Responsibilities Table
 
 | Project | Type | Role | Endpoints | Key Entities |

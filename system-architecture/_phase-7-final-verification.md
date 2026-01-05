@@ -17,6 +17,7 @@ All files below MUST exist at the end of the workflow:
 | **Documentation** | System Architecture | `${OUTPUT_ROOT}/${SYSTEM_NAME}-system-architecture.md` |
 | **Deep Dive** | End-to-End Flows | `${OUTPUT_ROOT}/deep-dive/end-to-end-flows.md` |
 | **Deep Dive** | Cross-Cutting Concerns | `${OUTPUT_ROOT}/deep-dive/cross-cutting-concerns.md` |
+| **Deep Dive** | ASCII Architecture | `${OUTPUT_ROOT}/deep-dive/ascii-architecture.md` |
 | **Interactive** | HTML Viewer | `${OUTPUT_ROOT}/${OUTPUT_FILE}` |
 
 ---
@@ -52,9 +53,16 @@ For each `.json` file in `${OUTPUT_ROOT}/analysis/`:
 
 For `${SYSTEM_NAME}-system-architecture.md`:
 - [ ] Contains Mermaid diagram (```mermaid block)
+- [ ] Contains ASCII system architecture diagram (box-drawing characters)
 - [ ] Contains Project Responsibilities table
 - [ ] Contains Cross-Service API Reference section
 - [ ] Contains Domain Model section
+
+For `deep-dive/ascii-architecture.md`:
+- [ ] Contains System Architecture ASCII diagram
+- [ ] Contains Software Architecture ASCII diagram
+- [ ] Contains Dependency Matrix
+- [ ] Uses valid UTF-8 box-drawing characters
 
 ### Step 4.5: Validate Dependency Graph Integrity (BLOCKING)
 
@@ -146,6 +154,7 @@ Generate a summary at the end:
 | ${SYSTEM_NAME}-system-architecture.md | ✅ Valid | All sections present |
 | end-to-end-flows.md | ✅ Valid | {flow count} flows documented |
 | cross-cutting-concerns.md | ✅ Valid | Patterns documented |
+| ascii-architecture.md | ✅ Valid | System & Software ASCII diagrams present |
 | ${OUTPUT_FILE} | ✅ Renders | Diagrams visible, navigation works |
 
 ### Warnings

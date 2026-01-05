@@ -188,21 +188,20 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 - Document error propagation patterns across layers
 
 ### Phase 4.5: Enforcement Gate (BLOCKING)
-**Before proceeding to Phase 5**, check coverage thresholds based on project type:
+**Before proceeding to Phase 5**, check coverage thresholds dynamically:
 
-**For Backend APIs (JVM/Spring Boot):**
-| Category | Source Count | Extracted Count | Required |
-|----------|-------------|-----------------|----------|
-| Controllers | `source-structure.json.fileCount.controllers` | `api-contracts` controller count | 100% |
-| Services | `source-structure.json.fileCount.services` | `function-registry.services` count | ≥50% |
-| Classes | `source-structure.json.fileCount.classes` | `entity-contracts` with `kind: "class"` | ≥30% |
+**Dynamic Threshold Rules** (based on `source-structure.json.fileCount` keys):
 
-**For Frontend (Node/TypeScript):**
-| Category | Source Count | Extracted Count | Required |
-|----------|-------------|-----------------|----------|
-| Hooks | `source-structure.json.fileCount.hooks.total` | `function-registry.hooks` count | ≥80% |
-| Components | `source-structure.json.fileCount.components` | `api-contracts` pages/components | ≥70% |
-| State | `source-structure.json.fileCount.state.slices` | `function-registry.stateModules` | 100% |
+| Category Pattern | Threshold | Validation Source |
+|------------------|-----------|-------------------|
+| `controllers`, `routes`, `endpoints` | 100% | `api-contracts.json` |
+| `services`, `providers`, `handlers` | ≥50% | `function-registry.json` |
+| `components`, `pages`, `views` | ≥70% | `api-contracts.json` |
+| `hooks`, `composables` | ≥80% | `function-registry.json` |
+| `state`, `stores`, `slices` | 100% | `function-registry.json` |
+| `entities`, `models`, `types` | ≥30% | `entity-contracts.json` |
+
+> For any `fileCount` key discovered in Phase 1: match the closest pattern above and apply its threshold.
 
 **If ANY threshold not met**:
 1. **DO NOT proceed** to Phase 5
@@ -221,51 +220,10 @@ Run phases in order. Each phase outputs to `${AI_INSTRUCTIONS_ROOT}` in the targ
 - Architecture diagrams
 
 ### Phase 6: Final Verification (BLOCKING GATE)
-
-> [!WARNING]
-> **THIS PHASE IS NOT OPTIONAL.** Do NOT report completion until all verification steps pass.
-
-**Step 1: List all generated files**
-
-For EACH target project, list the contents of `.ai-instructions/`:
-
-```bash
-find ${PROJECT_ROOT}/.ai-instructions/ -type f
-```
-
-**Step 2: Verify Required Files Exist**
-
-Check EACH required file (see "Generated Artifacts Summary" below):
-
-| File | Status |
-|------|--------|
-| `copilot-instructions.md` | [ ] Exists |
-| `analysis/techstack.md` | [ ] Exists |
-| `analysis/source-structure.json` | [ ] Exists |
-| `analysis/entity-contracts.json` | [ ] Exists |
-| `analysis/api-contracts.json` | [ ] Exists |
-| `analysis/function-registry.json` | [ ] Exists |
-| `analysis/file-categorization.json` | [ ] Exists |
-| `analysis/error-taxonomy.json` | [ ] Exists |
-| `deep-dive/dependency-chains.md` | [ ] Exists |
-| `deep-dive/data-flow.md` | [ ] Exists |
-
-**Step 3: Check for stale files**
-
-If ANY file exists in `.ai-instructions/` that is NOT in the required or conditional lists:
-- **Option A**: Regenerate it with current content
-- **Option B**: Delete it (and document why in summary)
-
-> [!IMPORTANT]
-> **Since Phase 0 deleted all files**, there should be NO stale files. If stale files exist, Phase 0 was not executed correctly. Re-run from Phase 0.
-
-**Step 4: Confirm completion**
-
-> [!CAUTION]
-> **DO NOT mark workflow complete** until:
-> - [ ] All required files exist for ALL target projects
-> - [ ] No stale files remain
-> - [ ] Coverage thresholds were met (Phase 4.5)
+**Read**: `${ARCHITECT_ROOT}/_phase-6-final-verification.md`
+- Verify all required files exist
+- Check for stale files
+- Confirm coverage thresholds were met
 
 ### Validation
 **Read**: `${ARCHITECT_ROOT}/_validation-rules.md`
@@ -276,51 +234,7 @@ If ANY file exists in `.ai-instructions/` that is NOT in the required or conditi
 
 ## Generated Artifacts Summary
 
-After successful execution, the following files **MUST** exist in `${AI_INSTRUCTIONS_ROOT}`:
-
-### Required Files (Always Generated)
-
-```
-.ai-instructions/
-├── copilot-instructions.md       # Master AI instructions (entry point)
-├── analysis/
-│   ├── techstack.md              # Stack detection results
-│   ├── source-structure.json     # Discovered locations + file counts + detectedCapabilities
-│   ├── entity-contracts.json     # Type definitions with fields
-│   ├── api-contracts.json        # REST endpoints with validation
-│   ├── function-registry.json    # Service dependencies
-│   ├── file-categorization.json  # Files grouped by layer
-│   └── error-taxonomy.json       # Error codes + response shapes (UNIVERSAL)
-└── deep-dive/
-    ├── dependency-chains.md      # Controller → Service → External chains
-    └── data-flow.md              # Data object transformations
-```
-
-### Conditional Files (Generated When Applicable)
-
-```
-.ai-instructions/
-├── analysis/
-│   ├── design-tokens.json        # (Frontend only) CSS/Tailwind tokens
-│   ├── component-registry.json   # (Frontend only) React/Vue components
-│   ├── state-contracts.json      # (Frontend only) Redux/Zustand full action payloads
-│   ├── database-schema.json      # (Backend only) Table definitions + migrations
-│   ├── validation-schemas.json   # (Conditional) Zod/Yup/Joi validation rules
-│   ├── inter-service-contracts.json  # (Backend only) Microservice call DTOs
-│   ├── external-integrations.json    # (Conditional) Third-party SDK wrappers
-│   # error-taxonomy.json moved to Required Files (always generated)
-└── deep-dive/
-    ├── component-registry.md     # (Frontend only) Component documentation
-    ├── debugging-guide.md        # (If complex error handling exists)
-    └── testing-strategy.md       # (If test files exist)
-```
-
-### Regeneration Rule
-
-> [!WARNING]
-> If ANY file in `.ai-instructions/` exists but is NOT in the lists above, either:
-> 1. **Regenerate it** with fresh content and timestamp, OR
-> 2. **Delete it** if no longer applicable (explain why)
+**Read**: `${ARCHITECT_ROOT}/_artifacts-reference.md` for the complete list of required and conditional files.
 
 ---
 
