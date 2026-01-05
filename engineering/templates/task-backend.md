@@ -1,3 +1,25 @@
+---
+template: task-backend
+version: 1.0.0
+contract: _template-contracts.md#task-backend-template-contract
+used_by: TaskPlanning
+required_sections:
+  - header
+  - metadata
+  - target_files
+  - dependencies
+  - pattern_context
+  - implementation
+  - steps
+  - test_plan
+  - acceptance
+  - summary
+conditional_sections:
+  - validation_rules: "If API/Entity task"
+  - cross_service: "If calling other services"
+  - before_after: "If MODIFY action"
+---
+
 ## Task: [Name]
 
 **Layer**: [Database | Service | API]  

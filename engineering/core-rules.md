@@ -136,19 +136,27 @@ Rules:
 
 ### 0.4 Tool Failure & Safety
 
+**Error Codes**: On any failure, emit a structured error code from `shared/error-codes.md`.
+
 On any MCP/tool failure (timeout, auth error, tool not found):
 
-1. State the failure clearly.
-2. Ask for manual context:
+1. **Emit error code** in this format:
+   ```markdown
+   > ⚠️ **Error `ENG-CTX-003`**: Context7 unavailable
+   > **Severity**: 🟠 WARNING
+   > **Resolution**: Request file paths/snippets from user
+   ```
+2. State the failure clearly.
+3. Ask for manual context:
    - Specs: pasted Jira/Confluence content
    - Designs: screenshots or textual description
    - Code patterns: file paths or snippets
-3. Do not fabricate tool results or IDs:
+4. Do not fabricate tool results or IDs:
    - No invented Jira keys, URLs, Figma node IDs, tokens, API paths, DB fields
-4. Decide if it is safe to proceed:
+5. Decide if it is safe to proceed:
    - Safe: user provided enough direct context; remaining assumptions are small and explicitly marked.
    - Unsafe: core behavior, UX, data rules, or cross-cutting architecture would be guesswork.
-5. If unsafe:
+6. If unsafe:
    - Stop; explain what is missing and request it.
 
 ### 0.4.1 Truncation Detection (MANDATORY)

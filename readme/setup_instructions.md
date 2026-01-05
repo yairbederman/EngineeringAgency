@@ -132,7 +132,8 @@ global_workflows/
 │   └── agents_diagram.md             # Agent hierarchy and usage
 ├── shared/
 │   ├── configuration.md              # 🔑 Project registry (SINGLE SOURCE OF TRUTH)
-│   └── mcp-config.md                 # MCP tool references
+│   ├── mcp-config.md                 # MCP tool references
+│   └── error-codes.md                # 🆕 Structured error codes for all agents
 │
 ├── engineering-agent.md              # Feature lifecycle workflow
 ├── engineering/                      # Configuration & mode files
@@ -141,6 +142,7 @@ global_workflows/
 │   ├── design/                       # Figma extraction protocol
 │   ├── modes/                        # Mode-specific instructions
 │   └── templates/                    # Epic, Tech Spec, Task templates
+│       └── _template-contracts.md    # 🆕 Required sections per template
 │
 ├── map-codebase-agent.md             # Project AI instructions generator
 ├── mapcodebase/                      # Phase files for extraction
@@ -152,8 +154,13 @@ global_workflows/
 │
 ├── manager-agent.md                  # Engineering Lead's Co-Pilot
 └── manager/                          # Manager agent configuration
-    ├── configuration.md              # Manager settings
-    └── modes/                        # Manager modes (beat, risk, report)
+    ├── configuration.md              # Thresholds, Jira conventions
+    ├── _calculation-engine.md        # 🆕 Formulas for delivery metrics
+    └── modes/                        # Manager modes
+        ├── team-beat.md              # /beat — Daily health
+        ├── strategic-risk.md         # /risk — Weekly radar
+        ├── status-report.md          # 🆕 /status — Stakeholder updates
+        └── sprint-retro.md           # /retro — Retrospective
 ```
 
 ---

@@ -6,16 +6,21 @@ description: Validation rules to ensure extraction completeness
 
 Run these checks after all phases complete to ensure extraction quality.
 
+> **Error Codes**: When validations fail, emit structured error codes from `shared/error-codes.md`.
+> Use format: `MCB-P45-XXX` for enforcement gate failures.
+
 ## Minimum Coverage Thresholds
 
-| Category | Minimum | Action if Below | Condition |
-|----------|---------|-----------------|-----------|
-| Hooks | 80% | WARN and list undocumented files | IF `detectedStack.hasFrontend` |
-| Classes | 70% | WARN and list undocumented files | IF `detectedStack.hasBackend` |
-| State Modules | 100% | FAIL extraction | IF `detectedStack.hasStateManagement` |
-| API Endpoints | 100% | FAIL extraction | IF `detectedStack.hasAPI` |
+| Category | Minimum | Action if Below | Error Code | Condition |
+|----------|---------|-----------------|------------|-----------|
+| Hooks | 80% | WARN and list undocumented files | `MCB-P45-003` | IF `detectedStack.hasFrontend` |
+| Classes | 70% | WARN and list undocumented files | `MCB-P2-001` | IF `detectedStack.hasBackend` |
+| State Modules | 100% | FAIL extraction | `MCB-P45-004` | IF `detectedStack.hasStateManagement` |
+| API Endpoints | 100% | FAIL extraction | `MCB-P45-001` | IF `detectedStack.hasAPI` |
+| Services | 50% | WARN and list undocumented | `MCB-P45-002` | IF `detectedStack.hasBackend` |
 
 If threshold not met, output:
+- **Error code** with severity and resolution
 - List of undocumented files
 - Reason for skip (utility, test, index-only, deprecated)
 

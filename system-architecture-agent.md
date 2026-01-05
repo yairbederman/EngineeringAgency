@@ -77,6 +77,10 @@ Run phases in order. Each phase outputs to `${OUTPUT_ROOT}`.
 > - After completing a phase, read the NEXT phase file only when transitioning
 > - This saves ~60KB of context per session
 
+> [!NOTE]
+> **Error Handling**: On any phase failure, emit structured error codes from `shared/error-codes.md`.
+> Use format: `SYS-P[PHASE]-[NUMBER]` (e.g., `SYS-P2-001` for orphan service detection).
+
 > [!IMPORTANT]
 > **ALL phases are MANDATORY**. Do NOT stop after Phase 5. Phase 6 (Interactive Viewer) MUST be executed to complete the workflow.
 

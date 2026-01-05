@@ -1,3 +1,28 @@
+---
+template: task-frontend
+version: 1.0.0
+contract: _template-contracts.md#task-frontend-template-contract
+used_by: TaskPlanning
+required_sections:
+  - header
+  - metadata
+  - target_files
+  - dependencies
+  - pattern_context
+  - ui_guide
+  - component_instances
+  - steps
+  - test_plan
+  - acceptance
+  - summary
+conditional_sections:
+  - figma_reference: "If Figma link in Epic"
+  - visual_reference: "If Figma extracted"
+  - api_integration: "If calling APIs"
+  - interactive_states: "If interactive component"
+  - figma_issues: "If Figma extraction had issues"
+---
+
 ## Task: [Name]
 
 **Layer**: [Frontend | State]  

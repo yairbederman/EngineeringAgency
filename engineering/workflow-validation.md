@@ -4,6 +4,9 @@
 
 This document defines quality gates for each mode in the Engineering Agent workflow. Use this checklist before completing any mode to ensure artifact quality and completeness.
 
+> **Template Contracts**: For detailed required/conditional sections per template, see [`templates/_template-contracts.md`](./templates/_template-contracts.md).
+> Each template file contains YAML frontmatter with `required_sections` and `conditional_sections` for self-validation.
+
 ---
 
 ## ProductSpecReview Mode – Quality Gate

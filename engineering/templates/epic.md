@@ -1,3 +1,17 @@
+---
+template: epic
+version: 1.0.0
+contract: _template-contracts.md#epic-template-contract
+used_by: FeaturePlanning
+required_sections:
+  - goal
+  - context
+  - key_data
+  - flows
+  - acceptance
+  - scope
+---
+
 # Epic: [Action-Oriented Name]
 
 **Goal**

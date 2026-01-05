@@ -1,3 +1,25 @@
+---
+template: tech-spec
+version: 1.0.0
+contract: _template-contracts.md#tech-spec-template-contract
+used_by: TechSpec
+required_sections:
+  - reference
+  - projects
+  - quick_ref
+  - epic_deconstruction
+  - architecture
+  - data_model
+  - api_contracts
+  - sequence
+  - inventory
+  - verification
+  - summary
+conditional_sections:
+  - ui_design: "If Epic has Figma links"
+  - migrations: "If database changes"
+---
+
 # Tech Spec: [Feature Name]
 
 **Reference**: Epic [Jira Key]  

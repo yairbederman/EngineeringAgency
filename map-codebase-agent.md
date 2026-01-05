@@ -49,6 +49,10 @@ Before running any phases, validate the target project:
 > - After completing a phase, read the NEXT phase file only when transitioning
 > - This saves ~60KB of context per session
 
+> [!NOTE]
+> **Error Handling**: On any phase failure, emit structured error codes from `shared/error-codes.md`.
+> Use format: `MCB-P[PHASE]-[NUMBER]` (e.g., `MCB-P3-001` for API extraction failure).
+
 > [!CAUTION]
 > **⛔ BLOCKING: Phase 0 MUST be executed first.** Do NOT proceed to any other phase until the `.ai-instructions/` folder has been deleted.
 

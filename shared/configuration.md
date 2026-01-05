@@ -4,6 +4,7 @@
 > When adding/removing projects or changing global constants, update **only this file**.
 >
 > **Global Tool Config**: See `shared/mcp-config.md` for MCP tool definitions.
+> **Error Handling**: See `shared/error-codes.md` for structured error codes.
 
 ---
 
