@@ -129,7 +129,8 @@ global_workflows/
 ├── readme/
 │   ├── README.md                     # Entry point
 │   ├── setup_instructions.md         # This file
-│   └── agents_diagram.md             # Agent hierarchy and usage
+│   ├── agents_diagram.md             # Agent hierarchy and usage
+│   └── manager-usage-guide.md        # 🆕 Manager Agent quick start
 ├── shared/
 │   ├── configuration.md              # 🔑 Project registry (SINGLE SOURCE OF TRUTH)
 │   ├── mcp-config.md                 # MCP tool references
