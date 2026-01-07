@@ -227,11 +227,11 @@ Check for BREAKING changes:
 For each significantly changed file, add inline context:
 
 ```markdown
-### File: `src/services/OrderService.ts`
+### File: `[Changed File Path]`
 
 **Purpose of changes**: [Brief explanation]
 **Key logic**: Lines 45-67 contain the new validation
-**Test coverage**: `OrderService.test.ts`
+**Test coverage**: `[Test File]`
 ```
 
 ### 4.2 Sequence Diagram (Complex Changes)
