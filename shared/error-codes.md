@@ -234,6 +234,15 @@ Examples:
 | `ENG-BF-003` | 🟠 WARNING | Regression test generation failed | Document expected test manually |
 | `ENG-BF-004` | 🟡 INFO | Bug fix complete with regression test | Proceed to PullRequest |
 
+### Hotfix Mode
+| Code | Severity | Description | Resolution |
+|------|----------|-------------|------------|
+| `ENG-HF-001` | 🔴 BLOCKING | Not a production incident | Use standard BugFix mode |
+| `ENG-HF-002` | 🔴 BLOCKING | No reproduction steps provided | Request minimal repro from user |
+| `ENG-HF-003` | 🟠 WARNING | Side effects identified in fix | Document and proceed with caution |
+| `ENG-HF-004` | 🟠 WARNING | Fix made things worse | Execute rollback protocol |
+| `ENG-HF-005` | 🟡 INFO | Hotfix complete | Proceed to post-hotfix requirements |
+
 ### PullRequest Mode
 | Code | Severity | Description | Resolution |
 |------|----------|-------------|------------|

@@ -12,7 +12,7 @@ This orchestrator handles both **BugReport Mode** (analysis) and **BugFix Mode**
 
 ### Step 0.1: Fetch Bug Context (Source of Truth)
 
-1. **Fetch Jira Issue**: Use `mcp0_getJiraIssue` to get full bug details
+1. **Fetch Jira Issue**: Use `${MCP_ATLASSIAN_GET_ISSUE}` to get full bug details
 2. **CRITICAL WARNING**: Do NOT rely on user summary. Jira issue is the ONLY source of truth.
 3. **Validate Understanding**:
    - Is the bug title and description clear?
@@ -152,7 +152,7 @@ Use template: `./templates/bug-analysis-report.md`
 
 1. **Present Report**: Show Bug Analysis Report to user for review
 2. **Request Approval**: "Do you approve this analysis for posting to Jira?"
-3. **On Approval**: Post using `mcp0_addCommentToJiraIssue`
+3. **On Approval**: Post using `${MCP_ATLASSIAN_ADD_COMMENT}`
 4. **Confirm Success**: Then ask: "Ready to proceed to BugFix?"
 
 **Completion Condition**: BugReport mode is ONLY complete when analysis posted to Jira AND confirmed.
@@ -178,7 +178,7 @@ Use template: `./templates/bug-analysis-report.md`
 > **Optimization**: Uses cached context from BugReport mode if same session.
 
 - **IF `_BUGFIX_CONTEXT_LOADED == [BugKey]`** → Skip full reload
-- **ELSE**: Fetch bug using `mcp0_getJiraIssue` and reload context
+- **ELSE**: Fetch bug using `${MCP_ATLASSIAN_GET_ISSUE}` and reload context
 - Review Bug Analysis Report
 - Confirm track selection still valid
 
@@ -300,7 +300,7 @@ Document to prevent recurrence:
 
 1. **Present Summary**: Show BugFix Summary to user for review
 2. **Request Approval**: "Do you approve this fix summary for posting to Jira?"
-3. **On Approval**: Post using `mcp0_addCommentToJiraIssue`
+3. **On Approval**: Post using `${MCP_ATLASSIAN_ADD_COMMENT}`
 4. **Present Completion Options**:
 
 ```

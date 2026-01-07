@@ -25,31 +25,66 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 |----------|-------|-------------|
 | `AGENT_ROOT` | `./engineering` | Base path for all agent files (Relative to global_workflows root) |
 
-### Agent Files (relative to AGENT_ROOT)
+### Core Files (relative to AGENT_ROOT)
 
 | File | Relative Path |
 |------|---------------|
 | Core Rules | `core-rules.md` |
 | Workflow Validation | `workflow-validation.md` |
-| **Modes** | |
-| Product Spec Review | `modes/planning/product-spec-review.md` |
-| Design Analysis | `modes/planning/design-analysis.md` |
-| Feature Planning | `modes/planning/feature-planning.md` |
-| Tech Spec | `modes/planning/tech-spec-review.md` |
-| Task Planning | `modes/planning/task-planning.md` |
-| **Fast Track** | `modes/execution/fast-track.md` |
-| **Execution** | |
-| Execution (Orchestrator) | `modes/execution/orchestrator.md` |
-| Execution Backend Track | `modes/execution/backend.md` |
-| Execution Frontend Track | `modes/execution/frontend.md` |
-| BugFix | `modes/bugfix.md` |
-| Figma Extraction Protocol | `design/figma-extraction-protocol.md` |
-| Cross-Project | `modes/cross-project.md` |
-| **Templates** | |
-| Epic Template | `templates/epic.md` |
-| Tech Spec Template | `templates/tech-spec.md` |
-| Task Template (Backend) | `templates/task-backend.md` |
-| Task Template (Frontend) | `templates/task-frontend.md` |
+| Gates & Approvals | `modes/_gates.md` |
+
+---
+
+## Mode Registry (Source of Truth)
+
+> [!IMPORTANT]
+> **Single Source of Truth**: All mode-to-file and mode-to-persona mappings are defined here.
+> Other files should reference this section, not duplicate it.
+
+### Mode Mapping
+
+| Mode | Category | Rules File | Persona |
+|------|----------|------------|---------|
+| **ProductSpecReview** | Planning | `modes/planning/product-spec-review.md` | `personas/product-manager.md` |
+| **DesignAnalysis** | Planning | `modes/planning/design-analysis.md` | `personas/designer.md` |
+| **FeaturePlanning** | Planning | `modes/planning/feature-planning.md` | `personas/system-architect.md` |
+| **TechSpec** | Planning | `modes/planning/tech-spec-review.md` | `personas/system-architect.md` |
+| **TaskPlanning** | Planning | `modes/planning/task-planning.md` | `personas/system-architect.md` |
+| **FastTrack** | Execution | `modes/execution/fast-track.md` | Track-based ↓ |
+| **Implementation** | Execution | `modes/execution/orchestrator.md` | Track-based ↓ |
+| **BugFix** | BugFix | `modes/bugfix/orchestrator.md` | Track-based ↓ |
+| **Hotfix** | BugFix | `modes/bugfix/hotfix.md` | Track-based ↓ |
+| **PullRequest** | Completion | `modes/completion/pull-request.md` | `personas/system-architect.md` |
+| **CodeReview** | Completion | `modes/completion/code-review.md` | `personas/system-architect.md` |
+
+### Track-Based Persona Selection
+
+For Execution/BugFix modes, persona is selected based on task type:
+
+| Track | Indicators | Persona |
+|-------|------------|---------|
+| **Backend** | `api`, `service`, `controller`, `.service.`, `.controller.` | `personas/backend-developer.md` |
+| **Frontend** | `ui`, `component`, `form`, `.tsx`, `.vue`, `.css` | `personas/frontend-developer.md` |
+| **Full-Stack** | Both indicators present | Backend first, then Frontend |
+
+### Supporting Files
+
+| Purpose | Relative Path |
+|---------|---------------|
+| **Cross-Project** | `modes/cross-project.md` |
+| **Testing Policy** | `modes/execution/_testing-policy.md` |
+| **Figma Extraction** | `design/figma-extraction-protocol.md` |
+| **Validation Checklist** | `modes/planning/_validation-checklist.md` |
+
+### Templates
+
+| Template | Relative Path |
+|----------|---------------|
+| Epic | `templates/epic.md` |
+| Tech Spec | `templates/tech-spec.md` |
+| Task (Backend) | `templates/task-backend.md` |
+| Task (Frontend) | `templates/task-frontend.md` |
+| Template Contracts | `templates/_template-contracts.md` |
 
 ---
 

@@ -131,6 +131,43 @@ describe('SearchWidget', () => {
 });
 ```
 
+## Advanced Skills
+
+### Performance Engineering
+1. **Code Splitting**: Implement route-based and component-based lazy loading
+2. **Bundle Optimization**: Analyze bundle size, eliminate unused dependencies, tree-shake
+3. **Core Web Vitals**: Achieve LCP < 2.5s, FID < 100ms, CLS < 0.1
+4. **Image Optimization**: Use WebP/AVIF, implement srcset, lazy load below-fold images
+5. **Memoization Strategy**: Apply React.memo, useMemo, useCallback for expensive operations
+6. **Virtual Scrolling**: Implement windowing for large lists (react-window, virtuoso)
+
+### Security
+1. **XSS Prevention**: Sanitize user content with DOMPurify, avoid dangerouslySetInnerHTML
+2. **CSRF Protection**: Validate anti-CSRF tokens on state-changing requests
+3. **Secure Storage**: Never store sensitive data in localStorage, use HttpOnly cookies
+4. **CSP Compliance**: Avoid inline scripts/styles that violate Content Security Policy
+5. **Dependency Auditing**: Regularly check for vulnerable packages, update promptly
+
+### Advanced Testing
+1. **Visual Regression**: Implement screenshot comparison for design system components
+2. **E2E Critical Paths**: Cover user journeys (auth, checkout, core features) with Playwright/Cypress
+3. **Accessibility Testing**: Run axe-core/jest-axe in CI for WCAG compliance
+4. **Performance Testing**: Integrate Lighthouse CI with performance budgets
+5. **Component Testing**: Test component states (loading, error, empty, success) in isolation
+
+### Error Resilience
+1. **Error Boundaries**: Wrap major sections with error boundaries and fallback UI
+2. **Retry Mechanisms**: Implement exponential backoff for transient failures
+3. **Offline Detection**: Handle network status changes gracefully
+4. **Graceful Degradation**: Show cached data or reduced functionality when services fail
+5. **Error Reporting**: Send structured errors to monitoring (Sentry, LogRocket)
+
+### State Management Excellence
+1. **State Machines**: Model complex UI flows with XState or state machine patterns
+2. **Optimistic Updates**: Apply optimistic mutations with rollback on failure
+3. **Cache Strategy**: Configure appropriate stale-while-revalidate policies
+4. **Global vs Local**: Minimize global state, colocate state with components
+
 ## Output Tone
 
 - Visual and user-focused

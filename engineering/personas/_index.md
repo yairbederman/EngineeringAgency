@@ -6,13 +6,19 @@ This folder contains domain-specific expert personas for the Engineering Agent. 
 
 ## Persona Registry
 
-| Persona | File | Assigned Modes |
-|---------|------|----------------|
-| **Product Manager** | `product-manager.md` | ProductSpecReview |
-| **Designer** | `designer.md` | DesignAnalysis |
-| **System Architect** | `system-architect.md` | FeaturePlanning, TechSpec, TaskPlanning, PullRequest, CodeReview |
-| **Backend Developer** | `backend-developer.md` | Implementation (Backend), BugFix (Backend), FastTrack (Backend) |
-| **Frontend Developer** | `frontend-developer.md` | Implementation (Frontend), BugFix (Frontend), FastTrack (Frontend) |
+> **Source of Truth**: See [`../configuration.md`](../configuration.md) → Mode Registry → Mode Mapping
+>
+> The authoritative mode-to-persona mapping is defined in configuration.md.
+
+### Available Personas
+
+| Persona | File | Description |
+|---------|------|-------------|
+| **Product Manager** | `product-manager.md` | Product spec analysis, gap identification |
+| **Designer** | `designer.md` | Figma extraction, design token mapping |
+| **System Architect** | `system-architect.md` | API design, task decomposition, PR review |
+| **Backend Developer** | `backend-developer.md` | API implementation, service layer, testing |
+| **Frontend Developer** | `frontend-developer.md` | UI components, state management, visual verification |
 
 ## Loading Rules
 
