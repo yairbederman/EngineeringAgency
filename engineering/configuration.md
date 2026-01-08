@@ -106,20 +106,50 @@ For Execution/BugFix modes, persona is selected based on task type:
 | | Product Specs URL | [Folder](https://${ATLASSIAN_CLOUD_ID}/wiki/spaces/${CONFLUENCE_SPACE_KEY}/folder/${PRODUCT_SPECS_FOLDER_ID}) |
 | | Tech Specs URL | [Folder](https://${ATLASSIAN_CLOUD_ID}/wiki/spaces/${CONFLUENCE_SPACE_KEY}/folder/${TECH_SPECS_FOLDER_ID}) |
 
-### Custom Fields
+## Jira Advanced Configuration
 
-> **Instructions**: Configure your Jira custom field IDs below.
-> To find custom field IDs, use Jira's REST API or check your Jira admin settings.
-> Remove or add rows based on your Jira configuration.
+> **Purpose**: Customize interaction with your Jira instance. All settings in this section are **optional-advanced**.
+> Copy this section to your local configuration only if you need to override defaults.
 
-| Variable | Field | ID | Value | Description |
-|----------|-------|-----|-------|-------------|
-| `${CROSS_PROJECT_IMPACT_FIELD}` | Cross-Project Impact | `<CUSTOM_FIELD_ID>` | `<DEFAULT_VALUE_ID>` | Required for all tasks (optional - remove if not used) |
-| `${JIRA_RANK_FIELD}` | Rank | `<RANK_FIELD_ID>` | N/A | Used for task ordering (e.g., `customfield_10019`) |
+### Limitations
 
-> **Note**: Custom fields are organization-specific. If your Jira doesn't use these fields, you can:
-> 1. Remove references to them in the workflow files
-> 2. Leave placeholders and they will be ignored
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `JIRA_MAX_RESULTS` | `50` | Maximum results to fetch in JQL queries (System Safe Limit) |
+| `JIRA_TIMEOUT_SECONDS` | `30` | API timeout duration for slow instances |
+
+### Overrides
+
+> **Use Case**: When your Jira workflow requires specific transition IDs that logic cannot auto-detect.
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `FORCE_TRANSITION_IDS` | JSON map of status names to transition IDs | `{"In Progress": "31", "Done": "41"}` |
+| `STATUS_MAPPING` | JSON map of agent status to Jira status | `{"Review": "In Code Review"}` |
+
+### Jira Required Custom Fields (User-Defined)
+
+> **Purpose**: Define custom fields that YOUR Jira instance mandates when creating issues.
+> Each organization has different required fields — add yours below.
+>
+> **Instructions**:
+> 1. Identify which custom fields your Jira requires (check issue creation screens)
+> 2. Add one row per field using the format below
+> 3. Delete the example row when done
+> 4. Leave table empty if no custom fields are required
+
+| Variable | Field Name | Field ID | Default Value | Description |
+|----------|------------|----------|---------------|-------------|
+| `${CROSS_PROJECT_IMPACT_FIELD}` | Cross-Project Impact | `customfield_XXXXX` | `<VALUE_ID>` | Dependencies on other teams (common mandatory field) |
+| `${CUSTOM_FIELD_2}` | _Your Field Name_ | `customfield_XXXXX` | `<value or N/A>` | _Add more fields as needed_ |
+
+> [!TIP]
+> **How to find Field IDs**: Navigate to Jira Admin → Issues → Custom Fields → Click on field → ID is in the URL.
+>
+> **Example configurations**:
+> - Cross-Project Impact: `customfield_12345` → Default: `None`
+> - Team: `customfield_10001` → Default: `Backend`
+> - Sprint: `customfield_10020` → Default: N/A (set at planning time)
 
 ---
 

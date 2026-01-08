@@ -39,6 +39,7 @@
       - `issueTypeName`: "Epic"
       - `summary`: Epic title
       - `description`: Full Epic content
+      - `additional_fields`: Include all custom fields from `configuration.md` → "Jira Required Custom Fields" table
 4.  **Update Product Spec Confluence Page**:
     - Use `mcp0_getConfluencePage` to read current page
     - Locate "Links" table in page body

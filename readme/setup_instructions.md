@@ -42,9 +42,18 @@ git clone <project-1-repo>
 git clone <project-2-repo>
 # ...
 
-# 3. Clone workflows repo
+# 3. Clone workflows repo to the EXACT path below
+#    macOS/Linux:
 git clone <this-repo> ~/.gemini/antigravity/global_workflows
+#    Windows:
+git clone <this-repo> %USERPROFILE%\.gemini\antigravity\global_workflows
 ```
+
+> [!IMPORTANT]
+> **The path `.gemini/antigravity/global_workflows` is required!**
+> The AI assistant auto-discovers workflows from this specific directory.
+> Cloning elsewhere will NOT register the `/engineering-agent` commands.
+> After cloning, restart your IDE to trigger agent discovery.
 
 ---
 
@@ -72,6 +81,18 @@ Open [`engineering/configuration.md`](../engineering/configuration.md) and set:
 |-------------|-------------|
 | `<PRODUCT_SPECS_FOLDER_ID>` | Navigate to folder in Confluence → extract ID from URL |
 | `<TECH_SPECS_FOLDER_ID>` | Same as above |
+
+### Optional: Jira Custom Fields
+
+If your Jira instance requires mandatory fields when creating issues (e.g., "Cross-Project Impact", "Team", etc.):
+
+1. Open [`engineering/configuration.md`](../engineering/configuration.md)
+2. Find the **"Jira Required Custom Fields"** section
+3. Add one row per mandatory field with Field Name, Field ID, and Default Value
+4. See the file's instructions for how to find Field IDs in Jira Admin
+
+> [!TIP]
+> Skip this section if your Jira has no mandatory custom fields on issue creation.
 
 ---
 
