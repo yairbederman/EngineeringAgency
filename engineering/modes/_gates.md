@@ -75,10 +75,12 @@
 
 **Action**:
 - Present generated Tech Spec to user
-- **MANDATORY**: Ask if user wants to "Inject to Jira" (create as Epic child Task)
-- **DO NOT** create Jira Task unless explicitly authorized
+- **MANDATORY**: Ask user to choose:
+  - `Yes, Inject & Proceed`: Create Jira Task (Epic Child)
+  - `No, Local Only`: Keep local artifact
+- **Start Condition**: Create Jira Task ONLY if "Yes" selected
 
-**Gate**: STOP until user approves Tech Spec.
+**Gate**: STOP until user makes a decision.
 
 ---
 

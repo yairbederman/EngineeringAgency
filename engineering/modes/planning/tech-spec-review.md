@@ -381,8 +381,11 @@ Display the status and next steps using the standard format.
 - **Summary**: Concrete action plan with [N] files across [X] project(s).
 - **Next Step**: TaskPlanning Mode
 
-> **⏸️ APPROVAL REQUIRED**: Please review the Tech Spec. Reply with:
-> - `Approve` to trigger **Creation of Jira Task/Confluence Page** AND proceed to **Task Breakdown**.
-> - `Revise [feedback]` to make changes
+> **⏸️ APPROVAL REQUIRED**: Please review the Tech Spec.
+>
+> **Decision: Should this be injected to Jira?**
+> - `Yes, Inject & Proceed`: Create Jira Task (Source of Truth) and move to Task Breakdown.
+> - `No, Local Only`: Keep local `implementation_plan.md` and move to Task Breakdown.
+> - `Revise [feedback]`: Request changes to the content.
 ```
 
