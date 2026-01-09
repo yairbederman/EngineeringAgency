@@ -90,21 +90,12 @@ For Execution/BugFix modes, persona is selected based on task type:
 
 ## Atlassian Configuration
 
-> **Source**: [shared/configuration.md](../shared/configuration.md)
+> **📁 Source**: [shared/configuration.md](../shared/configuration.md)
 >
-> All Atlassian settings (Cloud ID, Jira Project Key, Confluence Space Key) are now centralized in the shared configuration file.
-
-### Confluence Folders
-
-> **Instructions**: Replace placeholder values with your Confluence folder IDs.
-> To find folder IDs, navigate to the folder in Confluence and extract the ID from the URL.
-
-| Variable | Setting | Value |
-|----------|---------|-------|
-| `${PRODUCT_SPECS_FOLDER_ID}` | Product Specs Folder ID | `<PRODUCT_SPECS_FOLDER_ID>` |
-| `${TECH_SPECS_FOLDER_ID}` | Tech Specs Folder ID | `<TECH_SPECS_FOLDER_ID>` |
-| | Product Specs URL | [Folder](https://${ATLASSIAN_CLOUD_ID}/wiki/spaces/${CONFLUENCE_SPACE_KEY}/folder/${PRODUCT_SPECS_FOLDER_ID}) |
-| | Tech Specs URL | [Folder](https://${ATLASSIAN_CLOUD_ID}/wiki/spaces/${CONFLUENCE_SPACE_KEY}/folder/${TECH_SPECS_FOLDER_ID}) |
+> All Atlassian settings are centralized in the shared configuration file:
+> - Cloud ID, Jira Project Key, Confluence Space Key
+> - Confluence Folder IDs (Product Specs, Tech Specs)
+> - Jira Custom Fields (if required by your instance)
 
 ## Jira Advanced Configuration
 
@@ -126,30 +117,6 @@ For Execution/BugFix modes, persona is selected based on task type:
 |----------|-------------|---------|
 | `FORCE_TRANSITION_IDS` | JSON map of status names to transition IDs | `{"In Progress": "31", "Done": "41"}` |
 | `STATUS_MAPPING` | JSON map of agent status to Jira status | `{"Review": "In Code Review"}` |
-
-### Jira Required Custom Fields (User-Defined)
-
-> **Purpose**: Define custom fields that YOUR Jira instance mandates when creating issues.
-> Each organization has different required fields — add yours below.
->
-> **Instructions**:
-> 1. Identify which custom fields your Jira requires (check issue creation screens)
-> 2. Add one row per field using the format below
-> 3. Delete the example row when done
-> 4. Leave table empty if no custom fields are required
-
-| Variable | Field Name | Field ID | Default Value | Description |
-|----------|------------|----------|---------------|-------------|
-| `${CROSS_PROJECT_IMPACT_FIELD}` | Cross-Project Impact | `customfield_XXXXX` | `<VALUE_ID>` | Dependencies on other teams (common mandatory field) |
-| `${CUSTOM_FIELD_2}` | _Your Field Name_ | `customfield_XXXXX` | `<value or N/A>` | _Add more fields as needed_ |
-
-> [!TIP]
-> **How to find Field IDs**: Navigate to Jira Admin → Issues → Custom Fields → Click on field → ID is in the URL.
->
-> **Example configurations**:
-> - Cross-Project Impact: `customfield_12345` → Default: `None`
-> - Team: `customfield_10001` → Default: `Backend`
-> - Sprint: `customfield_10020` → Default: N/A (set at planning time)
 
 ---
 

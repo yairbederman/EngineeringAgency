@@ -27,15 +27,16 @@
 
 ---
 
-## Atlassian Configuration
+## Atlassian Configuration (Jira/Confluence)
 
-> **Cloud ID**: Use `mcp0_getAccessibleAtlassianResources` to discover your Cloud ID.
-
-| Variable | Value | Description |
-|----------|-------|-------------|
-| `${ATLASSIAN_CLOUD_ID}` | `<YOUR_ORG>.atlassian.net` | Base Cloud ID (e.g., `mycompany.atlassian.net`) |
-| `${JIRA_PROJECT_KEY}` | `<PROJECT_KEY>` | Default Project Key (e.g., `PROJ`) |
-| `${CONFLUENCE_SPACE_KEY}` | `<SPACE_KEY>` | Default Space Key (e.g., `DOCS`) |
+> **📁 Separate File**: [atlassian-config.md](atlassian-config.md)
+>
+> All Jira and Confluence settings are in a dedicated file:
+> - Cloud ID, Jira Project Key, Confluence Space Key
+> - Confluence Folder IDs (Product Specs, Tech Specs)
+> - Jira Custom Fields (optional)
+>
+> Skip if working in local-only mode (no Atlassian integration).
 
 ---
 
@@ -52,46 +53,10 @@
 
 ## Registered Projects
 
-> **Instructions**: Add your project entries below. Each project should have:
-> - A unique variable name for reference in workflows
-> - The actual folder name
-> - Type: `Frontend`, `Backend`, `Library`, `Infrastructure`, etc.
-> - A brief role description
-> - Path relative to `${WORKSPACE_ROOT}`
-
-| Variable | Name | Type | Role | Path |
-|----------|------|------|------|------|
-| `${PROJECT_EXAMPLE_1}` | `<project-name-1>` | Frontend | Web application | `${WORKSPACE_ROOT}/<project-name-1>` |
-| `${PROJECT_EXAMPLE_2}` | `<project-name-2>` | Backend | API service | `${WORKSPACE_ROOT}/<project-name-2>` |
-| `${PROJECT_EXAMPLE_3}` | `<project-name-3>` | Library | Shared utilities | `${WORKSPACE_ROOT}/<project-name-3>` |
-
-> **Example entries** (replace with your actual projects):
-> ```
-> | `${PROJECT_FRONTEND}` | my-client | Frontend | React/Next.js web app | `${WORKSPACE_ROOT}/my-client` |
-> | `${PROJECT_API}` | my-api | Backend | Spring Boot API | `${WORKSPACE_ROOT}/my-api` |
-> | `${PROJECT_CORE}` | my-core | Library | Shared libraries | `${WORKSPACE_ROOT}/my-core` |
-> ```
-
----
-
-## Adding New Projects
-
-1. Add a row to the table above
-2. Run `/map-codebase-agent` on the new project
-3. Run `/system-architecture-agent` to update cross-project docs
-
----
-
-## Project Selection Criteria
-
-> **Customize this table** based on your project structure.
-
-| Work Type | Use Project Variable |
-|-----------|---------------------|
-| Frontend work (UI, forms, displays) | `${PROJECT_FRONTEND}` |
-| API/Backend services | `${PROJECT_API}` |
-| Shared libraries/utilities | `${PROJECT_CORE}` |
-| Full-stack features | Multiple projects |
+> **📁 Separate File**: [projects.md](projects.md)
+>
+> Project registry (auto-populated by `/map-codebase-agent`).
+> When you run the agent on a project, it automatically registers there.
 
 ---
 
@@ -99,4 +64,4 @@
 
 - `/engineering-agent` – for project selection during TechSpec/TaskPlanning
 - `/system-architecture-agent` – for scanning all projects
-- `/map-codebase-agent` – target project validation
+- `/map-codebase-agent` – target project auto-registration

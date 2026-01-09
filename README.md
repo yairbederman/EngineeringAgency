@@ -2,6 +2,43 @@
 
 AI agent system for software development lifecycle — from specs to code to PR.
 
+---
+
+## 🚀 5-Minute Quick Start
+
+> Get up and running in 3 commands!
+
+**Step 1: Clone to the workflows directory**
+
+```bash
+# macOS/Linux:
+git clone <this-repo> ~/.gemini/antigravity/global_workflows
+
+# Windows (PowerShell):
+git clone <this-repo> $env:USERPROFILE\.gemini\antigravity\global_workflows
+```
+
+**Step 2: Configure (30 seconds)**
+
+Edit `shared/configuration.md`:
+```yaml
+SYSTEM_NAME: MySystem
+WORKSPACE_ROOT:
+  # macOS/Linux: ~/projects/MySystem
+  # Windows:     C:/Projects/MySystem
+```
+
+**Step 3: Run!**
+
+```
+/engineering-agent
+```
+
+> [!TIP]
+> Restart your IDE after cloning for agent discovery. Run `/verify-setup-agent` to validate your configuration.
+
+---
+
 ## 📋 Prerequisites
 
 - Git
@@ -17,28 +54,26 @@ AI agent system for software development lifecycle — from specs to code to PR.
 | [Agents Overview](readme/agents_diagram.md) | Workflow hierarchy & when to run each |
 | [Manager Guide](readme/manager-usage-guide.md) | Sprint health, risk, status reporting |
 
-## ⚡ Quick Start
+## 📝 What You'll Configure
 
-```bash
-# 1. Clone this repo to your workflows directory
-#    macOS/Linux: ~/.gemini/antigravity/global_workflows
-#    Windows:     %USERPROFILE%\.gemini\antigravity\global_workflows
-git clone <this-repo> <your-workflows-path>
+### `shared/configuration.md` (Required)
 
-# 2. Configure your environment
-#    Edit: shared/configuration.md (required)
-#       Set: SYSTEM_NAME, WORKSPACE_ROOT
-#       Set: ATLASSIAN_CLOUD_ID, JIRA_PROJECT_KEY, CONFLUENCE_SPACE_KEY (if using Atlassian)
-#       Update: Registered Projects table
-#    Edit: engineering/configuration.md (if using Jira/Confluence)
-#       Set: PRODUCT_SPECS_FOLDER_ID, TECH_SPECS_FOLDER_ID
-#       Set: Jira Required Custom Fields (if your Jira mandates fields on issue creation)
+| Find This | Replace With | Example |
+|-----------|--------------|---------|
+| `<YOUR_SYSTEM_NAME>` | Your system name | `MySystem` |
+| `${WORKSPACE_ROOT}` | Path to your projects | `C:/Projects/MySystem` |
 
-# 3. Open your projects and workflows in VS Code/Cursor
+> **Projects are auto-added!** Run `/map-codebase-agent` on any project — it registers automatically.
 
-# 4. Run an agent
-/engineering-agent
-```
+### `shared/atlassian-config.md` (Optional — skip for local-only mode)
+
+| Find This | Replace With | Example |
+|-----------|--------------|---------|
+| `<YOUR_ORG>.atlassian.net` | Your Atlassian Cloud ID | `mycompany.atlassian.net` |
+| `<PROJECT_KEY>` | Jira project key | `PROJ` |
+| `<SPACE_KEY>` | Confluence space key | `DOCS` |
+| `<PRODUCT_SPECS_FOLDER_ID>` | Folder ID from URL | `12345678` |
+| `<TECH_SPECS_FOLDER_ID>` | Folder ID from URL | `87654321` |
 
 ## 🔌 How It Works (Plug & Play)
 
@@ -64,27 +99,27 @@ When you clone this repo to the workflows directory (`~/.gemini/antigravity/glob
 
 ```bash
 # 1. Clone the workflows repo
-#    macOS/Linux: ~/.gemini/antigravity/global_workflows
-#    Windows:     %USERPROFILE%\.gemini\antigravity\global_workflows
-git clone <this-repo> <your-workflows-path>
+# macOS/Linux:
+git clone <this-repo> ~/.gemini/antigravity/global_workflows
+# Windows (PowerShell):
+git clone <this-repo> $env:USERPROFILE\.gemini\antigravity\global_workflows
 
-# 2. Clone all project repos to a common directory
-mkdir ~/projects/MySystem  # or C:\Projects\MySystem on Windows
-cd ~/projects/MySystem
-git clone <project-1> && git clone <project-2> ...
+# 2. Clone project repos
+# macOS/Linux:
+mkdir -p ~/projects/MySystem && cd ~/projects/MySystem
+# Windows (PowerShell):
+mkdir -Force C:\Projects\MySystem; cd C:\Projects\MySystem
 
-# 3. Configure paths
-#    Edit: shared/configuration.md
-#       Set: SYSTEM_NAME, WORKSPACE_ROOT
-#       Set: ATLASSIAN_CLOUD_ID, JIRA_PROJECT_KEY, CONFLUENCE_SPACE_KEY (if using Atlassian)
-#       Update: Registered Projects table
-#    Edit: engineering/configuration.md (if using Jira/Confluence)
-#       Set: PRODUCT_SPECS_FOLDER_ID, TECH_SPECS_FOLDER_ID
-#       Set: Jira Required Custom Fields (add your org's mandatory fields)
+git clone <project-1> && git clone <project-2>
 
-# 4. Install MCP servers (see readme/setup_instructions.md)
+# 3. Configure shared/configuration.md (SYSTEM_NAME, WORKSPACE_ROOT)
 
-# 5. Verify
+# 4. (Optional) Configure shared/atlassian-config.md (Cloud ID, Jira Key, etc.)
+
+# 5. Install MCP servers (see readme/setup_instructions.md)
+
+# 6. Verify
+/verify-setup-agent       # Validates configuration
 /engineering-agent  # Should load without errors
 ```
 
@@ -92,10 +127,12 @@ git clone <project-1> && git clone <project-2> ...
 
 - [ ] Clone `global_workflows` repo
 - [ ] Clone all project repos to single parent directory
-- [ ] Update `shared/configuration.md`: SYSTEM_NAME, WORKSPACE_ROOT, Projects table
-- [ ] *(If using Atlassian)* Set Cloud ID, Jira Project Key, Confluence Space Key
-- [ ] *(If using Atlassian)* Update `engineering/configuration.md`: Folder IDs
-- [ ] *(If Jira requires custom fields)* Configure "Jira Required Custom Fields" section
+- [ ] Update `shared/configuration.md`:
+  - [ ] SYSTEM_NAME, WORKSPACE_ROOT
+- [ ] *(If using Atlassian)* Update `shared/atlassian-config.md`:
+  - [ ] Cloud ID, Jira Project Key, Confluence Space Key
+  - [ ] Confluence Folder IDs
+  - [ ] *(Optional)* Jira Custom Fields
 - [ ] Install Atlassian MCP server *(optional — skip for local-only mode)*
 - [ ] Install Figma MCP server *(optional — for frontend design tokens)*
 - [ ] Add project folders to VS Code/Cursor workspace

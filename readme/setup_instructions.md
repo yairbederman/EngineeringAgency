@@ -34,8 +34,10 @@ MCP (Model Context Protocol) servers enable Jira, Confluence, and Figma integrat
 
 ```bash
 # 1. Create workspace directory
-mkdir ~/projects/MySystem  # or C:\Projects\MySystem on Windows
-cd ~/projects/MySystem
+# macOS/Linux:
+mkdir -p ~/projects/MySystem && cd ~/projects/MySystem
+# Windows (PowerShell):
+mkdir -Force C:\Projects\MySystem; cd C:\Projects\MySystem
 
 # 2. Clone all project repos here
 git clone <project-1-repo>
@@ -43,10 +45,10 @@ git clone <project-2-repo>
 # ...
 
 # 3. Clone workflows repo to the EXACT path below
-#    macOS/Linux:
+# macOS/Linux:
 git clone <this-repo> ~/.gemini/antigravity/global_workflows
-#    Windows:
-git clone <this-repo> %USERPROFILE%\.gemini\antigravity\global_workflows
+# Windows (PowerShell):
+git clone <this-repo> $env:USERPROFILE\.gemini\antigravity\global_workflows
 ```
 
 > [!IMPORTANT]
@@ -59,40 +61,33 @@ git clone <this-repo> %USERPROFILE%\.gemini\antigravity\global_workflows
 
 ## Part C: Configure
 
-### Required: `shared/configuration.md`
+### Step 1: Project Settings — `shared/configuration.md`
 
-Open [`shared/configuration.md`](../shared/configuration.md) and replace:
+Open [`shared/configuration.md`](../shared/configuration.md) and configure:
 
-| Placeholder | Replace With | Example |
-|-------------|--------------|---------|
-| `<YOUR_SYSTEM_NAME>` | Your system name | `MySystem` |
-| `<YOUR_ORG>.atlassian.net` | Your Atlassian Cloud ID | `mycompany.atlassian.net` |
-| `<PROJECT_KEY>` | Your Jira project key | `PROJ` |
-| `<SPACE_KEY>` | Your Confluence space key | `DOCS` |
-| `${WORKSPACE_ROOT}` | Path to your projects | `C:/Projects/MySystem` |
+| Section | Placeholder | Replace With | Example |
+|---------|-------------|--------------|---------|
+| **Global Constants** | `<YOUR_SYSTEM_NAME>` | Your system name | `MySystem` |
+| **Workspace Config** | `${WORKSPACE_ROOT}` | Path to projects | `C:/Projects/MySystem` |
 
-Add your projects to the **Registered Projects** table.
+> **Projects are auto-added!** Run `/map-codebase-agent` on any project — it registers to `shared/projects.md` automatically.
 
-### Required for Jira: `engineering/configuration.md`
+### Step 2: Jira/Confluence — `shared/atlassian-config.md` (Optional)
 
-Open [`engineering/configuration.md`](../engineering/configuration.md) and set:
+> Skip this step if working in local-only mode (no Atlassian integration).
 
-| Placeholder | How to Find |
-|-------------|-------------|
-| `<PRODUCT_SPECS_FOLDER_ID>` | Navigate to folder in Confluence → extract ID from URL |
-| `<TECH_SPECS_FOLDER_ID>` | Same as above |
+Open [`shared/atlassian-config.md`](../shared/atlassian-config.md) and configure:
 
-### Optional: Jira Custom Fields
-
-If your Jira instance requires mandatory fields when creating issues (e.g., "Cross-Project Impact", "Team", etc.):
-
-1. Open [`engineering/configuration.md`](../engineering/configuration.md)
-2. Find the **"Jira Required Custom Fields"** section
-3. Add one row per mandatory field with Field Name, Field ID, and Default Value
-4. See the file's instructions for how to find Field IDs in Jira Admin
+| Section | Placeholder | Replace With | Example |
+|---------|-------------|--------------|---------|
+| **Cloud Connection** | `<YOUR_ORG>.atlassian.net` | Your Cloud ID | `mycompany.atlassian.net` |
+| **Cloud Connection** | `<PROJECT_KEY>` | Jira project key | `PROJ` |
+| **Cloud Connection** | `<SPACE_KEY>` | Confluence space key | `DOCS` |
+| **Confluence Folders** | `<PRODUCT_SPECS_FOLDER_ID>` | Folder ID from URL | `12345678` |
+| **Confluence Folders** | `<TECH_SPECS_FOLDER_ID>` | Folder ID from URL | `87654321` |
 
 > [!TIP]
-> Skip this section if your Jira has no mandatory custom fields on issue creation.
+> **Jira Custom Fields** section is optional. Only configure if your Jira mandates fields on issue creation.
 
 ---
 
@@ -101,7 +96,11 @@ If your Jira instance requires mandatory fields when creating issues (e.g., "Cro
 1. Open VS Code/Cursor
 2. **File → Add Folder to Workspace** for each project
 3. **File → Save Workspace As** → `MySystem.code-workspace`
-4. Run `/engineering-agent` — should load configuration without errors
+4. Run `/verify-setup-agent` — validates all configuration
+5. Run `/engineering-agent` — should load configuration without errors
+
+> [!TIP]
+> Use `/verify-setup-agent` anytime to diagnose configuration issues.
 
 ---
 
@@ -113,28 +112,37 @@ Quick checklist for copying this system to another developer's machine:
 # On new machine:
 
 # 1. Clone workflows
+# macOS/Linux:
 git clone <workflows-repo> ~/.gemini/antigravity/global_workflows
+# Windows (PowerShell):
+git clone <workflows-repo> $env:USERPROFILE\.gemini\antigravity\global_workflows
 
 # 2. Clone projects
-mkdir ~/projects/MySystem && cd ~/projects/MySystem
-git clone <project-1> && git clone <project-2> ...
+# macOS/Linux:
+mkdir -p ~/projects/MySystem && cd ~/projects/MySystem
+# Windows (PowerShell):
+mkdir -Force C:\Projects\MySystem; cd C:\Projects\MySystem
 
-# 3. Configure
+git clone <project-1> && git clone <project-2>
+
+# 3. Configure (just 2 values!)
 # Edit: global_workflows/shared/configuration.md
-#   → Set WORKSPACE_ROOT to your local path
-#   → Set Atlassian Cloud ID (same as team)
-#
-# Edit: global_workflows/engineering/configuration.md
-#   → Set Confluence folder IDs (same as team)
+#   → Set SYSTEM_NAME, WORKSPACE_ROOT
 
-# 4. Install MCP servers (Part A above)
+# 4. Configure Jira/Confluence (optional)
+# Edit: global_workflows/shared/atlassian-config.md
+#   → Set Cloud ID, Jira Project Key, Confluence Space Key
+#   → Set Confluence Folder IDs
 
-# 5. Setup IDE workspace
+# 5. Install MCP servers (Part A above)
+
+# 6. Setup IDE workspace
 #   → Add all project folders
 #   → Save workspace file
 
-# 6. Verify
-/engineering-agent
+# 7. Verify
+/verify-setup-agent       # Validates configuration
+/engineering-agent  # Should load without errors
 ```
 
 ### Files to Copy vs Configure
@@ -159,7 +167,9 @@ global_workflows/
 │   ├── agents_diagram.md             # Workflow hierarchy
 │   └── manager-usage-guide.md        # Manager agent guide
 ├── shared/
-│   ├── configuration.md              # 🔑 Global config (EDIT THIS)
+│   ├── configuration.md              # 🔑 Core config: SYSTEM_NAME, WORKSPACE_ROOT
+│   ├── atlassian-config.md           # 🔑 Jira/Confluence (optional)
+│   ├── projects.md                   # 📁 Project registry (auto-populated)
 │   ├── mcp-config.md                 # MCP tool references
 │   └── error-codes.md                # Error code reference
 ├── engineering-agent.md              # Feature lifecycle agent
@@ -181,7 +191,7 @@ global_workflows/
 | "Placeholder value" errors | Complete Part C — replace all `<PLACEHOLDER>` values |
 | Agent can't find project | Add project to `shared/configuration.md` + VS Code workspace |
 | `.ai-instructions/` not found | Run `/map-codebase-agent` on the project |
-| Jira/Confluence errors | Check `engineering/configuration.md` for correct IDs |
+| Jira/Confluence errors | Check `shared/configuration.md` for correct IDs and folder IDs |
 | MCP server errors | Re-authenticate MCP server in IDE settings |
 
 ---

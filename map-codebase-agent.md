@@ -25,18 +25,40 @@ Where `ARCHITECT_ROOT` = `./mapcodebase`
 
 ---
 
-## Project Validation (Prerequisite)
+## Project Registration (Auto-Discovery)
 
-Before running any phases, validate the target project:
+Before running any phases, check and register the target project:
 
-1. **Read** `${GLOBAL_WORKFLOWS_ROOT}/shared/configuration.md`
+1. **Read** `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md`
 2. **Check**: Is the target project listed in the Registered Projects table?
    - **If YES**: Proceed to Execution
-   - **If NO**: 
-     - **STOP**: "Project not registered. Add it to `shared/configuration.md` first."
-     - Provide guidance on how to add the project
+   - **If NO**: **Auto-register** the project (see below)
 
-> **Why**: Ensures all analyzed projects are tracked centrally, enabling `/system-architecture-agent` to discover them.
+### Auto-Registration Flow
+
+When a project is not in the Registered Projects table:
+
+1. **Detect project info** from the target directory:
+   - `Name`: Folder name (e.g., `my-api`)
+   - `Path`: Full path relative to `${WORKSPACE_ROOT}`
+   - `Type`: Detect from package.json/pom.xml/go.mod (Frontend/Backend/Library)
+   - `Role`: Infer from detected type (e.g., "API service", "Web application")
+
+2. **Confirm with user**:
+   ```
+   📦 New project detected: my-api
+   
+   I will add this to shared/configuration.md:
+   | Variable | Name | Type | Role | Path |
+   | `${PROJECT_MY_API}` | my-api | Backend | API service | `${WORKSPACE_ROOT}/my-api` |
+   
+   Proceed? (Yes/No)
+   ```
+
+3. **On approval**: Add row to `shared/projects.md` → Registered Projects table
+4. **Proceed** to Phase 0
+
+> **Why auto-register**: Reduces manual configuration burden. Users only need to set `WORKSPACE_ROOT` and `SYSTEM_NAME`, then run the agent on projects.
 
 ---
 
