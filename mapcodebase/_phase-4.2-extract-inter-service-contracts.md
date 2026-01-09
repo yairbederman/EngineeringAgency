@@ -17,7 +17,7 @@ Extract contracts for internal service-to-service communication—enabling Tech 
 
 ## Input
 - `source-structure.json.discoveredLocations.clients` (HTTP clients)
-- `${GLOBAL_WORKFLOWS_ROOT}/shared/configuration.md` (Registered Projects)
+- `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` (Registered Projects)
 
 ## Relationship to Phase 4
 Phase 4's `crossProjectDependencies` identifies WHICH services are called. This phase extracts the **exact contracts** for those calls.
@@ -40,7 +40,7 @@ Scan for HTTP client patterns used for internal calls:
 For EACH inter-service client:
 
 1. Extract base URL (from config, env var, or hardcoded)
-2. Match URL to registered project in `shared/configuration.md`
+2. Match URL to registered project in `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
 3. Document the mapping with code evidence
 
 ### 3. Extract Call Contracts

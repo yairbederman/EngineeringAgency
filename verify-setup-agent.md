@@ -4,7 +4,7 @@ description: Validates global_workflows setup and configuration before running a
 
 # Verify Setup Workflow
 
-**Purpose**: Validate that `global_workflows` is correctly installed and configured.
+**Purpose**: Validate that `global_workflows` is correctly installed and `Agent_Config/agent-config.md` is configured.
 
 ---
 
@@ -19,46 +19,53 @@ Verify workflows are in the correct directory for auto-discovery:
 **Validation:**
 - [ ] `README.md` exists in the workflows directory
 - [ ] `engineering-agent.md` exists and is readable
-- [ ] `shared/configuration.md` exists
+- [ ] `readme/agent-config.template.md` exists
 
 > [!CAUTION]
 > If workflows are not in `.gemini/antigravity/global_workflows`, slash commands will NOT be discovered. Move the directory to the correct path.
 
 ---
 
-## Step 2: Validate Core Configuration
+## Step 2: Check Workspace Configuration
 
-Check `shared/configuration.md` for required values:
+> [!IMPORTANT]
+> **Configuration lives in your workspace**, not in `global_workflows`.
 
-**Required settings:**
-| Setting | Status Check |
-|---------|--------------|
-| `SYSTEM_NAME` | Must NOT be `<YOUR_SYSTEM_NAME>` |
-| `WORKSPACE_ROOT` | Must be a valid, existing path |
+Check if `agent-config.md` exists in current workspace:
 
-**Validation script (run mentally or via command):**
+**Validation checklist:**
+- [ ] `Agent_Config/agent-config.md` exists in workspace
+- [ ] `SYSTEM_NAME` is set (not `<YOUR_SYSTEM_NAME>`)
+- [ ] `STORAGE_BACKEND` is set (`local` or `atlassian`)
+
+**Commands to locate config:**
 ```bash
 # macOS/Linux:
-cat ~/.gemini/antigravity/global_workflows/shared/configuration.md | grep -E "(SYSTEM_NAME|WORKSPACE_ROOT)"
+cat ./Agent_Config/agent-config.md | head -30
 
 # Windows (PowerShell):
-Get-Content $env:USERPROFILE\.gemini\antigravity\global_workflows\shared\configuration.md | Select-String -Pattern "SYSTEM_NAME|WORKSPACE_ROOT"
+Get-Content .\Agent_Config\agent-config.md | Select-Object -First 30
 ```
 
-**Expected output:**
-- `SYSTEM_NAME` should be your actual system name (e.g., `MySystem`)
-- `WORKSPACE_ROOT` should be your actual projects path (e.g., `C:/Projects/MySystem`)
+**If `agent-config.md` is missing:**
+```bash
+# Copy template to workspace:
+# macOS/Linux:
+mkdir -p Agent_Config
+cp ~/.gemini/antigravity/global_workflows/readme/agent-config.template.md ./Agent_Config/agent-config.md
 
-> [!WARNING]
-> Placeholder values like `<YOUR_SYSTEM_NAME>` will cause agent errors. Replace all placeholders before proceeding.
+# Windows (PowerShell):
+New-Item -ItemType Directory -Force -Path Agent_Config
+Copy-Item $env:USERPROFILE\.gemini\antigravity\global_workflows\readme\agent-config.template.md .\Agent_Config\agent-config.md
+```
 
 ---
 
 ## Step 3: Validate Atlassian Configuration (Optional)
 
-Skip this step if working in **local-only mode** (no Jira/Confluence integration).
+Skip this step if `STORAGE_BACKEND = local` in your `agent-config.md`.
 
-Check `shared/atlassian-config.md`:
+Check `agent-config.md` Atlassian section:
 
 | Setting | Status Check |
 |---------|--------------|
@@ -78,11 +85,11 @@ Expected: Returns your Atlassian Cloud ID without errors.
 
 ## Step 4: Validate Workspace Structure
 
-Check that project folders are accessible:
+Check that workspace is properly configured:
 
 **Validation:**
-- [ ] `WORKSPACE_ROOT` directory exists
-- [ ] At least one project folder exists inside `WORKSPACE_ROOT`
+- [ ] Current directory is a workspace root (contains projects)
+- [ ] At least one project folder exists
 - [ ] Project folders are added to VS Code/Cursor workspace
 
 ---
@@ -104,8 +111,6 @@ After IDE restart, verify agents are available:
 
 ## Verification Summary
 
-Run this checklist to confirm setup is complete:
-
 ```
 ✅ Setup Verification Checklist
 ================================
@@ -113,18 +118,18 @@ Run this checklist to confirm setup is complete:
 [ ] Installation Path
     └── global_workflows in .gemini/antigravity/
 
-[ ] Core Configuration (shared/configuration.md)
+[ ] Workspace Configuration
+    ├── Agent_Config/agent-config.md exists
     ├── SYSTEM_NAME set (not placeholder)
-    └── WORKSPACE_ROOT set (valid path)
+    └── STORAGE_BACKEND set (local/atlassian)
 
-[ ] Atlassian Configuration (optional)
+[ ] Atlassian Configuration (if STORAGE_BACKEND=atlassian)
     ├── Cloud ID set
     ├── Jira Project Key set
     ├── Confluence Space Key set
     └── MCP server authenticated
 
 [ ] Workspace Structure
-    ├── WORKSPACE_ROOT exists
     └── Projects in IDE workspace
 
 [ ] Agent Discovery
@@ -137,8 +142,9 @@ Run this checklist to confirm setup is complete:
 
 | Symptom | Likely Cause | Fix |
 |---------|--------------|-----|
+| "Workspace Configuration Required" | No `agent-config.md` | Copy template to Agent_Config/ (see Step 2) |
 | Slash commands not found | Wrong install path | Move to `.gemini/antigravity/global_workflows/` + restart IDE |
-| "Placeholder value" errors | Config not updated | Edit `shared/configuration.md` |
+| "Placeholder value" errors | Config not updated | Edit `Agent_Config/agent-config.md` |
 | MCP authentication errors | MCP server not configured | Re-authenticate in IDE settings |
 | "Project not found" errors | Project not registered | Run `/map-codebase-agent` on the project |
 

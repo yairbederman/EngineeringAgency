@@ -108,7 +108,7 @@ error codes documented
 4. **State → API** (NEW): All async thunks in `state-contracts.json` reference valid API clients
 5. **DB → Entity** (NEW): All tables in `database-schema.json` map to entities in `entity-contracts.json`
 6. **Validation → Entity** (NEW): All schemas in `validation-schemas.json` link to entities
-7. **InterService → Config** (NEW): All targets in `inter-service-contracts.json` exist in `shared/configuration.md`
+7. **InterService → Config** (NEW): All targets in `inter-service-contracts.json` exist in `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
 8. **Error → API** (NEW): Error codes in `error-taxonomy.json` appear in API error responses
 
 ## Code Evidence Requirement (For Cross-Service Accuracy)

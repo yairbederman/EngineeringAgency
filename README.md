@@ -6,9 +6,9 @@ AI agent system for software development lifecycle — from specs to code to PR.
 
 ## 🚀 5-Minute Quick Start
 
-> Get up and running in 3 commands!
+> Get up and running in 3 steps!
 
-**Step 1: Clone to the workflows directory**
+**Step 1: Clone to the workflows directory (ONE TIME per machine)**
 
 ```bash
 # macOS/Linux:
@@ -18,15 +18,19 @@ git clone <this-repo> ~/.gemini/antigravity/global_workflows
 git clone <this-repo> $env:USERPROFILE\.gemini\antigravity\global_workflows
 ```
 
-**Step 2: Configure (30 seconds)**
+**Step 2: Create workspace configuration**
 
-Edit `shared/configuration.md`:
-```yaml
-SYSTEM_NAME: MySystem
-WORKSPACE_ROOT:
-  # macOS/Linux: ~/projects/MySystem
-  # Windows:     C:/Projects/MySystem
+```bash
+# macOS/Linux:
+mkdir -p ~/projects/MySystem/Agent_Config
+cp ~/.gemini/antigravity/global_workflows/readme/agent-config.template.md ~/projects/MySystem/Agent_Config/agent-config.md
+
+# Windows (PowerShell):
+New-Item -ItemType Directory -Force -Path C:\Projects\MySystem\Agent_Config
+Copy-Item $env:USERPROFILE\.gemini\antigravity\global_workflows\readme\agent-config.template.md C:\Projects\MySystem\Agent_Config\agent-config.md
 ```
+
+Edit `Agent_Config/agent-config.md` with your settings.
 
 **Step 3: Run!**
 
@@ -35,7 +39,69 @@ WORKSPACE_ROOT:
 ```
 
 > [!TIP]
-> Restart your IDE after cloning for agent discovery. Run `/verify-setup-agent` to validate your configuration.
+> Restart your IDE after cloning for agent discovery. Run `/verify-setup-agent` to validate.
+
+---
+
+## 🔐 Portability Architecture
+
+> [!IMPORTANT]
+> **This system is 100% portable.** Clone once per machine, configure once per workspace.
+
+### Key Principle: Separation of Code and Configuration
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                        YOUR MACHINE                                      │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  ~/.gemini/antigravity/global_workflows/  ← PORTABLE (git-managed)       │
+│  ├── engineering-agent.md                                                │
+│  ├── map-codebase-agent.md                                               │
+│  ├── system-architecture-agent.md                                        │
+│  └── readme/agent-config.template.md         ← Template only               │
+│                                                                          │
+│  ─────────────────────────────────────────────────────────────────────  │
+│                                                                          │
+│  C:/Projects/WorkspaceA/                  ← WORKSPACE A                  │
+│  ├── Agent_Config/agent-config.md           ← Config for Workspace A       │
+│  ├── frontend-app/                                                       │
+│  └── backend-api/                                                        │
+│                                                                          │
+│  C:/Projects/WorkspaceB/                  ← WORKSPACE B                  │
+│  ├── Agent_Config/agent-config.md           ← Different config             │
+│  └── ...                                                                 │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### What Makes It Portable
+
+| Component | Location | Git Managed? | Contains |
+|-----------|----------|--------------|----------|
+| **Agent Code** | `~/.gemini/antigravity/global_workflows/` | ✅ Yes | Workflow logic, phases, personas |
+| **Workspace Config** | `${WORKSPACE}/Agent_Config/agent-config.md` | ❌ No (gitignored) | YOUR settings, credentials, projects |
+
+### Detection Order
+
+Agents look for `agent-config.md` in these locations:
+
+1. `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` ← **Recommended**
+2. `${WORKSPACE_ROOT}/agent-config.md` ← Fallback
+
+---
+
+## 📝 What Goes in `agent-config.md`
+
+| Section | What to Configure | Example |
+|---------|-------------------|---------|
+| **Storage Mode** | `local` or `atlassian` | `local` |
+| **Workspace Settings** | System name, paths | `SYSTEM_NAME: MySystem` |
+| **Atlassian** | Cloud ID, Jira/Confluence keys | *(only if using atlassian mode)* |
+| **Registered Projects** | Auto-populated by `/map-codebase-agent` | List of your projects |
+
+> [!TIP]
+> Projects are auto-added! Run `/map-codebase-agent` on any project — it registers automatically.
 
 ---
 
@@ -51,54 +117,18 @@ WORKSPACE_ROOT:
 | Doc | Purpose |
 |-----|---------|
 | [Setup Guide](readme/setup_instructions.md) | Installation & configuration |
+| [Config Template](readme/agent-config.template.md) | Workspace configuration template |
 | [Agents Overview](readme/agents_diagram.md) | Workflow hierarchy & when to run each |
 | [Manager Guide](readme/manager-usage-guide.md) | Sprint health, risk, status reporting |
 
-## 📝 What You'll Configure
-
-### `shared/configuration.md` (Required)
-
-| Find This | Replace With | Example |
-|-----------|--------------|---------|
-| `<YOUR_SYSTEM_NAME>` | Your system name | `MySystem` |
-| `${WORKSPACE_ROOT}` | Path to your projects | `C:/Projects/MySystem` |
-
-> **Projects are auto-added!** Run `/map-codebase-agent` on any project — it registers automatically.
-
-### `shared/atlassian-config.md` (Optional — skip for local-only mode)
-
-| Find This | Replace With | Example |
-|-----------|--------------|---------|
-| `<YOUR_ORG>.atlassian.net` | Your Atlassian Cloud ID | `mycompany.atlassian.net` |
-| `<PROJECT_KEY>` | Jira project key | `PROJ` |
-| `<SPACE_KEY>` | Confluence space key | `DOCS` |
-| `<PRODUCT_SPECS_FOLDER_ID>` | Folder ID from URL | `12345678` |
-| `<TECH_SPECS_FOLDER_ID>` | Folder ID from URL | `87654321` |
-
-## 🔌 How It Works (Plug & Play)
-
-> **No installation required** — agents are auto-discovered!
-
-When you clone this repo to the workflows directory (`~/.gemini/antigravity/global_workflows`), the AI assistant automatically detects all `.md` files with YAML frontmatter and registers them as slash commands:
-
-| File | Becomes Command |
-|------|-----------------|
-| `engineering-agent.md` | `/engineering-agent` |
-| `map-codebase-agent.md` | `/map-codebase-agent` |
-| `system-architecture-agent.md` | `/system-architecture-agent` |
-| `manager-agent.md` | `/manager-agent` |
-
-**The path matters**: The AI assistant looks for workflows in the `.gemini/antigravity/` directory. Cloning to another location won't auto-register the commands.
-
-> [!TIP]
-> After cloning, restart your IDE to ensure agent discovery runs.
+---
 
 ## 📋 For Team Leaders — Migration Guide
 
 ### Migrating to a New Machine
 
 ```bash
-# 1. Clone the workflows repo
+# 1. Clone workflows (ONE TIME per machine)
 # macOS/Linux:
 git clone <this-repo> ~/.gemini/antigravity/global_workflows
 # Windows (PowerShell):
@@ -109,34 +139,31 @@ git clone <this-repo> $env:USERPROFILE\.gemini\antigravity\global_workflows
 mkdir -p ~/projects/MySystem && cd ~/projects/MySystem
 # Windows (PowerShell):
 mkdir -Force C:\Projects\MySystem; cd C:\Projects\MySystem
-
 git clone <project-1> && git clone <project-2>
 
-# 3. Configure shared/configuration.md (SYSTEM_NAME, WORKSPACE_ROOT)
+# 3. Create Agent_Config folder and config file
+mkdir Agent_Config
+cp ~/.gemini/antigravity/global_workflows/readme/agent-config.template.md ./Agent_Config/agent-config.md
+# Edit Agent_Config/agent-config.md with your settings
 
-# 4. (Optional) Configure shared/atlassian-config.md (Cloud ID, Jira Key, etc.)
+# 4. Install MCP servers (optional — see readme/setup_instructions.md)
 
-# 5. Install MCP servers (see readme/setup_instructions.md)
-
-# 6. Verify
-/verify-setup-agent       # Validates configuration
-/engineering-agent  # Should load without errors
+# 5. Verify
+/verify-setup-agent
+/engineering-agent
 ```
 
 ### Migration Checklist
 
-- [ ] Clone `global_workflows` repo
-- [ ] Clone all project repos to single parent directory
-- [ ] Update `shared/configuration.md`:
-  - [ ] SYSTEM_NAME, WORKSPACE_ROOT
-- [ ] *(If using Atlassian)* Update `shared/atlassian-config.md`:
-  - [ ] Cloud ID, Jira Project Key, Confluence Space Key
-  - [ ] Confluence Folder IDs
-  - [ ] *(Optional)* Jira Custom Fields
-- [ ] Install Atlassian MCP server *(optional — skip for local-only mode)*
-- [ ] Install Figma MCP server *(optional — for frontend design tokens)*
-- [ ] Add project folders to VS Code/Cursor workspace
+- [ ] Clone `global_workflows` repo to `.gemini/antigravity/`
+- [ ] Clone project repos to workspace directory
+- [ ] Create `Agent_Config/agent-config.md` (copy from template)
+- [ ] Configure SYSTEM_NAME
+- [ ] *(If using Atlassian)* Configure Cloud ID, Jira Key, Confluence settings
+- [ ] Install MCP servers *(optional)*
 - [ ] Test `/engineering-agent`
+
+---
 
 ## 🤖 Available Agents
 

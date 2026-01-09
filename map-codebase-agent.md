@@ -17,9 +17,33 @@ Produces `${AI_INSTRUCTIONS_ROOT}` with full entity contracts, API definitions, 
 
 ## Configuration
 
-First, read the configuration file for path variables:
-1. **Read**: `${ARCHITECT_ROOT}/../shared/configuration.md` (Global constants)
-2. **Read**: `${ARCHITECT_ROOT}/configuration.md` (Agent specifics)
+### 0. Detect Workspace Environment (MANDATORY)
+
+> [!IMPORTANT]
+> **Multi-Environment Support**: Agents load configuration from `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`.
+
+1. **Detect workspace root**: Use current working directory or VS Code workspace root
+2. **Look for** `agent-config.md` in these locations (in order):
+   - `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   - `${WORKSPACE_ROOT}/agent-config.md`
+3. **If found**: Load as primary configuration source
+4. **If NOT found**: Prompt user to create one:
+   ```
+   ⚠️ **Workspace Configuration Required**
+   
+   No `agent-config.md` found in current workspace.
+   
+   Copy the template to your workspace:
+   - Template: `global_workflows/readme/agent-config.template.md`
+   - Destination: `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   ```
+5. **STOP** until `agent-config.md` exists
+
+### 1. Load Agent Configuration
+
+Read configuration files in order:
+1. **Read**: `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` (detected above — Workspace settings, projects, Atlassian)
+2. **Read**: `${ARCHITECT_ROOT}/configuration.md` (Agent-specific paths)
 
 Where `ARCHITECT_ROOT` = `./mapcodebase`
 
@@ -29,7 +53,7 @@ Where `ARCHITECT_ROOT` = `./mapcodebase`
 
 Before running any phases, check and register the target project:
 
-1. **Read** `${GLOBAL_WORKFLOWS_ROOT}/shared/projects.md`
+1. **Read** `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` (from Step 0)
 2. **Check**: Is the target project listed in the Registered Projects table?
    - **If YES**: Proceed to Execution
    - **If NO**: **Auto-register** the project (see below)
@@ -48,17 +72,17 @@ When a project is not in the Registered Projects table:
    ```
    📦 New project detected: my-api
    
-   I will add this to shared/configuration.md:
+   I will add this to your workspace agent-config.md:
    | Variable | Name | Type | Role | Path |
-   | `${PROJECT_MY_API}` | my-api | Backend | API service | `${WORKSPACE_ROOT}/my-api` |
+   | `${PROJECT_MY_API}` | my-api | Backend | API service | `./my-api` |
    
    Proceed? (Yes/No)
    ```
 
-3. **On approval**: Add row to `shared/projects.md` → Registered Projects table
+3. **On approval**: Add row to `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` → Registered Projects table
 4. **Proceed** to Phase 0
 
-> **Why auto-register**: Reduces manual configuration burden. Users only need to set `WORKSPACE_ROOT` and `SYSTEM_NAME`, then run the agent on projects.
+> **Why auto-register**: Reduces manual configuration burden. Users only need to set up `agent-config.md` once, then run the agent on projects.
 
 ---
 

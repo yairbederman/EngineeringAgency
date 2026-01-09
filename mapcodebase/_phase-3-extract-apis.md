@@ -261,7 +261,7 @@ Count API directories and files documented.
 > **Purpose**: Enables /engineering-agent TechSpec to identify which backend project owns each API endpoint.
 
 For **frontend projects** that call external backend APIs:
-1. **Read `${GLOBAL_WORKFLOWS_ROOT}/shared/configuration.md`** to get registered project list
+1. **Read `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`** to get registered project list (use path detected in Agent Step 0)
 2. Identify the backend base URL (from `baseRequest`, axios config, or environment variables)
 3. Match URL patterns to registered projects by their `apiBasePath` or name
 4. If no match found, log in `_unresolved.backendOwners`

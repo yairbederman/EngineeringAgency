@@ -42,7 +42,7 @@ Examples:
 | Code | Severity | Description | Resolution |
 |------|----------|-------------|------------|
 | `MCB-P1-001` | 🔴 BLOCKING | No recognized project files found | Verify project path, check for package.json/pom.xml/etc. |
-| `MCB-P1-002` | 🔴 BLOCKING | Project not in registered projects list | Add project to `shared/configuration.md` |
+| `MCB-P1-002` | 🔴 BLOCKING | Project not in registered projects list | Add project to `agent-config.md` |
 | `MCB-P1-003` | 🟠 WARNING | Multiple ecosystems detected | Document primary and secondary stacks |
 | `MCB-P1-004` | 🟠 WARNING | Source structure incomplete (missing directories) | List missing expected directories |
 | `MCB-P1-005` | 🟡 INFO | Monorepo structure detected | Switch to multi-module extraction mode |
@@ -114,7 +114,7 @@ Examples:
 ### Phase 4.2: Extract Inter-Service Contracts (Backend Only)
 | Code | Severity | Description | Resolution |
 |------|----------|-------------|------------|
-| `MCB-P42-001` | 🔴 BLOCKING | Target service not in registered projects | Add target to shared/configuration.md |
+| `MCB-P42-001` | 🔴 BLOCKING | Target service not in registered projects | Add target to `agent-config.md` |
 | `MCB-P42-002` | 🟠 WARNING | Target service has no api-contracts.json | Run /map-codebase-agent on target first |
 | `MCB-P42-003` | 🟠 WARNING | Contract mismatch detected (caller != callee) | Flag for manual review |
 | `MCB-P42-004` | 🟡 INFO | Phase skipped (no inter-service calls detected) | Expected for standalone services |
@@ -166,7 +166,7 @@ Examples:
 | Code | Severity | Description | Resolution |
 |------|----------|-------------|------------|
 | `ENG-CTX-001` | 🔴 BLOCKING | `copilot-instructions.md` not found | Run /map-codebase-agent first |
-| `ENG-CTX-002` | 🔴 BLOCKING | Project not in registered projects | Add to shared/configuration.md |
+| `ENG-CTX-002` | 🔴 BLOCKING | Project not in registered projects | Add to `agent-config.md` |
 | `ENG-CTX-003` | 🟠 WARNING | Context7 unavailable | Request file paths/snippets from user |
 | `ENG-CTX-004` | 🟠 WARNING | System architecture docs not found | Run /system-architecture-agent first |
 | `ENG-CTX-005` | 🟠 WARNING | MCP tool response truncated | Attempt browser fallback, then ask user |
@@ -296,7 +296,7 @@ Examples:
 ### Phase 1: Project Inventory
 | Code | Severity | Description | Resolution |
 |------|----------|-------------|------------|
-| `SYS-P1-001` | 🔴 BLOCKING | No registered projects found | Add projects to shared/configuration.md |
+| `SYS-P1-001` | 🔴 BLOCKING | No registered projects found | Add projects to `agent-config.md` |
 | `SYS-P1-002` | 🟠 WARNING | Project missing .ai-instructions | Run /map-codebase-agent on project |
 | `SYS-P1-003` | 🟠 WARNING | copilot-instructions.md not readable | Check file format |
 | `SYS-P1-004` | 🟡 INFO | All projects scanned successfully | Continue to Phase 2 |

@@ -18,7 +18,7 @@
 
 ### Step 1: Read Configuration
 
-Load the project registry from `${GLOBAL_WORKFLOWS_ROOT}/shared/configuration.md`.
+Load the project registry from `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` (detected in parent agent's Step 0).
 
 ### Step 2: Scan Each Project
 

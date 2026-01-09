@@ -1,21 +1,7 @@
 # Engineering Agent Configuration
 
-> **Purpose**: Single source of truth for all environment-specific configuration.
-> When migrating to a new environment, update the paths in this file only.
-
----
-
-## ⚠️ Setup Required
-
-> [!IMPORTANT]
-> **Before first use**, configure the Atlassian folder IDs and custom fields for your Jira/Confluence instance.
-> All placeholder values (`<PLACEHOLDER>`) must be replaced with your organization's settings.
-
----
-
-## Installation
-
-After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`) by default. No update is required if the standard directory structure is maintained.
+> **Purpose**: Agent-specific paths and mode mappings.
+> Environment settings are in `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`.
 
 ---
 
@@ -23,23 +9,22 @@ After cloning, `AGENT_ROOT` is configured to use relative paths (`./engineering`
 
 | Variable | Value | Description |
 |----------|-------|-------------|
-| `AGENT_ROOT` | `./engineering` | Base path for all agent files (Relative to global_workflows root) |
+| `AGENT_ROOT` | `./engineering` | Base path for agent files (relative to global_workflows) |
 
-### Core Files (relative to AGENT_ROOT)
+### Core Files
 
-| File | Relative Path |
-|------|---------------|
-| Core Rules | `core-rules.md` |
-| Workflow Validation | `workflow-validation.md` |
-| Gates & Approvals | `modes/_gates.md` |
+| File | Path |
+|------|------|
+| Core Rules | `${AGENT_ROOT}/core-rules.md` |
+| Workflow Validation | `${AGENT_ROOT}/workflow-validation.md` |
+| Gates & Approvals | `${AGENT_ROOT}/modes/_gates.md` |
 
 ---
 
-## Mode Registry (Source of Truth)
+## Mode Registry
 
 > [!IMPORTANT]
 > **Single Source of Truth**: All mode-to-file and mode-to-persona mappings are defined here.
-> Other files should reference this section, not duplicate it.
 
 ### Mode Mapping
 
@@ -67,91 +52,62 @@ For Execution/BugFix modes, persona is selected based on task type:
 | **Frontend** | `ui`, `component`, `form`, `.tsx`, `.vue`, `.css` | `personas/frontend-developer.md` |
 | **Full-Stack** | Both indicators present | Backend first, then Frontend |
 
-### Supporting Files
+---
 
-| Purpose | Relative Path |
-|---------|---------------|
-| **Cross-Project** | `modes/cross-project.md` |
-| **Testing Policy** | `modes/execution/_testing-policy.md` |
-| **Figma Extraction** | `design/figma-extraction-protocol.md` |
-| **Validation Checklist** | `modes/planning/_validation-checklist.md` |
+## Supporting Files
 
-### Templates
-
-| Template | Relative Path |
-|----------|---------------|
-| Epic | `templates/epic.md` |
-| Tech Spec | `templates/tech-spec.md` |
-| Task (Backend) | `templates/task-backend.md` |
-| Task (Frontend) | `templates/task-frontend.md` |
-| Template Contracts | `templates/_template-contracts.md` |
+| Purpose | Path |
+|---------|------|
+| Cross-Project | `${AGENT_ROOT}/modes/cross-project.md` |
+| Testing Policy | `${AGENT_ROOT}/modes/execution/_testing-policy.md` |
+| Figma Extraction | `${AGENT_ROOT}/design/figma-extraction-protocol.md` |
+| Validation Checklist | `${AGENT_ROOT}/modes/planning/_validation-checklist.md` |
 
 ---
 
-## Atlassian Configuration
+## Templates
 
-> **📁 Source**: [shared/configuration.md](../shared/configuration.md)
->
-> All Atlassian settings are centralized in the shared configuration file:
-> - Cloud ID, Jira Project Key, Confluence Space Key
-> - Confluence Folder IDs (Product Specs, Tech Specs)
-> - Jira Custom Fields (if required by your instance)
-
-## Jira Advanced Configuration
-
-> **Purpose**: Customize interaction with your Jira instance. All settings in this section are **optional-advanced**.
-> Copy this section to your local configuration only if you need to override defaults.
-
-### Limitations
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `JIRA_MAX_RESULTS` | `50` | Maximum results to fetch in JQL queries (System Safe Limit) |
-| `JIRA_TIMEOUT_SECONDS` | `30` | API timeout duration for slow instances |
-
-### Overrides
-
-> **Use Case**: When your Jira workflow requires specific transition IDs that logic cannot auto-detect.
-
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `FORCE_TRANSITION_IDS` | JSON map of status names to transition IDs | `{"In Progress": "31", "Done": "41"}` |
-| `STATUS_MAPPING` | JSON map of agent status to Jira status | `{"Review": "In Code Review"}` |
+| Template | Path |
+|----------|------|
+| Epic | `${AGENT_ROOT}/templates/epic.md` |
+| Tech Spec | `${AGENT_ROOT}/templates/tech-spec.md` |
+| Task (Backend) | `${AGENT_ROOT}/templates/task-backend.md` |
+| Task (Frontend) | `${AGENT_ROOT}/templates/task-frontend.md` |
+| Template Contracts | `${AGENT_ROOT}/templates/_template-contracts.md` |
 
 ---
 
-## Workspace Projects
+## Per-Project Files
 
-> **📁 Source**: [shared/configuration.md](../shared/configuration.md) – Single source of truth for all agents.
->
-> Read the shared configuration file for project variables, names, types, roles, paths, and selection criteria.
+> Generated by `/map-codebase-agent`
 
-### Per-Project Config Files
-
-| Variable | Path | Description |
-|----------|------|-------------|
-| `${COPILOT_INSTRUCTIONS_PATH}` | `.ai-instructions/copilot-instructions.md` | Architecture & patterns |
-| `${FILE_CATEGORIZATION_PATH}` | `.ai-instructions/analysis/file-categorization.json` | Component organization |
-| `${DESIGN_TOKENS_PATH}` | `tailwind.config.js` or `theme.ts` | Design system tokens (frontend) |
-
-### System Architecture Paths (Cross-Project Context)
-
-> **Source**: Generated by `/system-architecture-agent`
-
-| Variable | Path | Description |
-|----------|------|-------------|
-| `${SYSTEM_ARCH_OUTPUT}` | `${SYSTEM_ARCH_OUTPUT_ROOT}` | Root for generated cross-project docs (from shared config) |
-| `${SERVICE_TOPOLOGY_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/service-topology.json` | Service dependencies |
-| `${CROSS_SERVICE_APIS_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/cross-service-apis.json` | Inter-service API contracts |
-| `${UNIFIED_DOMAIN_MODEL_PATH}` | `${SYSTEM_ARCH_OUTPUT}/analysis/unified-domain-model.json` | Canonical entities |
-| `${SYSTEM_ARCH_DOC_PATH}` | `${SYSTEM_ARCH_OUTPUT}/system-architecture.md` | Master system doc |
-
-> **Note**: `${WORKSPACE_ROOT}` and `${SYSTEM_ARCH_OUTPUT_ROOT}` are defined in [shared/configuration.md](../shared/configuration.md).
+| File | Path | Description |
+|------|------|-------------|
+| AI Instructions | `.ai-instructions/copilot-instructions.md` | Architecture & patterns |
+| File Categories | `.ai-instructions/analysis/file-categorization.json` | Component organization |
+| Design Tokens | `tailwind.config.js` or `theme.ts` | Design system (frontend) |
 
 ---
 
-## MCP Tool References
+## System Architecture Files
 
-> **Source**: [shared/mcp-config.md](../shared/mcp-config.md)
->
-> All MCP tool references are now centralized in the shared MCP configuration file.
+> Generated by `/system-architecture-agent`
+
+| File | Path |
+|------|------|
+| Service Topology | `${SYSTEM_ARCH_OUTPUT_ROOT}/analysis/service-topology.json` |
+| Cross-Service APIs | `${SYSTEM_ARCH_OUTPUT_ROOT}/analysis/cross-service-apis.json` |
+| Unified Domain Model | `${SYSTEM_ARCH_OUTPUT_ROOT}/analysis/unified-domain-model.json` |
+| Master Doc | `${SYSTEM_ARCH_OUTPUT_ROOT}/system-architecture.md` |
+
+> `${SYSTEM_ARCH_OUTPUT_ROOT}` is defined in `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+
+---
+
+## External References
+
+| Reference | Location |
+|-----------|----------|
+| Workspace Config | `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` |
+| MCP Tools | `../shared/mcp-config.md` |
+| Error Codes | `../shared/error-codes.md` |

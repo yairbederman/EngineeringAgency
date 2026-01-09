@@ -32,12 +32,35 @@ description: Activates the Engineering Agent Role
 
 ## Orchestrator Steps
 
+### 0. Detect Workspace Environment (MANDATORY)
+
+> [!IMPORTANT]
+> **Multi-Environment Support**: Agents load configuration from `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`.
+
+1. **Detect workspace root**: Use current working directory or VS Code workspace root
+2. **Look for** `agent-config.md` in these locations (in order):
+   - `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   - `${WORKSPACE_ROOT}/agent-config.md`
+3. **If found**: Load as primary configuration source
+4. **If NOT found**: Prompt user to create one:
+   ```
+   ⚠️ **Workspace Configuration Required**
+   
+   No `agent-config.md` found in current workspace.
+   
+   Copy the template to your workspace:
+   - Template: `global_workflows/readme/agent-config.template.md`
+   - Destination: `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   
+   See setup instructions: `global_workflows/readme/setup_instructions.md`
+   ```
+5. **STOP** until `agent-config.md` exists
+
 ### 1. Load Configuration (MANDATORY)
 
-Load from `${AGENT_ROOT}/configuration.md`:
-- Atlassian settings (Cloud ID, Project Key, Space Key)
-- Workspace projects (names and paths)
-- Custom Jira field IDs
+Load from `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` (detected above) + agent-specific config:
+- `${WORKSPACE_ROOT}/agent-config.md` → Environment settings
+- `${AGENT_ROOT}/configuration.md` → Agent paths, mode mappings
 
 Where `AGENT_ROOT` = `./engineering`
 

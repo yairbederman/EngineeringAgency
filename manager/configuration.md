@@ -8,7 +8,7 @@
 ## 1) Inheritance
 
 Read these files before executing:
-- `../shared/configuration.md` — Project registry, Atlassian settings
+- `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` — Project registry, Atlassian settings
 - `../shared/mcp-config.md` — MCP tool references
 - `./_calculation-engine.md` — Calculation formulas
 
@@ -17,8 +17,7 @@ Read these files before executing:
 ## 2) Default Target
 
 If user doesn't specify `Target`, use:
-- `${JIRA_PROJECT_KEY}` from `shared/configuration.md`
-- Or set manually here: `DEFAULT_PROJECT_KEY = <YOUR_PROJECT>`
+- `${JIRA_PROJECT_KEY}` from `Agent_Config/agent-config.md`
 
 ---
 
