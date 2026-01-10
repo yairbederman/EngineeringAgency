@@ -345,12 +345,27 @@ Fill `tech-spec.md` template with:
 
 ### Step 6: Present Tech Spec for Review
 
-> [!IMPORTANT]
-> **DO NOT** create Confluence pages or update Jira issues yet.
-> You must first present the generated Tech Spec content to the user for review.
+> [!CAUTION]
+> **⛔ HARD STOP: Tech Spec Approval Gate**
+> 
+> This is a BLOCKING gate. You MUST NOT proceed without explicit user approval.
 
-1.  Display the full Tech Spec markdown in the chat.
-2.  Explicitly ask for approval of the content.
+**You MUST:**
+1. Display the full Tech Spec markdown in the chat
+2. Present the Standard Approval Format (see Step 8)
+3. **STOP and WAIT** for user response
+4. Make **NO further tool calls** until approval is received
+
+**⛔ DO NOT (until approved):**
+- Create Confluence pages or Jira issues
+- Proceed to Task Planning
+- Generate any task content
+- Make any further tool calls beyond presenting this gate
+
+**Valid Approval Responses:**
+- `Approve` or `Yes, Inject & Proceed` → Execute Step 7, then present Gate for TaskPlanning
+- `No, Local Only` → Keep local artifact only, then present Gate for TaskPlanning
+- `Revise [feedback]` → Update Tech Spec and re-present for approval
 
 ### Step 7: Inject to Storage (ON APPROVAL)
 
@@ -384,3 +399,4 @@ Display the status and next steps using the standard format.
 > - `Revise`: Adjust the Tech Spec before proceeding.
 ```
 
+**On Approval**: → Immediately proceed to **TaskPlanning** mode. Do NOT offer implementation until all tasks are created and approved (Gate 5c).

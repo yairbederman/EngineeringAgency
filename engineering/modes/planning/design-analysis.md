@@ -4,24 +4,102 @@
 
 ## 1. DesignAnalysis Mode – Design Deep-Dive
 
-**Goal**: Extract comprehensive design context from Figma to enable pixel-perfect implementation. This phase produces a Design Review Report with tokens, components, and responsive specifications.
+**Goal**: Extract comprehensive design context from any design source to enable accurate implementation. This phase produces a Design Review Report with tokens, components, and responsive specifications.
 
 **Trigger**: 
 - Run after ProductSpecReview
-- Execute if Product Spec contains Figma links
+- Execute if ANY design reference is provided:
+  - Figma link
+  - Website URL (reference site)
+  - HTML/CSS mockup files
+  - Screenshot or image mockups
+  - Detailed design description
 
-**Skip Condition**: If no Figma links exist in the spec, present option to user:
+**Skip Condition**: If no design reference exists AND user confirms proceeding without design:
 - **Option A**: Proceed without DesignAnalysis (flag as design debt)
-- **Option B**: Request Figma designs from PM/Designer before continuing
+- **Option B**: Request design assets from client before continuing
 
 ---
 
-## 2. Prerequisites
+## 2. Design Source Detection (AUTO)
 
-Before starting, ensure:
+> [!IMPORTANT]
+> **All Modes (Enterprise & Local)**: Design inputs may come from various sources, not just Figma.
+> The agent MUST auto-detect the source type and use appropriate extraction tools.
+> This applies regardless of `STORAGE_BACKEND` setting.
+
+### Source Type Detection
+
+**Detection Algorithm** (apply in order):
+
+| Pattern | Source Type | Detection Rule |
+|---------|-------------|----------------|
+| `figma.com` URL | `figma` | URL contains `figma.com` |
+| `http(s)://` URL | `website` | Valid URL, not Figma |
+| File path `.html`/`.css` | `html_mockup` | File extension match |
+| File path `.png`/`.jpg`/`.pdf` | `image` | Image/PDF extension |
+| Text description | `description` | No URL/path, natural language |
+
+### Extraction Tools by Source Type
+
+| Source Type | Primary Tool | Fallback | Extracts |
+|-------------|--------------|----------|----------|
+| `figma` | Figma MCP (`${MCP_FIGMA_GET_DESIGN}`) | Browser subagent | Tokens, components, variables |
+| `website` | Browser subagent | `read_url_content` | Screenshots, colors, fonts, layout |
+| `html_mockup` | `view_file` | — | CSS variables, structure, classes |
+| `image` | `view_file` (image) | `generate_image` analysis | Colors, layout, typography |
+| `description` | LLM interpretation | — | Design system recommendations |
+
+---
+
+### Website Analysis Protocol
+
+When design source is a website URL:
+
+1. **Navigate & Screenshot**: Use browser subagent to capture homepage and key pages
+2. **Extract Design Tokens**:
+   - Colors: Identify primary, secondary, accent, background, text colors
+   - Typography: Font families, sizes, weights
+   - Spacing: Section padding, margins, gaps
+3. **Document Layout**: Header, navigation, hero, sections, footer structure
+4. **Capture Animations**: Note existing transitions, effects, or lack thereof
+5. **Generate Design Review Report**: Same format as Figma analysis
+
+### HTML/CSS Mockup Protocol
+
+When design input is an an HTML/CSS file:
+
+1. **Read HTML Structure**: Identify semantic elements, component patterns
+2. **Extract CSS Variables**: Parse `:root` or `--variable` declarations
+3. **Map to Design Tokens**: Create token table from CSS values
+4. **Screenshot if Needed**: Open in browser subagent for visual reference
+
+### Image/Screenshot Protocol
+
+When design input is an image or PDF:
+
+1. **View Image**: Use `view_file` to analyze visual content
+2. **Extract Colors**: Identify dominant color palette
+3. **Analyze Layout**: Grid structure, spacing patterns
+4. **Document Limitations**: Flag that exact tokens cannot be extracted
+
+### Description-Only Protocol
+
+When user provides only a text description (e.g., "premium, dark theme, gold accents"):
+
+1. **Generate Design Recommendations**: Based on industry best practices
+2. **Suggest Token Values**: Propose color palette, typography, spacing
+3. **Request Approval**: Present suggested design system for user confirmation
+4. **Flag as Draft**: Mark report as `[GENERATED - from description only]`
+
+---
+
+## 2.5 Prerequisites
+
+Before starting full extraction, ensure:
 1. ProductSpecReview is complete (Gap Analysis approved)
-2. Figma links are extracted from Product Spec
-3. Access to project's design system files:
+2. Design source is identified (Figma, website, file, or description)
+3. Access to project's design system files (if exist):
    - `${COPILOT_INSTRUCTIONS_PATH}` for architecture patterns
    - `${DESIGN_TOKENS_PATH}` for token definitions
    - `${FILE_CATEGORIZATION_PATH}` for component registry

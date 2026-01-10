@@ -60,3 +60,29 @@
 > - `Revise [feedback]` to make changes
 > - `Cancel` to stop workflow
 ```
+
+---
+
+## ⛔ HARD STOP: Epic Approval Gate
+
+> [!CAUTION]
+> **This is a BLOCKING gate. You MUST NOT proceed without explicit user approval.**
+
+**After creating the Epic, you MUST:**
+1. Display the Epic content summary
+2. Present the Standard Approval Format above
+3. **STOP and WAIT** for user response
+4. Make **NO further tool calls** until approval is received
+
+**Valid Approval Responses:**
+- `Approve` → Proceed to TechSpec Mode
+- `Revise [feedback]` → Update Epic and re-present for approval
+- `Cancel` → End workflow
+
+**⛔ DO NOT (until approved):**
+- Generate Tech Spec content
+- Create mockups or designs
+- Proceed to any execution tasks
+- Make any further tool calls beyond presenting this gate
+
+**On Approval**: → Immediately proceed to **TechSpec** mode. Do NOT offer implementation until all planning phases (through TaskPlanning Gate 5c) are complete.

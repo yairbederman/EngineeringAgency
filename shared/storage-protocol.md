@@ -39,12 +39,29 @@
 ### Adapter Compliance Checklist
 
 Before adding a new adapter, verify it implements:
+- [ ] `createProductSpec(title, content)` → returns ID (local mode only)
+- [ ] `updateProductSpec(specId, content)` → updates content (local mode only)
+- [ ] `getProductSpec(specId)` → returns content (local mode only)
 - [ ] `createEpic(title, content)` → returns ID
 - [ ] `getEpic(epicId)` → returns content
 - [ ] `createSpec(title, content, epicId)` → returns ID
 - [ ] `createTask(title, content, epicId)` → returns ID
 - [ ] `getTasks(epicId)` → returns ID[]
 - [ ] Error handling with clear messages
+
+> [!NOTE]
+> **Product Spec Operations**: Required for `local` mode. For `atlassian` mode, product specs are managed in Confluence directly.
+
+### Product Spec Operations (Local Mode)
+
+> **Purpose**: Persists the product spec as the source of truth before Epic creation.
+
+| Operation | Signature | Returns |
+|-----------|-----------|---------|
+| `createProductSpec` | `(title: string, content: markdown)` | `SpecId` (e.g., `SPEC-001`) |
+| `getProductSpec` | `(specId: string)` | `{ id, title, content, status, gapsResolved }` |
+| `updateProductSpec` | `(specId: string, content: markdown)` | `success/fail` |
+| `linkProductSpecToEpic` | `(specId: string, epicId: string)` | `success/fail` |
 
 ### Epic Operations
 

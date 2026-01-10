@@ -22,6 +22,28 @@
 - **Jira Tasks**: Created in Epic, all linked to Tech Spec
 - **Task List**: Summary of created task keys
 
+---
+
+## ⛔ GATE STRUCTURE: TaskPlanning Has 3 Sequential Hard Stops
+
+> [!CAUTION]
+> **TaskPlanning requires THREE separate approvals before implementation.**
+> Each gate is a HARD STOP. You MUST NOT proceed through multiple gates in one turn.
+
+| Gate | Checkpoint | What Happens | Blocks Until |
+|------|------------|--------------|--------------|
+| **5a** | Step 7: Task List Presentation | Present proposed tasks | User approves task list |
+| **5b** | Step 10: Scope Confirmation | Present traceability matrix | User confirms scope |
+| **5c** | Step 11: Final Readiness | Present summary | User selects first task |
+
+**⛔ DO NOT:**
+- Auto-proceed through multiple gates in one turn
+- Start implementation without all 3 gates passed
+- Assume approval based on previous responses
+- Create Jira tasks before Gate 5a approval
+
+---
+
 **Critical Rules**:
 1.  **Atomic UI**: Separate "Build Component" from "Integrate Logic" if complex.
 2.  **The "Figma Compilation" Rule**:

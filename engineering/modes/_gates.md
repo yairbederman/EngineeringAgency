@@ -3,6 +3,44 @@
 > **Core Principle**: Each planning step requires human approval before proceeding.
 > Entry conditions for **Implementation** and **BugFix** are defined in `core-rules.md`.
 
+> [!CAUTION]
+> **⛔ GATE ENFORCEMENT IS NON-NEGOTIABLE**
+> 
+> Every gate marked with "STOP" is a **HARD STOP**. The agent:
+> - **MUST NOT** proceed to the next mode without explicit user approval
+> - **MUST NOT** create artifacts for the next phase until approval is received
+> - **MUST NOT** generate mockups, designs, or code beyond the current gate
+> - **MUST** display the Standard Approval Format and wait for user response
+> - **MUST** treat any attempt to bypass gates as a **workflow violation**
+> 
+> **Valid approval responses**: `Approve`, `Yes`, `Proceed`, or mode-specific options listed in each gate.
+> **Any other response**: Treat as feedback requiring revision, NOT as approval.
+
+---
+
+## ⚡ CRITICAL: Planning Phase Chaining Rule
+
+> [!IMPORTANT]
+> **The Planning Phase is a SINGLE CHAIN that MUST complete before Implementation.**
+>
+> ```
+> ProductSpecReview → [DesignAnalysis] → FeaturePlanning → TechSpec → TaskPlanning → Implementation
+>       GATE 1          GATE 2 (opt)        GATE 3         GATE 4    GATES 5a-5c      EXECUTION
+> ```
+>
+> **Gate 2 is OPTIONAL**: Only triggers if Figma links are present in the Product Spec.
+>
+> **After each approval, you MUST immediately proceed to the next planning phase.**
+> Do NOT ask "should I proceed to implementation" until ALL planning gates (through Gate 5c) are complete.
+>
+> | Gate Approved | Next Action (MANDATORY) |
+> |---------------|-------------------------|
+> | Gate 1 (ProductSpecReview) | → Proceed to **DesignAnalysis** (if Figma) OR **FeaturePlanning** (if no Figma) |
+> | Gate 2 (DesignAnalysis) | → Proceed to **FeaturePlanning** |
+> | Gate 3 (FeaturePlanning) | → Proceed to **TechSpec** |
+> | Gate 4 (TechSpec) | → Proceed to **TaskPlanning** |
+> | Gate 5c (TaskPlanning) | → **STOP** - User selects first task for Implementation |
+
 ---
 
 ## Gate 1: After ProductSpecReview
@@ -26,6 +64,8 @@
 
 **Gate**: STOP until user selects an option.
 
+**On Approval**: → Immediately proceed to **FeaturePlanning** (or **DesignAnalysis** if Figma links exist)
+
 ---
 
 ## Gate 2: After DesignAnalysis
@@ -48,6 +88,8 @@
 
 **Gate**: STOP until user approves Design Review.
 
+**On Approval**: → Immediately proceed to **FeaturePlanning**
+
 ---
 
 ## Gate 3: After FeaturePlanning
@@ -63,6 +105,8 @@
 - If assumptions logged, Epic must include "Assumptions Log" section and `needs-validation` label
 
 **Gate**: STOP until user approves Epic.
+
+**On Approval**: → Immediately proceed to **TechSpec** (do NOT offer implementation yet)
 
 ---
 
@@ -81,6 +125,8 @@
 - **Start Condition**: Create artifact ONLY if "Yes" selected
 
 **Gate**: STOP until user makes a decision.
+
+**On Approval**: → Immediately proceed to **TaskPlanning** (do NOT offer implementation yet)
 
 ---
 

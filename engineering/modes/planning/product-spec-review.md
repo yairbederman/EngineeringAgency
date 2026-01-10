@@ -20,6 +20,41 @@
 
 ---
 
+## 1.5 Local Mode: Create Product Spec Artifact (MANDATORY)
+
+> [!IMPORTANT]
+> **Local mode MUST create `product-spec.md`** as the persistent source of truth.
+> This mirrors how Atlassian mode uses Confluence for product specs.
+
+**Step 0: Persist Product Spec to Local Storage**
+
+| Input Source | Action |
+|--------------|--------|
+| User provides feature description in chat | Generate structured product spec, then `storage.createProductSpec(title, content)` |
+| User provides a file/document | Parse content, then `storage.createProductSpec(title, content)` |
+| Resuming existing spec | `storage.getProductSpec(specId)` to load existing |
+
+**Product Spec Lifecycle**:
+
+```
+[User Input] → createProductSpec() → Analyze for Gaps → updateProductSpec() → Approved
+                    ↓                                          ↑
+              product-spec.md                           (add gaps/assumptions)
+```
+
+**When Gaps Are Identified**:
+1. Add "Gap Analysis" section to product spec content
+2. After user approves assumptions: `storage.updateProductSpec(specId, updatedContent)`
+3. Update status to "approved" and `gapsResolved: true`
+
+**When Proceeding to FeaturePlanning**:
+1. Link product spec to epic: `storage.linkProductSpecToEpic(specId, epicId)`
+2. This maintains bidirectional traceability
+
+> [!NOTE]
+> **Atlassian Mode**: Product specs are managed in Confluence directly via MCP.
+> This section applies only to `local` storage mode.
+
 ## 2. Analysis Framework
 
 **For each feature, ask**:
@@ -225,3 +260,30 @@ I've identified [X] unresolved gaps. Here's the proposed Assumptions Log:
 - All **🔴 BLOCKER** gaps are resolved by the Product Manager, **OR**
 - User explicitly approves proceeding with assumptions (and Assumptions Log is prepared)
 - All **🟠 HIGH RISK** gaps are either resolved **OR** documented in Assumptions Log with user approval
+
+---
+
+## ⛔ HARD STOP: Gap Analysis Approval Gate
+
+> [!CAUTION]
+> **This is a BLOCKING gate. You MUST NOT proceed without explicit user approval.**
+
+**After completing Gap Analysis, you MUST:**
+1. Present the Gap Analysis Report with severity-segmented questions
+2. If no gaps: Present approval request to proceed to FeaturePlanning
+3. If gaps exist: Present options (A, B, or C) and WAIT for user selection
+4. **STOP and WAIT** for user response
+5. Make **NO further tool calls** until approval is received
+
+**Valid Approval Responses:**
+- `Approve` or "Spec is ready" → Proceed to FeaturePlanning Mode
+- `Option A/B/C` → Handle according to option selected
+- `Revise [feedback]` → Update analysis and re-present
+
+**⛔ DO NOT (until approved):**
+- Create Epic content
+- Generate mockups or designs
+- Proceed to FeaturePlanning mode
+- Make any further tool calls beyond presenting this gate
+
+**On Approval**: → Immediately proceed to **FeaturePlanning** mode (or **DesignAnalysis** if Figma links exist). Do NOT offer implementation.
