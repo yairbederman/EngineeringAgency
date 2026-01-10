@@ -347,27 +347,26 @@ Fill `tech-spec.md` template with:
 > **DO NOT** create Confluence pages or update Jira issues yet.
 > You must first present the generated Tech Spec content to the user for review.
 
-1. Display the full Tech Spec markdown in the chat.
-2. Explicitly ask for approval of the content.
-3. **MANDATORY**: Ask if the user wants to "Inject to Jira" (create as Epic child Task).
+1.  Display the full Tech Spec markdown in the chat.
+2.  Explicitly ask for approval of the content.
 
-### Step 7: Inject to Jira (ONLY IF AUTHORIZED)
+### Step 7: Inject to Jira (ON APPROVAL)
 
-**Condition**: Only proceed if the user explicitly confirms "Inject to Jira".
+**Condition**: Proceed immediately once the user replies "**Approve**".
 
 **Create Jira Task (Epic Child)**:
-1. Create a **Jira Task** under the Epic using `${MCP_ATLASSIAN_CREATE_ISSUE}`:
-   - `projectKey`: "${JIRA_PROJECT_KEY}"
-   - `issueTypeName`: "Task"
-   - `parent`: [Epic Key]
-   - `summary`: "Tech Spec: [Feature Name]"
-   - `description`: The full Tech Spec markdown content
-   - `additional_fields`: Include all custom fields defined in `configuration.md` → "Jira Required Custom Fields" table. Example: `{"customfield_XXXXX": {"id": "VALUE_ID"}}`
-2. **Verify** the Task is linked as a child of the Epic.
+1.  Create a **Jira Task** under the Epic using `${MCP_ATLASSIAN_CREATE_ISSUE}`:
+    -   `projectKey`: "${JIRA_PROJECT_KEY}"
+    -   `issueTypeName`: "Task"
+    -   `parent`: [Epic Key]
+    -   `summary`: "Tech Spec: [Feature Name]"
+    -   `description`: The full Tech Spec markdown content
+    -   `additional_fields`: Include all custom fields defined in `configuration.md` → "Jira Required Custom Fields" table. Example: `{"customfield_XXXXX": {"id": "VALUE_ID"}}`
+2.  **Verify** the Task is linked as a child of the Epic.
 
 **Link Back (Bidirectional Traceability)**:
-- Update Product Spec Links table with Tech Spec Jira link via `${MCP_ATLASSIAN_ADD_FOOTER_COMMENT}`.
-- Update Epic description using `${MCP_ATLASSIAN_EDIT_ISSUE}` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link.
+-   Update Product Spec Links table with Tech Spec Jira link via `${MCP_ATLASSIAN_ADD_FOOTER_COMMENT}`.
+-   Update Epic description using `${MCP_ATLASSIAN_EDIT_ISSUE}` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link.
 
 ### Step 8: Standard Approval & Gate
 
@@ -375,17 +374,15 @@ Display the status and next steps using the standard format.
 
 **Standard Approval Format**:
 ```
-✅ **TechSpec Content Generated**
-- **Status**: [Content Ready | Injected to Atlassian]
-- **Artifact**: [Tech Spec URL or "Local Markdown Only"]
-- **Summary**: Concrete action plan with [N] files across [X] project(s).
+✅ **TechSpec Approved & Published**
+- **Artifact**: [Jira Task Key] (Tech Spec)
+- **Summary**: Published Tech Spec to Jira.
 - **Next Step**: TaskPlanning Mode
 
-> **⏸️ APPROVAL REQUIRED**: Please review the Tech Spec.
+> **⏸️ APPROVAL REQUIRED**: Proceed to Task Creation?
 >
-> **Decision: Should this be injected to Jira?**
-> - `Yes, Inject & Proceed`: Create Jira Task (Source of Truth) and move to Task Breakdown.
-> - `No, Local Only`: Keep local `implementation_plan.md` and move to Task Breakdown.
-> - `Revise [feedback]`: Request changes to the content.
+> **Decision: Proceed to Task Decomposition?**
+> - `Approve`: Proceed to **TaskPlanning Mode** (decompose Tech Spec into atomic, LLM-ready Jira tasks).
+> - `Revise`: Adjust the Tech Spec before proceeding.
 ```
 
