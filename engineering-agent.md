@@ -32,29 +32,55 @@ description: Activates the Engineering Agent Role
 
 ## Orchestrator Steps
 
-### 0. Detect Workspace Environment (MANDATORY)
+### 0. Detect Workspace Environment (BLOCKING GATE)
 
-> [!IMPORTANT]
-> **Multi-Environment Support**: Agents load configuration from `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`.
+> [!CAUTION]
+> **⛔ HARD STOP: This step is NON-NEGOTIABLE.**
+> 
+> The agent **CANNOT** proceed to ANY other step without a valid `agent-config.md`.
+> **DO NOT** attempt to help the user, analyze code, or do ANY work until this gate passes.
+> **DO NOT** offer workarounds or alternatives. The config file is MANDATORY.
 
 1. **Detect workspace root**: Use current working directory or VS Code workspace root
 2. **Look for** `agent-config.md` in these locations (in order):
    - `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
    - `${WORKSPACE_ROOT}/agent-config.md`
-3. **If found**: Load as primary configuration source
-4. **If NOT found**: Prompt user to create one:
+3. **If found**: Load as primary configuration source → Proceed to Step 0.5
+4. **If NOT found**: 
+
+   > [!WARNING]
+   > **⛔ WORKFLOW BLOCKED: Missing Configuration**
+
+   **IMMEDIATELY stop all work and present ONLY this message:**
+
    ```
-   ⚠️ **Workspace Configuration Required**
+   ⛔ **BLOCKED: agent-config.md not found**
    
-   No `agent-config.md` found in current workspace.
+   I cannot proceed without a workspace configuration file.
    
-   Copy the template to your workspace:
-   - Template: `global_workflows/readme/agent-config.template.md`
-   - Destination: `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   **Choose an option:**
    
-   See setup instructions: `global_workflows/readme/setup_instructions.md`
+   1️⃣ **Auto-Create** — I'll create `Agent_Config/agent-config.md` with defaults.
+      - Storage: `local` (file-based, no Atlassian required)
+      - You can customize it afterward.
+   
+   2️⃣ **Manual Setup** — Copy the template yourself:
+      - Template: `global_workflows/readme/agent-config.template.md`
+      - Destination: `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   
+   Reply with `1` or `2` to proceed.
    ```
-5. **STOP** until `agent-config.md` exists
+
+   **⛔ DO NOT proceed to Step 0.5 or any other step. WAIT for user response.**
+
+5. **If user selects `1` (Auto-Create)**:
+   - Create directory: `${WORKSPACE_ROOT}/Agent_Config/`
+   - Copy `global_workflows/readme/agent-config.template.md` to `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   - Notify user: "✅ Created `Agent_Config/agent-config.md`. Review and customize values, then **re-invoke the agent**."
+   - **⛔ HARD STOP** — Do NOT continue. Agent must be re-invoked after config review.
+
+6. **If user selects `2` (Manual Setup)**:
+   - **⛔ HARD STOP** — Wait until user confirms config exists, then re-invoke agent.
 
 ### 0.5 Load Storage Adapter (MANDATORY)
 

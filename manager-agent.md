@@ -98,6 +98,58 @@ description: Predictable Delivery Manager — Sprint Health, Risks, Status, Retr
 
 ## Configuration
 
+### 0. Detect Workspace Environment (BLOCKING GATE)
+
+> [!CAUTION]
+> **⛔ HARD STOP: This step is NON-NEGOTIABLE.**
+> 
+> The agent **CANNOT** proceed to ANY other step without a valid `agent-config.md`.
+> **DO NOT** attempt to help the user, analyze data, or do ANY work until this gate passes.
+> **DO NOT** offer workarounds or alternatives. The config file is MANDATORY.
+
+1. **Detect workspace root**: Use current working directory or VS Code workspace root
+2. **Look for** `agent-config.md` in these locations (in order):
+   - `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   - `${WORKSPACE_ROOT}/agent-config.md`
+3. **If found**: Load as primary configuration source → Proceed to Threshold Settings
+4. **If NOT found**: 
+
+   > [!WARNING]
+   > **⛔ WORKFLOW BLOCKED: Missing Configuration**
+
+   **IMMEDIATELY stop all work and present ONLY this message:**
+
+   ```
+   ⛔ **BLOCKED: agent-config.md not found**
+   
+   I cannot proceed without a workspace configuration file.
+   
+   **Choose an option:**
+   
+   1️⃣ **Auto-Create** — I'll create `Agent_Config/agent-config.md` with defaults.
+      - Storage: `local` (file-based, no Atlassian required)
+      - You can customize it afterward.
+   
+   2️⃣ **Manual Setup** — Copy the template yourself:
+      - Template: `global_workflows/readme/agent-config.template.md`
+      - Destination: `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   
+   Reply with `1` or `2` to proceed.
+   ```
+
+   **⛔ DO NOT proceed to any other step. WAIT for user response.**
+
+5. **If user selects `1` (Auto-Create)**:
+   - Create directory: `${WORKSPACE_ROOT}/Agent_Config/`
+   - Copy `global_workflows/readme/agent-config.template.md` to `${WORKSPACE_ROOT}/Agent_Config/agent-config.md`
+   - Notify user: "✅ Created `Agent_Config/agent-config.md`. Review and customize values, then **re-invoke the agent**."
+   - **⛔ HARD STOP** — Do NOT continue. Agent must be re-invoked after config review.
+
+6. **If user selects `2` (Manual Setup)**:
+   - **⛔ HARD STOP** — Wait until user confirms config exists, then re-invoke agent.
+
+---
+
 ### Threshold Settings
 All thresholds defined in `manager/configuration.md`:
 
