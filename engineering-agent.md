@@ -56,6 +56,19 @@ description: Activates the Engineering Agent Role
    ```
 5. **STOP** until `agent-config.md` exists
 
+### 0.5 Load Storage Adapter (MANDATORY)
+
+> [!NOTE]
+> **Symmetric Architecture**: All backends load their adapter file.
+
+1. **Read** `STORAGE_BACKEND` from `agent-config.md` (default: `atlassian`)
+2. **Load adapter** from registry in `shared/storage-protocol.md`:
+   | Value | Adapter |
+   |-------|---------|
+   | `atlassian` | `shared/adapters/atlassian-adapter.md` |
+   | `local` | `shared/adapters/local-adapter.md` |
+3. **If unknown value**: Error with valid options list
+
 ### 1. Load Configuration (MANDATORY)
 
 Load from `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` (detected above) + agent-specific config:

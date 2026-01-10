@@ -13,9 +13,8 @@
 - Figma (for UI/UX constraints, if available)
 
 **Output**:
-- **One Epic** using the `epic.md` template
-- **Jira Epic**: Created in project ${JIRA_PROJECT_KEY}
-- **Confluence Update**: Product Spec page updated with Epic link
+- **Epic**: Created via `storage.createEpic()` — Jira Epic or local `epic.md`
+- **Product Spec Update**: (Atlassian mode) Confluence page with Epic link
 
 **Critical Rules**:
 1.  **Behavioral Strictness**: Define the *User Experience*, not the implementation.
@@ -25,7 +24,7 @@
 3.  **Gherkin Precision**: Acceptance Criteria must use Given/When/Then.
 
 **Flow**:
-1.  **Read Product Spec**: If Confluence link provided, use `mcp0_getConfluencePage`
+1.  **Read Product Spec**: If Confluence link provided, use `${MCP_ATLASSIAN_GET_PAGE}`
 2.  **Generate Epic**: Fill `epic.md` template with:
     - Goal (business value)
     - Context (trigger, preconditions, links to Confluence/Figma)
@@ -33,31 +32,30 @@
     - Functional Flows (Happy Path + Error Cases)
     - Acceptance Criteria (Gherkin format)
     - Scope & Constraints
-3.  **Publish to Jira**:
-    - Use `mcp0_createJiraIssue` with:
-      - `projectKey`: "${JIRA_PROJECT_KEY}"
-      - `issueTypeName`: "Epic"
-      - `summary`: Epic title
-      - `description`: Full Epic content
-      - `additional_fields`: Include all custom fields from `configuration.md` → "Jira Required Custom Fields" table
-4.  **Update Product Spec Confluence Page**:
-    - Use `mcp0_getConfluencePage` to read current page
-    - Locate "Links" table in page body
-    - Add Epic link row to table: `| Epic | [${JIRA_PROJECT_KEY}-XXX](Epic URL) | |`
-    - Use `mcp0_updateConfluencePage` to save updated page body
-    - **DO NOT use `mcp0_createConfluenceFooterComment`** - footer comments are insufficient for traceability
+3.  **Publish Epic** (via Storage Protocol):
+    - Use `storage.createEpic(title, content)` → Returns `epicId`
+    - **Atlassian mode**: Creates Jira Epic via MCP
+    - **Local mode**: Creates folder `.specs/epics/{epicId}-{title-slug}/` with `epic.md`
+4.  **Update Product Spec** (Atlassian mode only):
+    - If `STORAGE_BACKEND == atlassian`:
+      - Use `${MCP_ATLASSIAN_GET_PAGE}` to read current page
+      - Locate "Links" table in page body
+      - Add Epic link row to table
+      - Use `${MCP_ATLASSIAN_UPDATE_PAGE}` to save
+    - If `STORAGE_BACKEND == local`:
+      - Skip Confluence update (no external linkback needed)
 5.  **Presentation & Gate**:
-    - Display created Epic key and URL
+    - Display created Epic ID and URL/path
     - **STOP** and request approval
 
 **Standard Approval Format**:
 ```
 ✅ **FeaturePlanning Complete**
-- **Artifact**: [Epic Jira URL]
+- **Artifact**: [epicId] (Jira URL or local path)
 - **Summary**: Epic created with behavioral contracts and acceptance criteria
 - **Next Step**: TechSpec Mode
 
-> **⏸️ APPROVAL REQUIRED**: Please review the Epic in Jira. Reply with:
+> **⏸️ APPROVAL REQUIRED**: Please review the Epic. Reply with:
 > - `Approve` to proceed to Tech Spec creation
 > - `Revise [feedback]` to make changes
 > - `Cancel` to stop workflow

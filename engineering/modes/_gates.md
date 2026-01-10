@@ -54,12 +54,12 @@
 
 | Attribute | Value |
 |-----------|-------|
-| **Artifact** | Jira Epic |
+| **Artifact** | Jira Epic (`atlassian`) OR `epic.md` (`local`) |
 | **Trigger** | FeaturePlanning mode completes |
 
 **Action**:
-- Create Epic in Jira
-- Update Product Spec's Links section with Epic link
+- Create Epic via `storage.createEpic()`
+- Update Product Spec's Links section (Atlassian mode only)
 - If assumptions logged, Epic must include "Assumptions Log" section and `needs-validation` label
 
 **Gate**: STOP until user approves Epic.
@@ -70,15 +70,15 @@
 
 | Attribute | Value |
 |-----------|-------|
-| **Artifact** | Tech Spec Markdown |
+| **Artifact** | Jira Task (`atlassian`) OR `tech-spec.md` (`local`) |
 | **Trigger** | TechSpec mode completes |
 
 **Action**:
 - Present generated Tech Spec to user
 - **MANDATORY**: Ask user to choose:
-  - `Yes, Inject & Proceed`: Create Jira Task (Epic Child)
-  - `No, Local Only`: Keep local artifact
-- **Start Condition**: Create Jira Task ONLY if "Yes" selected
+  - `Yes, Inject & Proceed`: Create via `storage.createSpec()`
+  - `No, Local Only`: Keep local artifact (no storage write)
+- **Start Condition**: Create artifact ONLY if "Yes" selected
 
 **Gate**: STOP until user makes a decision.
 
@@ -147,9 +147,20 @@ After each mode completes, use this format:
 
 ```
 ✅ **[Mode Name] Complete**
-- **Artifact**: [Jira URL | Confluence URL | List of Keys]
+- **Artifact**: [ID] (URL or path based on storage backend)
 - **Summary**: [1-line description]
 - **Next Step**: [Next mode name]
 
 > **⏸️ APPROVAL REQUIRED**: Reply with `Approve` to proceed.
 ```
+
+---
+
+## Artifact Display Protocol
+
+> **Purpose**: Consistent artifact display regardless of storage backend.
+
+| Backend | Epic Display | Tech Spec Display | Task Display |
+|---------|--------------|-------------------|--------------|
+| `atlassian` | `[PROJ-123](jira-url)` | `[PROJ-124](jira-url)` | `[PROJ-125](jira-url)` |
+| `local` | `[EPIC-001](file:///.specs/.../epic.md)` | `[tech-spec](file:///.../tech-spec.md)` | `[TASK-001](file:///.../TASK-001.md)` |

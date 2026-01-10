@@ -277,27 +277,30 @@ Before publishing, verify EVERY task has:
 > - `Cancel` to abort
 ```
 
-### Step 8: Publish to Jira (Execution)
+### Step 8: Publish Tasks (Execution)
 - **Condition**: Only proceed after user approval.
-- Create Jira Issues using `${MCP_ATLASSIAN_CREATE_ISSUE}` with:
-  - `projectKey`: "${JIRA_PROJECT_KEY}"
-  - `issueTypeName`: "Task" or "Story"
-  - `parent`: Epic key (to link tasks to Epic)
-  - `summary`: **MUST include [BE] or [FE] prefix** to indicate Backend or Frontend
-    - Format: `[Order] [BE|FE]: Task Title`
-    - Examples:
-      - `[1/5] [BE]: Add aggregation methods to SDK`
-      - `[2/5] [FE]: Create Tooltip Component`
-      - `[3/5] [FE]: Integrate Component into Parent`
-
-  - `description`: Fully populated task template content (backend or frontend)
-- Add Tech Spec Confluence link to each task description
+- **Use Storage Protocol**: `storage.createTask(title, content, epicId)`:
+  - **Atlassian mode**: Creates Jira Task via MCP with:
+    - `projectKey`: "${JIRA_PROJECT_KEY}"
+    - `issueTypeName`: "Task" or "Story"
+    - `parent`: Epic key (to link tasks to Epic)
+    - `summary`: **MUST include [BE] or [FE] prefix**
+      - Format: `[Order] [BE|FE]: Task Title`
+      - Examples:
+        - `[1/5] [BE]: Add aggregation methods to SDK`
+        - `[2/5] [FE]: Create Tooltip Component`
+    - `description`: Fully populated task template content
+  - **Local mode**: Writes to `.specs/epics/{epicId}/tasks/TASK-XXX.md`
+- Add Tech Spec reference to each task description
 
 
 ### Step 9: Verify Links
-- Use `${MCP_ATLASSIAN_GET_ISSUE_LINKS}` to verify:
+- **Atlassian mode**: Use `${MCP_ATLASSIAN_GET_ISSUE_LINKS}` to verify:
   - All tasks linked to Epic (parent field)
   - All tasks reference Tech Spec Confluence page
+- **Local mode**: Verify:
+  - All TASK-XXX.md files exist in epic folder
+  - Registry updated with task IDs
 
 ### Step 10: Pre-Implementation Gate (MANDATORY)
 

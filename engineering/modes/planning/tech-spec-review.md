@@ -36,7 +36,9 @@
 **Flow**:
 
 ### Step 1: Read and Deconstruct Epic (Understand Requirements)
-- Fetch Epic from Jira using `${MCP_ATLASSIAN_GET_ISSUE}`
+- **Fetch Epic** using `storage.getEpic(epicId)`:
+  - **Atlassian mode**: Uses `${MCP_ATLASSIAN_GET_ISSUE}`
+  - **Local mode**: Reads from `.specs/epics/{epicId}/epic.md`
 - **Deconstruct Epic into Components**:
   - Extract all **Functional Flows** (Happy Path, Error paths, Edge cases)
   - Extract **Acceptance Criteria** (Given/When/Then scenarios)
@@ -350,23 +352,19 @@ Fill `tech-spec.md` template with:
 1.  Display the full Tech Spec markdown in the chat.
 2.  Explicitly ask for approval of the content.
 
-### Step 7: Inject to Jira (ON APPROVAL)
+### Step 7: Inject to Storage (ON APPROVAL)
 
 **Condition**: Proceed immediately once the user replies "**Approve**".
 
-**Create Jira Task (Epic Child)**:
-1.  Create a **Jira Task** under the Epic using `${MCP_ATLASSIAN_CREATE_ISSUE}`:
-    -   `projectKey`: "${JIRA_PROJECT_KEY}"
-    -   `issueTypeName`: "Task"
-    -   `parent`: [Epic Key]
-    -   `summary`: "Tech Spec: [Feature Name]"
-    -   `description`: The full Tech Spec markdown content
-    -   `additional_fields`: Include all custom fields defined in `configuration.md` → "Jira Required Custom Fields" table. Example: `{"customfield_XXXXX": {"id": "VALUE_ID"}}`
-2.  **Verify** the Task is linked as a child of the Epic.
-
-**Link Back (Bidirectional Traceability)**:
--   Update Product Spec Links table with Tech Spec Jira link via `${MCP_ATLASSIAN_ADD_FOOTER_COMMENT}`.
--   Update Epic description using `${MCP_ATLASSIAN_EDIT_ISSUE}` to replace "[TBD - Will be added after TechSpec phase]" with actual Tech Spec Task link.
+**Create Tech Spec** (via Storage Protocol):
+- Use `storage.createSpec(title, content, epicId)` → Returns `specId`
+- **Atlassian mode**:
+  1. Create Jira Task under Epic with Tech Spec content
+  2. Update Product Spec Links table with Tech Spec link
+  3. Update Epic description with Tech Spec reference
+- **Local mode**:
+  1. Write `tech-spec.md` to epic folder
+  2. Update registry: `hasSpec = true`
 
 ### Step 8: Standard Approval & Gate
 
@@ -375,14 +373,14 @@ Display the status and next steps using the standard format.
 **Standard Approval Format**:
 ```
 ✅ **TechSpec Approved & Published**
-- **Artifact**: [Jira Task Key] (Tech Spec)
-- **Summary**: Published Tech Spec to Jira.
+- **Artifact**: [specId] (Jira Task or local path)
+- **Summary**: Published Tech Spec to storage.
 - **Next Step**: TaskPlanning Mode
 
 > **⏸️ APPROVAL REQUIRED**: Proceed to Task Creation?
 >
 > **Decision: Proceed to Task Decomposition?**
-> - `Approve`: Proceed to **TaskPlanning Mode** (decompose Tech Spec into atomic, LLM-ready Jira tasks).
+> - `Approve`: Proceed to **TaskPlanning Mode** (decompose Tech Spec into atomic tasks).
 > - `Revise`: Adjust the Tech Spec before proceeding.
 ```
 

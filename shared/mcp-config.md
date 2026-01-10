@@ -18,6 +18,7 @@
 | `${MCP_ATLASSIAN_ADD_FOOTER_COMMENT}` | `mcp_atlassian-mcp-server_createConfluenceFooterComment` | Add footer comment to Confluence page |
 | `${MCP_ATLASSIAN_GET_ISSUE_LINKS}` | `mcp_atlassian-mcp-server_getJiraIssueRemoteIssueLinks` | Get remote links for Issue |
 | `${MCP_ATLASSIAN_GET_PAGE}` | `mcp_atlassian-mcp-server_getConfluencePage` | Get Confluence page content |
+| `${MCP_ATLASSIAN_UPDATE_PAGE}` | `mcp_atlassian-mcp-server_updateConfluencePage` | Update Confluence page |
 | `${MCP_ATLASSIAN_GET_USER_INFO}` | `mcp_atlassian-mcp-server_atlassianUserInfo` | Get current user info |
 | `${MCP_ATLASSIAN_GET_RESOURCES}` | `mcp_atlassian-mcp-server_getAccessibleAtlassianResources` | Get accessible resources (Cloud ID) |
 
