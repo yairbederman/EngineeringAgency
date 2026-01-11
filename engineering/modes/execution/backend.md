@@ -153,8 +153,8 @@ Check before completion:
 
 1. **Run Related Tests**: All tests in module + integration
 2. **Commit**: `[TaskKey] Implement [summary]`
-3. **Jira Update**: Transition to "In Review"
-4. **Jira Comment**: 
+3. **Status Update**: `updateTaskStatus(taskId, \"in-review\")`
+4. **Completion Comment**: `addTaskComment(taskId, comment)` 
    ```
    ### ✅ Backend Implementation Complete
    

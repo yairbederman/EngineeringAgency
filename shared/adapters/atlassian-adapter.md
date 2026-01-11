@@ -36,7 +36,10 @@
 | `updateEpic` | `${MCP_ATLASSIAN_EDIT_ISSUE}` | `issueIdOrKey`, `fields` |
 | `createSpec` | `${MCP_ATLASSIAN_CREATE_ISSUE}` | `issueTypeName: "Task"`, `parent: epicId` |
 | `createTask` | `${MCP_ATLASSIAN_CREATE_ISSUE}` | `issueTypeName: "Task"`, `parent: epicId` |
+| `getTask` | `${MCP_ATLASSIAN_GET_ISSUE}` | `issueIdOrKey` |
 | `getTasks` | `${MCP_ATLASSIAN_SEARCH_JQL}` | `jql: "parent = epicId"` |
+| `updateTaskStatus` | `${MCP_ATLASSIAN_TRANSITION_ISSUE}` | `issueIdOrKey`, `transitionId` |
+| `addTaskComment` | `${MCP_ATLASSIAN_ADD_COMMENT}` | `issueIdOrKey`, `body` |
 | `linkItems` | `${MCP_ATLASSIAN_ADD_COMMENT}` | Or use remote issue links |
 
 ---
@@ -100,6 +103,40 @@
    - cloudId: ${ATLASSIAN_CLOUD_ID}
    - jql: "parent = epicId ORDER BY created ASC"
 2. Return: Array of issue keys
+```
+
+### getTask(taskId)
+
+```
+1. Call ${MCP_ATLASSIAN_GET_ISSUE}:
+   - cloudId: ${ATLASSIAN_CLOUD_ID}
+   - issueIdOrKey: taskId
+2. Return: { id, title: summary, content: description, epicId: parent, status, type: issueType }
+```
+
+### updateTaskStatus(taskId, status)
+
+```
+1. Map status to Jira transition:
+   - "in-progress" → "Start Progress" or equivalent
+   - "in-review" → "Submit for Review" or equivalent
+   - "done" → "Done" or equivalent
+   - "blocked" → Add "Blocked" label or use custom field
+2. Call ${MCP_ATLASSIAN_TRANSITION_ISSUE}:
+   - cloudId: ${ATLASSIAN_CLOUD_ID}
+   - issueIdOrKey: taskId
+   - transitionId: [mapped transition ID]
+3. Return: success/fail
+```
+
+### addTaskComment(taskId, comment)
+
+```
+1. Call ${MCP_ATLASSIAN_ADD_COMMENT}:
+   - cloudId: ${ATLASSIAN_CLOUD_ID}
+   - issueIdOrKey: taskId
+   - body: comment (markdown)
+2. Return: success/fail
 ```
 
 ---

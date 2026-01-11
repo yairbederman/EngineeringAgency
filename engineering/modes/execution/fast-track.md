@@ -68,7 +68,7 @@ Analyze the request for keywords:
 ### Step 1: Read Task
 
 ```
-${MCP_ATLASSIAN_GET_ISSUE}(key)
+getTask(taskId) via storage protocol
 ```
 
 Extract:
@@ -108,8 +108,8 @@ Standard TDD loop with mandatory static analysis:
 
 1. **Run tests**: All related tests must pass
 2. **Commit**: `[${JIRA_PROJECT_KEY}-XXX] [Summary]`
-3. **Jira**: Transition to "In Review" via `${MCP_ATLASSIAN_TRANSITION_ISSUE}`
-4. **Comment**: Post implementation summary via `${MCP_ATLASSIAN_ADD_COMMENT}`
+3. **Status Update**: Update status to "In Review" via storage protocol: `updateTaskStatus(taskId, "in-review")`
+4. **Comment**: Post implementation summary via storage protocol: `addTaskComment(taskId, comment)`
 
 ---
 

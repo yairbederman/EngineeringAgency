@@ -251,8 +251,8 @@ Before completion:
 1. **Run Component Tests**: All tests for this component
 2. **Visual Verification**: Comparison table completed
 3. **Commit**: Follow format in `./templates/commit-conventions.md`
-4. **Jira Update**: Transition to "In Review"
-5. **Jira Comment**:
+4. **Status Update**: `updateTaskStatus(taskId, "in-review")`
+5. **Completion Comment**: `addTaskComment(taskId, comment)`
    ```
    ### ✅ Frontend Implementation Complete
    

@@ -44,7 +44,7 @@ ALL must be true:
 ### Phase 0: Emergency Context (2-3 min)
 
 ```
-1. Fetch Jira Issue using ${MCP_ATLASSIAN_GET_ISSUE}
+1. Fetch task via storage protocol: `getTask(taskId)`
 2. Extract:
    - Summary and description
    - Affected component/service
@@ -95,15 +95,15 @@ git checkout -b hotfix/[IssueKey]-emergency
 git commit -m "[IssueKey][HOTFIX] <short description>"
 ```
 
-#### Step 3.2: Jira Update
+#### Step 3.2: Status Update
 ```
-${MCP_ATLASSIAN_TRANSITION_ISSUE} → "In Review"
-${MCP_ATLASSIAN_ADD_COMMENT} → 
-  "🚨 HOTFIX APPLIED
-  - Branch: hotfix/[IssueKey]-emergency
-  - Fix: [1-sentence explanation]
-  - Test: [test file and method]
-  - Full regression: PENDING (not run in emergency mode)"
+updateTaskStatus(taskId, "in-review")
+addTaskComment(taskId, comment) →
+   "🚨 HOTFIX APPLIED
+   - Branch: hotfix/[IssueKey]-emergency
+   - Fix: [1-sentence explanation]
+   - Test: [test file and method]
+   - Full regression: PENDING (not run in emergency mode)"
 ```
 
 #### Step 3.3: Present Completion

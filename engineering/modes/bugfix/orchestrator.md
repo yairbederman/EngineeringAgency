@@ -12,8 +12,8 @@ This orchestrator handles both **BugReport Mode** (analysis) and **BugFix Mode**
 
 ### Step 0.1: Fetch Bug Context (Source of Truth)
 
-1. **Fetch Jira Issue**: Use `${MCP_ATLASSIAN_GET_ISSUE}` to get full bug details
-2. **CRITICAL WARNING**: Do NOT rely on user summary. Jira issue is the ONLY source of truth.
+1. **Fetch Task**: Use storage protocol `getTask(taskId)` to get full bug details
+2. **CRITICAL WARNING**: Do NOT rely on user summary. Stored task is the ONLY source of truth.
 3. **Validate Understanding**:
    - Is the bug title and description clear?
    - Can you determine current vs expected behavior?
@@ -148,14 +148,14 @@ Use template: `./templates/bug-analysis-report.md`
 - Verification approach
 - Assumptions / Missing info
 
-### Step 8: Publish Analysis to Jira (MANDATORY)
+### Step 8: Publish Analysis (MANDATORY)
 
 1. **Present Report**: Show Bug Analysis Report to user for review
-2. **Request Approval**: "Do you approve this analysis for posting to Jira?"
-3. **On Approval**: Post using `${MCP_ATLASSIAN_ADD_COMMENT}`
+2. **Request Approval**: "Do you approve this analysis for posting?"
+3. **On Approval**: Post via storage protocol: `addTaskComment(taskId, analysisReport)`
 4. **Confirm Success**: Then ask: "Ready to proceed to BugFix?"
 
-**Completion Condition**: BugReport mode is ONLY complete when analysis posted to Jira AND confirmed.
+**Completion Condition**: BugReport mode is ONLY complete when analysis posted AND confirmed.
 
 ---
 
@@ -178,7 +178,7 @@ Use template: `./templates/bug-analysis-report.md`
 > **Optimization**: Uses cached context from BugReport mode if same session.
 
 - **IF `_BUGFIX_CONTEXT_LOADED == [BugKey]`** → Skip full reload
-- **ELSE**: Fetch bug using `${MCP_ATLASSIAN_GET_ISSUE}` and reload context
+- **ELSE**: Fetch bug via storage protocol: `getTask(taskId)` and reload context
 - Review Bug Analysis Report
 - Confirm track selection still valid
 
@@ -296,11 +296,11 @@ Document to prevent recurrence:
 - Report: "Fixed on branch `[BranchName]`. Tests passed."
 - Document any architectural considerations or follow-up items
 
-### Step 14: Publish Fix to Jira (MANDATORY)
+### Step 14: Publish Fix (MANDATORY)
 
 1. **Present Summary**: Show BugFix Summary to user for review
-2. **Request Approval**: "Do you approve this fix summary for posting to Jira?"
-3. **On Approval**: Post using `${MCP_ATLASSIAN_ADD_COMMENT}`
+2. **Request Approval**: "Do you approve this fix summary for posting?"
+3. **On Approval**: Post via storage protocol: `addTaskComment(taskId, fixSummary)`
 4. **Present Completion Options**:
 
 ```
@@ -308,7 +308,7 @@ Document to prevent recurrence:
 - **Bug**: [BugKey] - [Summary]
 - **Branch**: bugfix/[BugKey]-[summary]
 - **Tests**: Regression tests passing
-- **Jira**: Status updated, comment posted
+- **Status**: Updated, comment posted
 
 > **⏸️ NEXT STEP**: Reply with:
 > - `Create PR` to generate PR description (recommended)

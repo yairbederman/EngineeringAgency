@@ -70,9 +70,24 @@ ${LOCAL_SPECS_PATH}/
       "hasSpec": true,
       "tasks": ["TASK-001", "TASK-002"]
     }
+  },
+  "tasks": {
+    "TASK-001": {
+      "title": "Setup Project",
+      "slug": "setup-project",
+      "epicId": "EPIC-001",
+      "status": "open",
+      "type": "task",
+      "created": "2026-01-10",
+      "commentCount": 0
+    }
   }
 }
 ```
+
+> [!NOTE]
+> **Task Status Values**: `open`, `in-progress`, `in-review`, `done`, `blocked`
+> **Task Type Values**: `task` (default), `bug`
 
 ---
 
@@ -178,6 +193,46 @@ ${LOCAL_SPECS_PATH}/
 ```
 1. Read _registry.json
 2. Return epics[epicId].tasks array
+```
+
+### getTask(taskId)
+
+```
+1. Read _registry.json
+2. Look up task by ID in tasks object
+3. Find epicId from task entry
+4. Build path: epics/{epicId}-{epicSlug}/tasks/{taskId}-{taskSlug}.md
+5. Read file content
+6. Return: { id, title, content, epicId, status, type }
+```
+
+### updateTaskStatus(taskId, status)
+
+```
+1. Read _registry.json
+2. Update tasks[taskId].status = status
+3. Write updated _registry.json
+4. Append status change to task markdown file:
+   
+   ---
+   ### {timestamp} | Status: {status}
+   
+5. Return: success/fail
+```
+
+### addTaskComment(taskId, comment)
+
+```
+1. Read _registry.json
+2. Increment tasks[taskId].commentCount
+3. Write updated _registry.json
+4. Append comment to task markdown file:
+   
+   ---
+   ### {timestamp} | Comment
+   {comment}
+   
+5. Return: success/fail
 ```
 
 ---

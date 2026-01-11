@@ -84,7 +84,16 @@ Before adding a new adapter, verify it implements:
 |-----------|-----------|---------|
 | `createTask` | `(title: string, content: markdown, epicId: string)` | `TaskId` |
 | `getTasks` | `(epicId: string)` | `TaskId[]` |
-| `getTask` | `(taskId: string)` | `{ id, title, content, epicId, status }` |
+| `getTask` | `(taskId: string)` | `{ id, title, content, epicId, status, type }` |
+| `updateTaskStatus` | `(taskId: string, status: string)` | `success/fail` |
+| `addTaskComment` | `(taskId: string, comment: markdown)` | `success/fail` |
+
+**Valid Status Values**: `open`, `in-progress`, `in-review`, `done`, `blocked`
+
+**Valid Type Values**: `task` (default), `bug`
+
+> [!NOTE]
+> Mode files call these operations abstractly. The active adapter handles backend-specific implementation (Jira transitions vs. local file updates).
 
 ### Link Operations
 

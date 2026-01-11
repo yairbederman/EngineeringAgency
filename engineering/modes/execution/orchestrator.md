@@ -10,7 +10,7 @@
 
 **Inputs**:
 - **Target**: Task Key (e.g., `PROJ-123`) OR Epic Key (e.g., `PROJ-100`).
-- **Context**: The "Context-Rich Task" details (fetched via Jira `${MCP_ATLASSIAN_GET_ISSUE}` or active memory).
+- **Context**: The "Context-Rich Task" details (fetched via storage protocol `getTask(taskId)` or active memory).
 
 ---
 
@@ -21,7 +21,7 @@
 **Read**: `fast-track.md`
 
 IF user request is "Implement [TaskKey]" AND issueType is Task/Sub-task:
-1. Fetch task via `${MCP_ATLASSIAN_GET_ISSUE}`
+1. Fetch task via storage protocol: `getTask(taskId)`
 2. Run eligibility check (see `fast-track.md` criteria)
 3. **IF eligible** → Skip to Phase 2 (Execution Loop) with minimal context
 4. **IF not eligible** → Fall back to standard workflow (continue below)
@@ -228,7 +228,7 @@ After Backend Completion (Phase 3B), before starting Frontend:
 #### Step 2.1.2: Create Branch
 
 Execute in **PARALLEL** where possible:
-- Read the current task using `${MCP_ATLASSIAN_GET_ISSUE}`
+- Read the current task using storage protocol: `getTask(taskId)`
 - Read Target Files (if MODIFY action)
 - Read Reference Files (from Pattern Context)
 - Create git branch (if new): `git checkout -b feature/[TaskKey]-[Short-Summary]`
@@ -358,7 +358,7 @@ git checkout [last-green-commit]
 ### Step 3.2: Commit & Publish
 
 - **Commit**: Follow format in `./templates/commit-conventions.md`
-- **Jira Transition**: Update status to "In Review" via `${MCP_ATLASSIAN_TRANSITION_ISSUE}`
+- **Status Update**: Update status to "In Review" via storage protocol: `updateTaskStatus(taskId, "in-review")`
 
 ### Step 3.2.5: Artifact Cleanup (Full-Stack Only)
 
@@ -369,9 +369,9 @@ rm -f [TaskKey]_final_contract.json
 rm -f [TaskKey]_api_response_sample.json
 ```
 
-### Step 3.3: Publish Completion to Jira (MANDATORY)
+### Step 3.3: Publish Completion (MANDATORY)
 
-Post implementation summary as comment using `${MCP_ATLASSIAN_ADD_COMMENT}`:
+Post implementation summary as comment via storage protocol: `addTaskComment(taskId, comment)`:
 - Branch name
 - Tests passed count
 - Deviations (if frontend)
