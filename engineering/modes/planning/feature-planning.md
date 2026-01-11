@@ -75,7 +75,7 @@
 4. Make **NO further tool calls** until approval is received
 
 **Valid Approval Responses:**
-- `Approve` → Proceed to TechSpec Mode
+- `Approve` → Check if new project: route to ProductRoadmap (Gate 3.25), else TechSpec (Gate 4)
 - `Revise [feedback]` → Update Epic and re-present for approval
 - `Cancel` → End workflow
 
@@ -85,4 +85,9 @@
 - Proceed to any execution tasks
 - Make any further tool calls beyond presenting this gate
 
-**On Approval**: → Immediately proceed to **TechSpec** mode. Do NOT offer implementation until all planning phases (through TaskPlanning Gate 5c) are complete.
+**On Approval**: 
+- **If Epic creates a NEW project/codebase** → Proceed to **ProductRoadmap** mode (Gate 3.25) to capture future feature plans before tech stack decision
+- **If Epic modifies EXISTING project(s)** → Proceed to **TechSpec** mode (Gate 4) directly
+
+Do NOT offer implementation until all planning phases (through TaskPlanning Gate 5c) are complete.
+

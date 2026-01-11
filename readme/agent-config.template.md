@@ -84,62 +84,6 @@
 
 ---
 
-## Tech Stack Configuration (Optional)
-
-> **Purpose**: Define the technology stack for this project. Used by `/engineering-agent` when generating Tech Specs and implementation tasks.
->
-> **When to fill**: For new projects or when establishing tech standards. Leave blank to prompt for selection during planning.
-
-### Project Type
-
-| Variable | Value | Options |
-|----------|-------|---------|
-| `PROJECT_TYPE` | `<TYPE>` | `web-app`, `api`, `fullstack`, `mobile`, `cli`, `library` |
-
-### Frontend Stack (if applicable)
-
-> Skip this section for backend-only projects.
-
-| Variable | Value | Options |
-|----------|-------|---------|
-| `FRONTEND_FRAMEWORK` | `<FRAMEWORK>` | `react`, `vue`, `angular`, `svelte`, `none` |
-| `FRONTEND_META_FRAMEWORK` | `<META>` | `nextjs`, `nuxt`, `remix`, `astro`, `vite`, `none` |
-| `FRONTEND_STYLING` | `<STYLING>` | `tailwind`, `css-modules`, `styled-components`, `vanilla-css`, `sass` |
-| `FRONTEND_STATE` | `<STATE>` | `zustand`, `redux`, `jotai`, `pinia`, `none` |
-
-### Backend Stack (if applicable)
-
-> Skip this section for frontend-only projects.
-
-| Variable | Value | Options |
-|----------|-------|---------|
-| `BACKEND_RUNTIME` | `<RUNTIME>` | `node`, `python`, `go`, `dotnet`, `java`, `rust` |
-| `BACKEND_FRAMEWORK` | `<FRAMEWORK>` | `express`, `fastify`, `nestjs`, `hono`, `fastapi`, `gin`, `none` |
-| `API_STYLE` | `<API>` | `rest`, `graphql`, `trpc`, `grpc` |
-
-### Database Stack (if applicable)
-
-| Variable | Value | Options |
-|----------|-------|---------|
-| `DATABASE_PRIMARY` | `<DB>` | `postgres`, `mysql`, `mongodb`, `supabase`, `firebase`, `sqlite`, `none` |
-| `DATABASE_ORM` | `<ORM>` | `prisma`, `drizzle`, `typeorm`, `sqlalchemy`, `gorm`, `none` |
-
-### Infrastructure
-
-| Variable | Value | Options |
-|----------|-------|---------|
-| `DEPLOYMENT_TARGET` | `<TARGET>` | `vercel`, `aws`, `gcp`, `azure`, `docker`, `self-hosted` |
-| `CI_CD` | `<CI>` | `github-actions`, `gitlab-ci`, `bitbucket-pipelines`, `none` |
-
-### Testing Stack
-
-| Variable | Value | Options |
-|----------|-------|---------|
-| `TEST_FRAMEWORK` | `<TEST>` | `jest`, `vitest`, `pytest`, `go-test`, `xunit` |
-| `E2E_FRAMEWORK` | `<E2E>` | `playwright`, `cypress`, `none` |
-
----
-
 ## Example: Complete Configuration
 
 ```markdown
@@ -171,22 +115,6 @@
 | `PROJECT_WEB` | mc-web | frontend | client | `./mc-web` |
 | `PROJECT_API` | mc-api | backend | api | `./mc-api` |
 | `PROJECT_CORE` | mc-core | library | shared | `./mc-core` |
-
-## Tech Stack Configuration
-| Variable | Value |
-|----------|-------|
-| `PROJECT_TYPE` | `fullstack` |
-| `FRONTEND_FRAMEWORK` | `react` |
-| `FRONTEND_META_FRAMEWORK` | `nextjs` |
-| `FRONTEND_STYLING` | `tailwind` |
-| `BACKEND_RUNTIME` | `node` |
-| `BACKEND_FRAMEWORK` | `nestjs` |
-| `API_STYLE` | `rest` |
-| `DATABASE_PRIMARY` | `postgres` |
-| `DATABASE_ORM` | `prisma` |
-| `DEPLOYMENT_TARGET` | `vercel` |
-| `TEST_FRAMEWORK` | `vitest` |
-| `E2E_FRAMEWORK` | `playwright` |
 ```
 
 ---

@@ -222,7 +222,77 @@ For **each affected project**:
 **Output**: Add "UI Design Specifications" section to Tech Spec document.
 
 
-### Step 5: Generate Concrete Action Plan (Tech Spec Document)
+### Step 4.6: Tech Stack Decision Gate (MANDATORY for New Projects)
+
+> [!CAUTION]
+> **⛔ BLOCKING GATE for New Projects**
+> 
+> If this Epic involves creating a **new project/codebase** (not extending an existing one):
+> 1. Present tech stack options BEFORE writing detailed Tech Spec
+> 2. Get explicit user approval
+> 3. Document decision in Epic's Decisions Log
+>
+> **Skip this step** if Epic only modifies existing project(s) with established tech stack.
+
+**When to Trigger**: 
+- New frontend application
+- New backend service
+- New standalone tool/utility
+- Greenfield project within existing workspace
+
+**Step 4.6.1: Present Tech Stack Options**
+
+Present 2-4 viable options in a comparison table:
+
+```markdown
+## Tech Stack Decision Required
+
+| Option | Stack | Pros | Cons | Recommendation |
+|--------|-------|------|------|----------------|
+| **A** | [Stack A] | [Pros] | [Cons] | [If recommended] |
+| **B** | [Stack B] | [Pros] | [Cons] | |
+| **C** | [Stack C] | [Pros] | [Cons] | |
+
+**My Recommendation**: Option [X] because [justification based on project requirements].
+
+> **⏸️ DECISION REQUIRED**: Reply with your choice (A, B, C, etc.) to proceed.
+```
+
+**Criteria for Options**:
+1. **Alignment with Requirements**: Does it meet functional/non-functional needs?
+2. **Team Familiarity**: Is the team experienced with this stack?
+3. **Ecosystem/Tooling**: Quality of libraries, community support
+4. **Performance**: Meets performance targets?
+5. **Maintenance**: Long-term maintainability
+6. **Project Size**: Appropriate complexity for scope?
+
+**Common Option Categories**:
+
+| Project Type | Option Examples |
+|--------------|-----------------|
+| **Static Site** | Pure HTML/CSS/JS, Vite + Vanilla, Vite + React, Next.js |
+| **Web App (Frontend)** | React + Vite, Next.js, Vue + Vite, Angular |
+| **Web App (Full-stack)** | Next.js, Nuxt, SvelteKit, Remix |
+| **Backend API** | Node + Express, NestJS, Fastify, .NET, Python FastAPI |
+| **Mobile** | React Native, Flutter, Native (Swift/Kotlin) |
+
+**Step 4.6.2: Document Decision**
+
+Once user approves, add to Epic's Decisions Log:
+
+```markdown
+| Date | Decision | Rationale |
+|------|----------|-----------|
+| YYYY-MM-DD | Tech Stack: [Selected Option] | [User's reasoning or "Per recommendation"] |
+```
+
+**Step 4.6.3: Proceed to Step 5**
+
+Only after tech stack is approved, continue to generate the detailed Tech Spec with the chosen technology.
+
+---
+
+
 
 Fill `tech-spec.md` template with:
 

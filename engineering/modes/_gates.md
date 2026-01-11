@@ -24,11 +24,13 @@
 > **The Planning Phase is a SINGLE CHAIN that MUST complete before Implementation.**
 >
 > ```
-> ProductSpecReview → [DesignAnalysis] → FeaturePlanning → TechSpec → TaskPlanning → Implementation
->       GATE 1          GATE 2 (opt)        GATE 3         GATE 4    GATES 5a-5c      EXECUTION
+> ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation
+>       GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION
 > ```
 >
 > **Gate 2 is OPTIONAL**: Only triggers if Figma links are present in the Product Spec.
+> **Gate 3.25 is CONDITIONAL**: Only triggers if Epic creates a new project/codebase.
+> **Gate 3.5 is CONDITIONAL**: Only triggers if Epic creates a new project/codebase.
 >
 > **After each approval, you MUST immediately proceed to the next planning phase.**
 > Do NOT ask "should I proceed to implementation" until ALL planning gates (through Gate 5c) are complete.
@@ -37,7 +39,9 @@
 > |---------------|-------------------------|
 > | Gate 1 (ProductSpecReview) | → Proceed to **DesignAnalysis** (if Figma) OR **FeaturePlanning** (if no Figma) |
 > | Gate 2 (DesignAnalysis) | → Proceed to **FeaturePlanning** |
-> | Gate 3 (FeaturePlanning) | → Proceed to **TechSpec** |
+> | Gate 3 (FeaturePlanning) | → Proceed to **ProductRoadmap** (if new project) OR **TechSpec** (if existing project) |
+> | Gate 3.25 (ProductRoadmap) | → Proceed to **TechStackDecision** with roadmap context |
+> | Gate 3.5 (TechStackDecision) | → Proceed to **TechSpec** with chosen technology |
 > | Gate 4 (TechSpec) | → Proceed to **TaskPlanning** |
 > | Gate 5c (TaskPlanning) | → **STOP** - User selects first task for Implementation |
 
@@ -106,9 +110,70 @@
 
 **Gate**: STOP until user approves Epic.
 
-**On Approval**: → Immediately proceed to **TechSpec** (do NOT offer implementation yet)
+**On Approval** (CONDITIONAL BRANCHING):
+- **If Epic creates a NEW project/codebase**: → Proceed to **ProductRoadmap** (Gate 3.25)
+- **If Epic modifies EXISTING project**: → Skip to **TechSpec** (Gate 4)
+
+> [!IMPORTANT]
+> For new projects, ProductRoadmap is **MANDATORY** to ensure tech stack decisions consider future needs.
 
 ---
+
+## Gate 3.25: Product Roadmap Analysis (Conditional)
+
+| Attribute | Value |
+|-----------|-------|
+| **Artifact** | Product Roadmap Summary |
+| **Trigger** | Epic involves **new project/codebase** creation |
+| **Skip Condition** | Epic only modifies existing project(s) OR user explicitly says "no future plans" |
+
+**Action**:
+- Present Future Feature Discovery questions (CMS, user accounts, e-commerce, integrations, scale)
+- Document Product Roadmap Summary with phases and technical implications
+- Determine tech stack direction based on future needs
+
+**Questions to Ask**:
+1. CMS/blog for content updates?
+2. User accounts and login?
+3. E-commerce or payments?
+4. Third-party integrations?
+5. Expected traffic scale?
+6. Who maintains after launch?
+
+**Gate**: STOP until user answers roadmap questions OR replies `Skip`.
+
+**On Completion**: 
+- Document roadmap in Epic's Decisions Log
+- → Proceed to **TechStackDecision** (Gate 3.5) with roadmap context
+
+---
+
+## Gate 3.5: Tech Stack Decision (Conditional)
+
+| Attribute | Value |
+|-----------|-------|
+| **Artifact** | Tech Stack Options Table |
+| **Trigger** | Epic involves **new project/codebase** creation |
+| **Skip Condition** | Epic only modifies existing project(s) with established tech stack |
+
+**Action**:
+- Present 2-4 viable tech stack options with pros/cons
+- Include recommendation with justification
+- Get explicit user approval before writing detailed Tech Spec
+
+**User Options**:
+- Select Option A, B, C, etc.
+- Request more options or alternatives
+
+**Gate**: STOP until user selects a tech stack option.
+
+**On Approval**: 
+- Document decision in Epic's Decisions Log
+- → Proceed to generate detailed **TechSpec** with chosen technology
+
+---
+
+
 
 ## Gate 4: After TechSpec
 

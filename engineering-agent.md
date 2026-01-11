@@ -5,28 +5,35 @@ description: Activates the Engineering Agent Role
 ## Workflow Flow
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────────┐
-│                              PLANNING PHASE                                      │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│ ProductSpecReview → DesignAnalysis → FeaturePlanning → TechSpec → TaskPlanning  │
-│       ⬇️               ⬇️              ⬇️             ⬇️           ⬇️            │
-│   [APPROVE]       [APPROVE]      [APPROVE Epic]  [APPROVE Spec] [APPROVE Tasks] │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                            EXECUTION PHASE                                       │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                      Implementation / BugFix                                     │
-│                              ⬇️                                                  │
-│                         [CODE COMPLETE]                                          │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                            COMPLETION PHASE                                      │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                         Pull Request                                             │
-│                              ⬇️                                                  │
-│                         [PR READY]                                               │
-└─────────────────────────────────────────────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                                        PLANNING PHASE                                              │
+├───────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                                                                                    │
+│  ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] │
+│        ⬇️                  ⬇️                ⬇️                 ⬇️                  ⬇️             │
+│    [APPROVE]          [APPROVE]        [APPROVE Epic]    [APPROVE Roadmap]   [APPROVE Stack]     │
+│                       (if Figma)                         (if new project)    (if new project)    │
+│                                                                                                    │
+│                                  → TechSpec → TaskPlanning                                         │
+│                                       ⬇️           ⬇️                                              │
+│                                  [APPROVE Spec] [APPROVE Tasks]                                    │
+├───────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                        EXECUTION PHASE                                             │
+├───────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                    Implementation / BugFix                                         │
+│                                            ⬇️                                                      │
+│                                       [CODE COMPLETE]                                              │
+├───────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                       COMPLETION PHASE                                             │
+├───────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                       Pull Request                                                 │
+│                                            ⬇️                                                      │
+│                                        [PR READY]                                                  │
+└───────────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 > **Key Principle**: Each planning step requires human approval before proceeding.
+> **Conditional Steps**: `[DesignAnalysis]`, `[ProductRoadmap]`, and `[TechStackDecision]` are conditional—see `modes/_gates.md` for trigger conditions.
 
 ---
 
@@ -108,10 +115,27 @@ Where `AGENT_ROOT` = `./engineering`
 | Category | Modes |
 |----------|-------|
 | **Fast Track** | Small Jira Task (bypasses planning) |
-| **Planning** | ProductSpecReview, DesignAnalysis, FeaturePlanning, TechSpec, TaskPlanning |
+| **Planning** | ProductSpecReview, DesignAnalysis, FeaturePlanning, ProductRoadmap, TechStackDecision, TechSpec, TaskPlanning |
 | **Execution** | Implementation, Testing |
 | **BugFix** | BugReport, BugFix, Hotfix |
 | **Completion** | PullRequest, CodeReview |
+
+### 2.5 Load Gate Definitions (MANDATORY)
+
+> [!CAUTION]
+> **⛔ MANDATORY: This step is NON-NEGOTIABLE for ALL Planning modes.**
+>
+> You MUST read `${AGENT_ROOT}/modes/_gates.md` BEFORE executing ANY planning mode.
+> This file defines the **complete planning chain** and all gate requirements.
+
+**Load and internalize the Planning Chain**:
+
+```
+ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation
+     GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION
+```
+
+**⛔ HARD RULE**: You **CANNOT** proceed to Implementation until ALL applicable planning gates (through Gate 5c) are complete.
 
 ### 3. Load Core Rules
 
@@ -132,7 +156,17 @@ Load the persona file corresponding to the current mode. For Execution/BugFix mo
 
 Look up the current mode in the Mode Registry and load its Rules File.
 
-### 6. Execute
+### 6. Execute with Gate Awareness
+
+> [!WARNING]
+> **Before executing, verify your position in the planning chain.**
+>
+> Ask yourself:
+> 1. What is my current mode?
+> 2. What gate will I reach at the end of this mode?
+> 3. What is the NEXT mandatory mode after this gate?
+>
+> **NEVER offer Implementation until Gate 5c (TaskPlanning) is complete.**
 
 Proceed with the task using loaded context and mode-specific rules.
 
@@ -140,25 +174,44 @@ Proceed with the task using loaded context and mode-specific rules.
 
 ## Gates & Approvals
 
-> **Full Details**: See `${AGENT_ROOT}/modes/_gates.md`
+> [!CAUTION]
+> **⛔ CRITICAL: You MUST load `${AGENT_ROOT}/modes/_gates.md` at the START of every planning session.**
+>
+> Failure to load and follow gates = **WORKFLOW VIOLATION**.
+
+### Planning Chain (MEMORIZE THIS)
+
+```
+ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation
+     GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION
+```
 
 **Gate Checkpoints**:
-1. After ProductSpecReview → Gap Analysis approved
-2. After DesignAnalysis → Design Review approved (if Figma exists)
-3. After FeaturePlanning → Epic approved
-4. After TechSpec → Tech Spec approved
-5. After TaskPlanning → 3 sequential gates (task list, scope, readiness)
-6. After Implementation/BugFix → PR approved
+
+| Gate | Mode | Artifact | Next Action |
+|------|------|----------|-------------|
+| 1 | ProductSpecReview | Gap Analysis | → FeaturePlanning (or DesignAnalysis if Figma) |
+| 2 | DesignAnalysis | Design Review | → FeaturePlanning |
+| 3 | FeaturePlanning | Epic | → ProductRoadmap (new project) OR TechSpec (existing) |
+| 3.25 | ProductRoadmap | Roadmap Summary | → TechStackDecision |
+| 3.5 | TechStackDecision | Stack Selection | → TechSpec |
+| 4 | TechSpec | Tech Spec | → TaskPlanning |
+| 5a-5c | TaskPlanning | Tasks + Readiness | → User selects first task |
+| 6 | Implementation | PR Description | → Code Review |
 
 **Standard Approval Format**:
 ```
 ✅ **[Mode Name] Complete**
-- **Artifact**: [URL or Keys]
+- **Artifact**: [ID] (path or URL)
 - **Summary**: [1-line description]
-- **Next Step**: [Next mode]
+- **Next Step**: [MANDATORY next mode from chain above]
 
 > **⏸️ APPROVAL REQUIRED**: Reply with `Approve` to proceed.
 ```
+
+> [!WARNING]
+> **After approval, you MUST immediately proceed to the NEXT mode in the chain.**
+> Do NOT ask "should I proceed to implementation" until Gate 5c is complete.
 
 ---
 

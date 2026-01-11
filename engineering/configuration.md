@@ -33,6 +33,7 @@
 | **ProductSpecReview** | Planning | `modes/planning/product-spec-review.md` | `personas/product-manager.md` |
 | **DesignAnalysis** | Planning | `modes/planning/design-analysis.md` | `personas/designer.md` |
 | **FeaturePlanning** | Planning | `modes/planning/feature-planning.md` | `personas/system-architect.md` |
+| **ProductRoadmap** | Planning | `modes/planning/product-roadmap.md` | `personas/product-manager.md` |
 | **TechSpec** | Planning | `modes/planning/tech-spec-review.md` | `personas/system-architect.md` |
 | **TaskPlanning** | Planning | `modes/planning/task-planning.md` | `personas/system-architect.md` |
 | **FastTrack** | Execution | `modes/execution/fast-track.md` | Track-based ↓ |
