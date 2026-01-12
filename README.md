@@ -39,7 +39,7 @@ Edit `Agent_Config/agent-config.md` with your settings.
 ```
 
 > [!TIP]
-> Restart your IDE after cloning for agent discovery. Run `/verify-setup-agent` to validate.
+> Restart your IDE after cloning for agent discovery. Run `/system-health-agent` to validate.
 
 ---
 
@@ -149,7 +149,7 @@ cp ~/.gemini/antigravity/global_workflows/readme/agent-config.template.md ./Agen
 # 4. Install MCP servers (optional — see readme/setup_instructions.md)
 
 # 5. Verify
-/verify-setup-agent
+/system-health-agent
 /engineering-agent
 ```
 

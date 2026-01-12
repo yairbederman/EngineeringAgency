@@ -112,11 +112,11 @@ In the same `agent-config.md`, configure the Atlassian section:
 1. Open VS Code/Cursor
 2. **File → Add Folder to Workspace** for each project
 3. **File → Save Workspace As** → `MySystem.code-workspace`
-4. Run `/verify-setup-agent` — validates all configuration
+4. Run `/system-health-agent` — validates all configuration
 5. Run `/engineering-agent` — should load configuration without errors
 
 > [!TIP]
-> Use `/verify-setup-agent` anytime to diagnose configuration issues.
+> Use `/system-health-agent` anytime to diagnose configuration issues.
 
 ---
 
@@ -184,7 +184,7 @@ cp ~/.gemini/antigravity/global_workflows/readme/agent-config.template.md ./agen
 #   → Save workspace file
 
 # 6. Verify
-/verify-setup-agent       # Validates configuration
+/system-health-agent       # Validates configuration
 /engineering-agent        # Should load without errors
 ```
 

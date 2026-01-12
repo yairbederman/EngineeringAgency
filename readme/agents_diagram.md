@@ -3,20 +3,20 @@
 ## 🔄 Workflow Hierarchy
 
 ```
+┌─────────────────────────┐       ┌─────────────────────────┐
+│  /map-codebase-agent    │       │  /system-health-agent   │
+└───────────┬─────────────┘       │      (The Overseer)     │
+            ↓                     └─────────────────────────┘
+┌─────────────────────────┐                    |
+│/system-architecture-agent│                   | (Monitors All)
+└───────────┬─────────────┘                    |
+            ↓                                  v
 ┌─────────────────────────┐
-│  /map-codebase-agent    │  ← Run per project (generates .ai-instructions/)
-└───────────┬─────────────┘
-            ↓
-┌─────────────────────────┐
-│/system-architecture-agent│ ← Run once (aggregates all projects)
-└───────────┬─────────────┘
-            ↓
-┌─────────────────────────┐
-│   /engineering-agent    │  ← Daily feature work (uses all above)
+│   /engineering-agent    │
 └─────────────────────────┘
             ↓
 ┌─────────────────────────┐
-│     /manager-agent      │  ← Oversight & Risk Management (observes all above)
+│     /manager-agent      │  ← Oversight & Risk Management
 └─────────────────────────┘
 ```
 
@@ -28,6 +28,7 @@
 | `/system-architecture-agent` | New project added or major API changes | `system-architecture/` docs |
 | `/engineering-agent` | Any feature work, bug fixes | Jira tasks, code, tests |
 | `/manager-agent` | Daily standup, Weekly sync, Executive reporting | Risk reports, status briefs |
+| `/system-health-agent` | System setup, diagostics, project status | Health report, recommendations |
 
 ---
 
