@@ -29,6 +29,7 @@
 ## Phase 1: Tech Stack Selection
 
 > **Persona**: System Architect (CTO/VP R&D experience)
+> **Recommended Tool**: Use `Context7` (MCP) to research capabilities of candidate libraries (e.g. VBR, Dxperience) before recommending.
 
 ### Step 1.1: Gather Inputs
 

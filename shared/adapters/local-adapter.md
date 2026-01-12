@@ -235,6 +235,34 @@ ${LOCAL_SPECS_PATH}/
 5. Return: success/fail
 ```
 
+### addLabel(taskId, label)
+
+```
+1. Read _registry.json
+2. Find task entry
+3. Initialize labels array if missing: tasks[taskId].labels = []
+4. If label already exists: Return success (no-op)
+5. Append label to array: tasks[taskId].labels.push(label)
+6. Write updated _registry.json
+7. Update task markdown frontmatter/header:
+   
+   **Labels**: [unverified], [needs-review]
+   
+8. Return: success/fail
+```
+
+### removeLabel(taskId, label)
+
+```
+1. Read _registry.json
+2. Find task entry
+3. If no labels array or label not found: Return success (no-op)
+4. Remove label from array
+5. Write updated _registry.json
+6. Update task markdown frontmatter/header
+7. Return: success/fail
+```
+
 ---
 
 ## File Templates
@@ -299,6 +327,237 @@ ${LOCAL_SPECS_PATH}/
 
 ---
 
+## Change Log Operations
+
+> **Purpose**: Support mid-flow change requests with versioning, rollback, and traceability.
+
+### Directory Structure (Extended)
+
+```
+${LOCAL_SPECS_PATH}/
+├── _registry.json
+├── product-specs/
+│   └── SPEC-001-feature-name/
+│       ├── feature-name-product-spec.md    # Current active
+│       └── .versions/                       # Version archive
+│           ├── product-spec_v1.0.md
+│           └── product-spec_v1.1.md
+└── epics/
+    └── EPIC-001-feature-name/
+        ├── feature-name-epic.md
+        ├── feature-name-tech-spec.md
+        ├── .versions/                       # Version archive
+        │   ├── epic_v1.0.md
+        │   └── tech-spec_v1.0.md
+        └── tasks/
+```
+
+### Registry Schema (Extended)
+
+```json
+{
+  "nextId": { "SPEC": 2, "EPIC": 2, "TASK": 5 },
+  "productSpecs": {
+    "SPEC-001": {
+      "title": "Feature Name",
+      "version": "1.1",
+      "changeLog": [
+        {
+          "version": "1.1",
+          "date": "2026-01-11",
+          "type": "increment",
+          "source": "DEV",
+          "priority": "P2",
+          "description": "Added blog feature requirement",
+          "impactedAreas": ["Epic", "TechSpec"]
+        }
+      ]
+    }
+  },
+  "epics": { },
+  "tasks": { }
+}
+```
+
+---
+
+### archiveArtifact(artifactType, artifactId)
+
+Archives the current version before making changes.
+
+```
+1. Read _registry.json
+2. Determine artifact path based on type:
+   - "product-spec" → product-specs/{specId}-{slug}/
+   - "epic" → epics/{epicId}-{slug}/
+   - "tech-spec" → epics/{epicId}-{slug}/
+   - "task" → epics/{epicId}-{slug}/tasks/
+3. Create .versions/ folder if missing
+4. Get current version from registry (default: "1.0")
+5. Copy current file to .versions/{type}_v{version}.md
+6. Increment version number:
+   - Minor change: 1.0 → 1.1
+   - Major change: 1.0 → 2.0
+7. Update registry with new version number
+8. Return: { previousVersion: "1.0", newVersion: "1.1" }
+```
+
+### rollbackArtifact(artifactType, artifactId, targetVersion)
+
+Restores an artifact to a previous version.
+
+```
+1. Read _registry.json
+2. Build path to .versions/{type}_v{targetVersion}.md
+3. If file doesn't exist:
+   - Return error: "Version {targetVersion} not found"
+4. Read target version content
+5. Archive current version (call archiveArtifact)
+6. Overwrite current file with target version content
+7. Add change log entry:
+   - type: "rollback"
+   - description: "Rolled back to version {targetVersion}"
+8. Update registry version to reflect rollback
+9. Return: { restoredVersion: targetVersion, archivedVersion: previousVersion }
+```
+
+### logChange(artifactType, artifactId, change)
+
+Appends a change entry to an artifact's change log.
+
+**Parameters**:
+```json
+{
+  "type": "increment" | "adjustment" | "refinement" | "rollback",
+  "source": "PM" | "DEV" | "STAKE" | "QA" | "TECH" | "EXT",
+  "priority": "P0" | "P1" | "P2" | "P3",
+  "description": "What changed",
+  "impactedAreas": ["Epic", "TechSpec", "Tasks"],
+  "codeImpact": { "filesAffected": [], "tasksAffected": [], "reworkEstimate": "2h" } | null,
+  "testImpact": { "testsModified": [], "testsAdded": [] } | null
+}
+```
+
+**Implementation**:
+```
+1. Read _registry.json
+2. Find artifact entry
+3. Initialize changeLog array if missing
+4. Create change entry:
+   {
+     "version": newVersion,
+     "date": timestamp,
+     "type": change.type,
+     "source": change.source,
+     "priority": change.priority,
+     "description": change.description,
+     "impactedAreas": change.impactedAreas,
+     "codeImpact": change.codeImpact,
+     "testImpact": change.testImpact
+   }
+5. Append to changeLog array
+6. Write updated _registry.json
+7. Append to artifact markdown file:
+
+   ---
+   ## Change Log
+   
+   | Version | Date | Source | Type | Priority | Description |
+   |---------|------|--------|------|----------|-------------|
+   | v1.1 | 2026-01-11 | DEV | increment | P2 | Added blog feature |
+   
+8. Return: { entryId: changeLog.length }
+```
+
+### getChangeHistory(artifactType, artifactId)
+
+Returns the change log for an artifact.
+
+```
+1. Read _registry.json
+2. Find artifact entry
+3. Return: artifact.changeLog || []
+```
+
+### cascadeChange(rootArtifact, change)
+
+Propagates a change to all linked downstream artifacts.
+
+```
+1. Read _registry.json
+2. Identify linked artifacts:
+   - product-spec → linked epic
+   - epic → tech-spec, tasks
+   - tech-spec → tasks
+3. For each linked artifact:
+   a. Call logChange with cross-reference:
+      - description: "Cascaded from {rootArtifact.id}: {change.description}"
+      - type: "adjustment"
+   b. If task: Update status to include "needs-review" marker
+4. Return: { 
+     cascaded: ["EPIC-001", "TASK-001", "TASK-002"],
+     requiresReApproval: ["EPIC-001"] // if change.type is "adjustment" or "increment"
+   }
+```
+
+### generateChangeReport(epicId, dateRange?)
+
+Generates a stakeholder Change Summary Report.
+
+**Parameters**:
+- `epicId`: Target epic
+- `dateRange`: Optional `{ from: "2026-01-01", to: "2026-01-11" }`
+
+**Implementation**:
+```
+1. Read _registry.json
+2. Get epic and all linked artifacts (product-spec, tech-spec, tasks)
+3. Collect all changeLog entries within dateRange
+4. Group by priority and type
+5. Generate markdown report:
+
+   # Change Summary Report - {epicTitle}
+   
+   **Period**: {dateRange.from} to {dateRange.to}
+   **Total Changes**: {count}
+   
+   ## P0 Changes (Blockers)
+   - {list or "None"}
+   
+   ## Scope Changes
+   | # | Date | Description | Source | Status |
+   |---|------|-------------|--------|--------|
+   | 1 | 2026-01-11 | Added blog feature | DEV | ✅ |
+   
+   ## Minor Adjustments
+   - {list}
+   
+   ## Documentation Status
+   | Artifact | Version | Last Updated | Aligned |
+   |----------|---------|--------------|---------|
+   | ProductSpec | v1.2 | 2026-01-11 | ✅ |
+   | Epic | v1.1 | 2026-01-11 | ✅ |
+   | TechSpec | v1.0 | 2026-01-10 | ⚠️ |
+
+6. Write report to: epics/{epicId}-{slug}/change-report-{date}.md
+7. Return: { reportPath: path, summary: { total, p0, scope, minor } }
+```
+
+---
+
+### listVersions(artifactType, artifactId)
+
+Lists all available versions for an artifact.
+
+```
+1. Build path to .versions/ folder
+2. List all files matching pattern {type}_v*.md
+3. Parse version numbers
+4. Return: ["1.0", "1.1", "1.2"] sorted descending
+```
+
+---
+
 ## Error Handling
 
 | Error | Response |
@@ -306,3 +565,5 @@ ${LOCAL_SPECS_PATH}/
 | Registry not found | Create with default: `{ "nextId": { "EPIC": 1, "TASK": 1 }, "epics": {} }` |
 | Epic not found | `❌ Epic not found: [epicId]` |
 | Write failed | `❌ Failed to write: [path]. Check permissions.` |
+| Version not found | `❌ Version [version] not found for [artifactId]` |
+| Cascade failed | `⚠️ Cascade partially failed. Updated: [list]. Failed: [list]` |

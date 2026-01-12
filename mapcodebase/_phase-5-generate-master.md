@@ -82,6 +82,12 @@ Create additional documentation files (see Output section).
 - **Stack**: [framework + language]
 - **Layers**: [detected layers]
 
+## External Documentation (Context7)
+> **Instructions for Agent**:
+> - If you see libraries listed below, **ALWAYS use the Context7 MCP tool** to query their documentation.
+> - Do not guess API details for these complex libraries.
+> - **Detected Libraries**: [List major libs e.g. VBR, Dxperience, etc.]
+
 ## Path Aliases
 | Alias | Path | Purpose |
 |-------|------|---------|

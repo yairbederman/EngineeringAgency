@@ -16,7 +16,7 @@ You have MCP tools that extend your context beyond the current editor. Use them 
 
 | Protocol | File | Load When |
 |----------|------|-----------|
-| Context7 | `mcp/context7.md` | Implementation, TechSpec, BugFix, Testing |
+| Context7 | `mcp/context7.md` | Implementation, TechSpec, BugFix, Testing, ProjectInit, TechStackDecision |
 | Atlassian | `mcp/atlassian.md` | Planning modes, any Jira/Confluence access |
 | Figma | `mcp/figma.md` | Frontend/UI tasks |
 
@@ -159,7 +159,37 @@ Conflicts:
 
 Load when in Implementation, BugFix, or Testing mode.
 
-### 2.5 Workflow Gating – No Ad-hoc Implementation
+### 2.5 Strict Verification & Testing Policy (MANDATORY)
+
+> **CRITICAL RULE**: NO task is "Done" until verified.
+> **Single Source of Truth**: See `${AGENT_ROOT}/modes/execution/verification-gate.md` for authoritative scope detection.
+
+1. **Verification Scope Detection** (Summary - full table in `verification-gate.md`):
+   | Scope | Verification Required |
+   |-------|----------------------|
+   | DOC_ONLY (*.md, README) | ✅ Auto-approve |
+   | BUILD_CHECK (config files) | Build pass required |
+   | API_TEST (backend) | Contract validation required |
+   | BROWSER_VISUAL (frontend) | User approval of visual evidence required |
+
+2. **Per-Task Verification**:
+   - Every implementation task must be followed by a verification step.
+   - You must verify the changes using:
+     - **Automated Tests**: Unit/Integration tests where applicable.
+     - **Live Verification (MANDATORY)**: Browser or MCP-based testing with evidence capture.
+   - **Verification Tools (Priority Order)**:
+     1. `browser_subagent` - Launch browser, navigate to implementation, capture screenshots/recordings
+     2. MCP tools - Use project-specific MCP for API testing, visual capture
+     3. Build verification - `npm run build && npm run test` (minimum bar)
+     4. Manual fallback - Provide URL + verification checklist for user
+   - **Evidence Requirement**: Every non-DOC verification MUST capture evidence.
+   - **User Confirmation**: You MUST explicitly ask the user to confirm the task is complete before marking it as done.
+   
+3. **Epic Completion**:
+   - The entire Epic must be verified as a cohesive unit.
+   - User must confirm final acceptance before closing the Epic.
+
+### 2.6 Workflow Gating – No Ad-hoc Implementation
 
 You may only enter Implementation or BugFix when all entry conditions are satisfied:
 

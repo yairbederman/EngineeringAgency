@@ -23,10 +23,18 @@ description: Activates the Engineering Agent Role
 │                                    Implementation / BugFix                                         │
 │                                            ⬇️                                                      │
 │                                       [CODE COMPLETE]                                              │
+│                                            ⬇️                                                      │
+│                         🔍 Gate 5.9: Live Verification Gate                                        │
+│                          ├── DOC_ONLY ────────► Auto-approve                                      │
+│                          ├── BUILD_CHECK ─────► Build pass required                               │
+│                          ├── API_TEST ────────► Contract validation required                      │
+│                          └── BROWSER_VISUAL ──► User approval required                            │
+│                                            ⬇️                                                      │
+│                                  [VERIFICATION APPROVED]                                           │
 ├───────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                       COMPLETION PHASE                                             │
 ├───────────────────────────────────────────────────────────────────────────────────────────────────┤
-│                                       Pull Request                                                 │
+│                                  🔍 Gate 6: Pull Request                                           │
 │                                            ⬇️                                                      │
 │                                        [PR READY]                                                  │
 └───────────────────────────────────────────────────────────────────────────────────────────────────┘
@@ -34,6 +42,7 @@ description: Activates the Engineering Agent Role
 
 > **Key Principle**: Each planning step requires human approval before proceeding.
 > **Conditional Steps**: `[DesignAnalysis]`, `[ProductRoadmap]`, and `[TechStackDecision]` are conditional—see `modes/_gates.md` for trigger conditions.
+> **Gate 5.9**: Verification MUST pass before Gate 6 (PR) can begin.
 
 ---
 
@@ -110,10 +119,62 @@ Load from `${WORKSPACE_ROOT}/Agent_Config/agent-config.md` (detected above) + ag
 
 Where `AGENT_ROOT` = `./engineering`
 
-### 2. Identify Mode
+### 2. Pre-Check: Is This a Change Request?
+
+> [!IMPORTANT]
+> **Before selecting a mode**, check if this is a modification to existing work.
+
+#### Step 2.1: Active Artifact Check
+
+```
+Check: Does ${WORKSPACE_ROOT}/.specs/ contain existing artifacts?
+
+If NO → New work, proceed to Step 2.4 (Identify Mode)
+If YES → Continue to Step 2.2
+```
+
+#### Step 2.2: Phase Detection
+
+Determine the current workflow phase based on existing artifacts:
+
+| Artifacts Exist | Task Status | Phase |
+|-----------------|-------------|-------|
+| ProductSpec only | N/A | PLANNING_SPEC |
+| Epic exists | No tasks | PLANNING_EPIC |
+| TechSpec exists | No tasks | PLANNING_TECH |
+| Tasks exist | None started | PLANNING_TASKS |
+| Tasks exist | Some in-progress | EXECUTION |
+| PR mentioned/exists | - | COMPLETION |
+
+#### Step 2.3: Change Detection
+
+Does the user's request modify existing scope?
+
+**Change Indicators**:
+- Keywords: "also...", "instead...", "change...", "actually...", "add...", "remove..."
+- References existing feature with modification intent
+- Introduces new requirement after spec approval
+
+**NOT a Change**:
+- User says "start fresh" or "new project"
+- Request is about a different, unrelated feature
+- Request is "continue with [existing task]"
+
+```
+If CHANGE DETECTED:
+  1. Load ${AGENT_ROOT}/modes/planning/change-request.md
+  2. Execute ChangeRequest protocol
+  3. After change applied → Resume at current gate
+  
+If NOT A CHANGE:
+  Continue to Step 2.4 (Identify Mode)
+```
+
+#### Step 2.4: Identify Mode
 
 | Category | Modes |
 |----------|-------|
+| **Change Request** | ChangeRequest (mid-flow modifications) |
 | **Fast Track** | Small Jira Task (bypasses planning) |
 | **Planning** | ProductSpecReview, DesignAnalysis, FeaturePlanning, ProductRoadmap, TechStackDecision, TechSpec, TaskPlanning |
 | **Execution** | Implementation, Testing |
@@ -131,8 +192,8 @@ Where `AGENT_ROOT` = `./engineering`
 **Load and internalize the Planning Chain**:
 
 ```
-ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation
-     GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION
+ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation → Verification → PR
+     GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION      GATE 5.9    GATE 6
 ```
 
 **⛔ HARD RULE**: You **CANNOT** proceed to Implementation until ALL applicable planning gates (through Gate 5c) are complete.
@@ -182,8 +243,8 @@ Proceed with the task using loaded context and mode-specific rules.
 ### Planning Chain (MEMORIZE THIS)
 
 ```
-ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation
-     GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION
+ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation → Verification → PR
+     GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION      GATE 5.9    GATE 6
 ```
 
 **Gate Checkpoints**:
@@ -197,6 +258,7 @@ ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] 
 | 3.5 | TechStackDecision | Stack Selection | → TechSpec |
 | 4 | TechSpec | Tech Spec | → TaskPlanning |
 | 5a-5c | TaskPlanning | Tasks + Readiness | → User selects first task |
+| 5.9 | Verification | Evidence in `.verification/` | → Pull Request |
 | 6 | Implementation | PR Description | → Code Review |
 
 **Standard Approval Format**:

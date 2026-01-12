@@ -369,6 +369,65 @@ rm -f [TaskKey]_final_contract.json
 rm -f [TaskKey]_api_response_sample.json
 ```
 
+### Step 3.2.7: Gate 5.9 - Live Verification Gate (MANDATORY)
+
+> [!CAUTION]
+> **⛔ NO TASK IS COMPLETE WITHOUT VERIFICATION**
+>
+> This is a BLOCKING GATE. Do NOT proceed to Step 3.3 until verification is approved.
+
+**Load**: `./verification-gate.md`
+
+**Execution**:
+
+1. **Scope Detection**: Analyze changed files
+   ```bash
+   git diff --name-only HEAD~1
+   ```
+   - Determine verification type: DOC_ONLY, BUILD_CHECK, API_TEST, BROWSER_VISUAL, FULL_STACK
+
+2. **Skip Check**: 
+   - If DOC_ONLY → Auto-approve, proceed to Step 3.3
+   - Else → Continue to verification
+
+3. **Execute Verification**:
+   | Type | Action |
+   |------|--------|
+   | BUILD_CHECK | Run `npm run build && npm run test` |
+   | API_TEST | Validate endpoints via MCP or test suite |
+   | BROWSER_VISUAL | Launch browser_subagent, capture screenshots |
+   | FULL_STACK | Execute API_TEST → BROWSER_VISUAL sequentially |
+
+4. **Evidence Capture**: Store in `.verification/[TaskKey]/`
+   - Screenshots, recordings, logs, API responses
+
+5. **Present Results**: Display verification summary with checklist
+
+6. **Gate (BLOCKING)**:
+   ```
+   ✅ **Live Verification Complete**
+   - **Type**: [BROWSER_VISUAL / API_TEST / BUILD_CHECK]
+   - **Checklist**: [X/Y] items passed
+   - **Evidence**: [embedded screenshots/recordings]
+   
+   > **⏸️ APPROVAL REQUIRED**:
+   > - `Approve` → Mark task complete
+   > - `Retry` → Re-run verification
+   > - `Skip [reason]` → Bypass with logged justification
+   ```
+
+   **STOP**: Wait for user response before proceeding.
+
+7. **On Response**:
+   - `Approve` → Proceed to Step 3.3
+   - `Retry` → Return to step 3 (max 2 retries, 3 attempts total)
+   - `Skip [reason]` → Log justification, add `unverified` label, proceed with warning
+
+**Timeout Handling**: If verification exceeds 90s:
+- Save partial evidence
+- Present fallback options (Retry / Manual / Skip)
+- **NEVER auto-skip**
+
 ### Step 3.3: Publish Completion (MANDATORY)
 
 Post implementation summary as comment via storage protocol: `addTaskComment(taskId, comment)`:

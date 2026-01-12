@@ -24,8 +24,8 @@
 > **The Planning Phase is a SINGLE CHAIN that MUST complete before Implementation.**
 >
 > ```
-> ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation
->       GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION
+> ProductSpecReview → [DesignAnalysis] → FeaturePlanning → [ProductRoadmap] → [TechStackDecision] → TechSpec → TaskPlanning → Implementation → Verification → PR
+>       GATE 1          GATE 2 (opt)        GATE 3          GATE 3.25          GATE 3.5           GATE 4    GATES 5a-5c      EXECUTION      GATE 5.9    GATE 6
 > ```
 >
 > **Gate 2 is OPTIONAL**: Only triggers if Figma links are present in the Product Spec.
@@ -46,6 +46,58 @@
 > | Gate 5c (TaskPlanning) | → **STOP** - User selects first task for Implementation |
 
 ---
+
+## ⚡ Change Request Handling at Gates
+
+> [!IMPORTANT]
+> **Mid-Flow Change Protocol**
+>
+> If user introduces a change request at ANY gate:
+> 1. **STOP** current gate processing
+> 2. **Load** `${AGENT_ROOT}/modes/planning/change-request.md`
+> 3. **Execute** change request protocol
+> 4. **Resume** at current gate (not restart from beginning)
+
+### Phase-Specific Behavior
+
+| Current Phase | Change Detected | Action |
+|---------------|-----------------|--------|
+| PLANNING_SPEC | During ProductSpecReview | Update spec inline, no mode switch |
+| PLANNING_EPIC | After Epic approved | Switch to ChangeRequest, update Epic |
+| PLANNING_TECH | After TechSpec approved | Switch to ChangeRequest, flag architecture impact |
+| PLANNING_TASKS | After Tasks created | Switch to ChangeRequest, mark affected tasks |
+| EXECUTION | Task in progress | **⚠️ CRITICAL** - Flag code impact, estimate rework |
+| COMPLETION | PR submitted | **🔴 SCOPE CREEP** - May need new Epic |
+
+### Gate Re-Approval Rules
+
+| Change Type | Re-Approval Required |
+|-------------|---------------------|
+| Minor | No - Continue at current gate |
+| Scope | Yes - Re-approve current + affected downstream |
+| Major | Yes - Re-approve ALL from ProductSpec forward |
+
+### Rollback Trigger
+
+If user says "go back", "undo", or "revert":
+1. Check `.versions/` for previous artifact versions
+2. Present version list with dates
+3. On selection:
+   - Call `storage.rollbackArtifact()`
+   - Cascade rollback to downstream if needed
+   - Resume at appropriate gate
+
+### Change Handling at Each Gate
+
+| Gate | On Change Request |
+|------|-------------------|
+| Gate 1 | Update ProductSpec, re-present Gap Analysis |
+| Gate 2 | Update Design Review if design affected |
+| Gate 3 | Update Epic, regenerate acceptance criteria |
+| Gate 3.5 | Re-evaluate tech stack decision if architectural |
+| Gate 4 | Update TechSpec, flag implementation changes |
+| Gate 5a-5c | Update tasks, mark affected as needs-review |
+| Gate 5.9 | Re-run verification after code changes |
 
 ## Gate 1: After ProductSpecReview
 
@@ -233,12 +285,66 @@
 
 ---
 
+## Gate 5.9: Live Verification Gate (MANDATORY)
+
+> [!CAUTION]
+> **⛔ NO TASK IS COMPLETE WITHOUT VERIFICATION**
+>
+> This gate blocks task completion until implementation is verified via browser/MCP tools.
+> **Position**: This gate MUST complete BEFORE Gate 6 (Pull Request).
+
+| Attribute | Value |
+|-----------|-------|
+| **Artifact** | Verification evidence in `.verification/[TaskKey]/` |
+| **Trigger** | Code committed, before status update to "In Review" |
+
+**Load**: `${AGENT_ROOT}/modes/execution/verification-gate.md`
+
+### Scope Detection
+
+> **Single Source of Truth**: See `verification-gate.md` § "Scope Detection" for authoritative table.
+> The scope detection logic and file patterns are defined there to prevent drift.
+
+**Summary**:
+| Scope | Verification | User Approval |
+|-------|--------------|---------------|
+| DOC_ONLY | Auto-approve | ✅ |
+| BUILD_CHECK | Build pass | ⚠️ |
+| API_TEST / BROWSER_VISUAL / FULL_STACK | Full verification | ❌ Required |
+
+### Action
+
+1. Detect verification scope from `git diff --name-only`
+2. Execute appropriate verification protocol (per `verification-gate.md`)
+3. Capture evidence (screenshots, recordings, logs)
+4. Present results with checklist completion status
+
+### Gate Behavior
+
+- **DOC_ONLY**: Auto-approve, proceed to Step 3.3
+- **BUILD_CHECK**: Require build pass, then proceed
+- **API_TEST / BROWSER_VISUAL / FULL_STACK**: STOP → User approval required
+
+### User Options
+
+- `Approve` → Mark task complete, proceed to PR
+- `Retry` → Re-run verification
+- `Skip [reason]` → Bypass with justification (adds `unverified` label)
+
+### On Skip
+
+1. Log justification in task comment
+2. Add `unverified` label to task
+3. Include warning in PR description
+
+---
+
 ## Gate 6: After Implementation/BugFix
 
 | Attribute | Value |
 |-----------|-------|
 | **Artifact** | PR Description with self-review checklist |
-| **Trigger** | Implementation or BugFix completes (Jira status = "In Review") |
+| **Trigger** | Gate 5.9 (Verification) passed, Jira status updated to "In Review" |
 
 **Action**:
 - Complete self-review checklist

@@ -26,7 +26,64 @@
 > **Local mode MUST create `product-spec.md`** as the persistent source of truth.
 > This mirrors how Atlassian mode uses Confluence for product specs.
 
-**Step 0: Persist Product Spec to Local Storage**
+### Step -1: Check for Existing Specs (MANDATORY)
+
+> [!CAUTION]
+> **Before creating a new spec, you MUST check for overlapping existing specs.**
+> This prevents orphaned specs when scope changes or supersedes previous work.
+
+**Pre-Creation Overlap Check**:
+
+1. **Read Registry**: Load `.specs/_registry.json`
+2. **List Active Specs**: Filter for specs with `status != "superseded"`
+3. **Scope Comparison**: For each active spec, compare:
+   - Feature area overlap (e.g., both involve "Journal" or "Blog")
+   - Project overlap (same target project)
+   - Functional overlap (shared user stories)
+
+**If Overlap Detected**:
+
+Present the user with options:
+
+```markdown
+⚠️ **Existing Spec Detected**
+
+I found [SPEC-XXX: Title] which may overlap with your request:
+- **Scope**: [Brief description of existing spec scope]
+- **Status**: [draft/approved]
+- **Linked Epic**: [EPIC-XXX or None]
+
+**Options**:
+1. **Expand existing** → Update SPEC-XXX to include new requirements
+2. **Supersede** → Mark SPEC-XXX as superseded, create new spec
+3. **Keep separate** → This is a different feature, create new spec
+
+Reply with `1`, `2`, or `3`.
+```
+
+**On User Selection**:
+
+| Choice | Action |
+|--------|--------|
+| `1` (Expand) | Load existing spec, add new requirements, update version |
+| `2` (Supersede) | Set `existingSpec.status = "superseded"`, `existingSpec.superseded_by = newSpecId`, create new spec |
+| `3` (Separate) | Proceed with new spec creation (no conflict) |
+
+**Supersession Registry Update**:
+
+```json
+{
+  "SPEC-001": {
+    "status": "superseded",
+    "superseded_by": "SPEC-002",
+    "superseded_date": "2026-01-11"
+  }
+}
+```
+
+---
+
+### Step 0: Persist Product Spec to Local Storage
 
 | Input Source | Action |
 |--------------|--------|
@@ -287,3 +344,72 @@ I've identified [X] unresolved gaps. Here's the proposed Assumptions Log:
 - Make any further tool calls beyond presenting this gate
 
 **On Approval**: → Immediately proceed to **FeaturePlanning** mode (or **DesignAnalysis** if Figma links exist). Do NOT offer implementation.
+
+---
+
+## 8. Product Increment / Adjustment Handling
+
+> [!IMPORTANT]
+> **Post-Approval Changes**: If user introduces changes AFTER ProductSpec is approved,
+> use the Change Request Protocol to maintain documentation alignment.
+
+### 8.1 Detecting Post-Approval Changes
+
+After ProductSpec approval, if user says:
+- "Actually, also..." / "Add..." / "Change..." / "Instead..."
+- Introduces new requirements
+- Modifies existing requirements
+
+**Action**: Switch to ChangeRequest mode.
+
+```
+1. Load ${AGENT_ROOT}/modes/planning/change-request.md
+2. Current Phase: PLANNING_SPEC (or beyond)
+3. Execute classification and impact analysis
+4. Return here after change is processed
+```
+
+### 8.2 Inline Minor Changes
+
+For **Minor Adjustments** (typos, clarifications) during review:
+
+```
+1. Update product-spec.md directly via storage.updateProductSpec()
+2. No formal change log entry needed
+3. Continue with current gate
+```
+
+### 8.3 Scope Changes to Approved Spec
+
+For **Scope Changes** after approval:
+
+```
+1. Archive current version: storage.archiveArtifact("product-spec", specId)
+2. Update product-spec.md with new requirements
+3. Log change: storage.logChange("product-spec", specId, {
+     type: "increment" or "adjustment",
+     source: sourceCode,
+     priority: priority,
+     description: "Added X requirement",
+     impactedAreas: ["Epic", "TechSpec"] // what else needs update
+   })
+4. If Epic exists: cascade change via storage.cascadeChange()
+5. Present updated spec for re-approval if needed
+```
+
+### 8.4 Change Log Section Template
+
+ProductSpec files should include (at end):
+
+```markdown
+---
+
+## Change Log
+
+| Version | Date | Source | Type | Priority | Description |
+|---------|------|--------|------|----------|-------------|
+| v1.0 | 2026-01-10 | PM | initial | - | Initial product specification |
+
+```
+
+This section is automatically updated by `storage.logChange()`.
