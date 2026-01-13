@@ -20,7 +20,70 @@
 
 ---
 
-## 1.5 Local Mode: Create Product Spec Artifact (MANDATORY)
+## 1.2 Interactive Spec Builder (The "Anti-Garbage" Protocol)
+
+> **Goal**: Prevent vague one-liners. If the input is unstructured (chat) or incomplete, you MUST build the spec interactively.
+
+**Trigger**:
+- User provides a raw idea ("I want a search bar")
+- User provides a chat dump
+- Existing spec is a "skeleton" or placeholder
+
+**The Builder Loop**:
+1.  **Detect Mode**: "I see this is a raw request/review. I will help you refine the Product Spec."
+2.  **Context Discovery (The Why)**:
+    *   **Goal**: "What problem are we solving? Who is the target user?"
+    *   **Vision**: "How does this align with the product strategy?"
+3.  **Specifics Interview** (Ask targeted questions):
+    *   **User Behavior**: "Walk me through the user flow steps."
+    *   **UI/UX**: "What does the success state look like? What about errors?"
+    *   **Business Logic**: "Are there permission rules? Data limits?"
+4.  **Drafting Phase**:
+    *   *Real-time Structure*: Convert answers into structured recommendations.
+    *   *Visual Confirmation*: "Here is the refined requirement. Correct?"
+5.  **Finalize**:
+    *   **Local**: Compile into `product-spec.md` and save (Authoritative Build).
+    *   **Enterprise**: Do **NOT** overwrite. Present a "Enhancement Recommendations" list for the PM to review.
+
+
+---
+
+## 1.3 Workflow Selection (Universal)
+
+Select the flow based on your starting point, regardless of storage mode (Local vs Enterprise).
+
+| Starting Point | Flow Selection |
+|----------------|----------------|
+| **Idea / Chat** | **Flow A: Interactive Builder** (Start from scratch) |
+| **Existing Doc** | **Flow B: Gap Analyzer** (Review file or Confluence page) |
+
+### **Flow A: Interactive Builder (Chat Flow)**
+
+> **Goal**: Turn a raw idea into a structured spec.
+
+1.  **Context Discovery**: Define Problem & User (§1.2).
+2.  **Spec Building**: Interview Loop (Behavior -> UX -> Logic).
+3.  **Drafting**: Agent compiles structured content in chat.
+4.  **Completion / Handoff**:
+    *   **Local**: Agent writes `product-spec.md`.
+    *   **Enterprise**: Agent provides **Markdown Content Block**. User creates Confluence page manually (or Agent creates Draft if permitted).
+
+### **Flow B: Gap Analyzer (File/Link Flow)**
+
+> **Goal**: Polish an existing spec to "Ready" status.
+
+1.  **Ingest**:
+    *   **Local**: Read markdown file.
+    *   **Enterprise**: Read **Confluence Page** (via link).
+2.  **Gap Analysis**: Check against Analysis Framework (§2).
+3.  **Refinement Loop**: Discuss gaps and determine fixes.
+4.  **Completion / Handoff**:
+    *   **Local**: Agent updates `product-spec.md`.
+    *   **Enterprise**: Agent provides **Recommendations List** (Comment/Chat). User applies edits to Confluence.
+
+---
+
+## 1.5 Local Mode: Storage Protocol (MANDATORY)
 
 > [!IMPORTANT]
 > **Local mode MUST create `product-spec.md`** as the persistent source of truth.
@@ -83,20 +146,14 @@ Reply with `1`, `2`, or `3`.
 
 ---
 
-### Step 0: Persist Product Spec to Local Storage
-
-| Input Source | Action |
-|--------------|--------|
-| User provides feature description in chat | Generate structured product spec, then `storage.createProductSpec(title, content)` |
-| User provides a file/document | Parse content, then `storage.createProductSpec(title, content)` |
-| Resuming existing spec | `storage.getProductSpec(specId)` to load existing |
+### Step 0: Persist Product Spec (Local Only)
 
 **Product Spec Lifecycle**:
 
 ```
-[User Input] → createProductSpec() → Analyze for Gaps → updateProductSpec() → Approved
-                    ↓                                          ↑
-              product-spec.md                           (add gaps/assumptions)
+[Input] → (Flow A or B) → createProductSpec() → Gap Analysis → updateProductSpec() → Approved
+                                                       ↓                                     ↑
+                                                 product-spec.md                    (finalize content)
 ```
 
 **When Gaps Are Identified**:
@@ -220,7 +277,10 @@ Minor UX polish questions that can be defaulted but should be confirmed.
 **After Analysis, you must**:
 
 1. **If NO BLOCKER/HIGH RISK gaps**:
-   - State: ✅ "Product Spec is ready for Epic creation."
+   - **Action**: Finalize the artifact.
+     - **Local**: `storage.updateProductSpec(specId, finalContent)` (Write authoritative file)
+     - **Enterprise**: `post_confluence_comment(pageId, recommendations)` (Advisory - Let PM apply changes)
+   - State: ✅ "Product Spec is finalized/reviewed and ready for Epic creation."
    - **STOP** and request approval to proceed to FeaturePlanning.
 
 2. **If BLOCKER/HIGH RISK gaps exist**:
