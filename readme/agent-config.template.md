@@ -125,3 +125,4 @@
 - `/map-codebase-agent` — Project registration
 - `/system-architecture-agent` — Cross-project scanning
 - `/manager-agent` — Sprint metrics and reporting
+- `/system-health-agent` — Health diagnostics and project status

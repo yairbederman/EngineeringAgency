@@ -173,10 +173,13 @@ cp ~/.gemini/antigravity/global_workflows/readme/agent-config.template.md ./Agen
 | `/map-codebase-agent` | Generate `.ai-instructions/` for a project |
 | `/system-architecture-agent` | Cross-project architecture docs |
 | `/manager-agent` | Sprint health, risk radar, stakeholder updates |
+| `/system-health-agent` | Workspace diagnostics, setup validation, project status |
 
 ## 🔗 Agent Hierarchy
 
 ```
+/system-health-agent      → Run anytime (validates setup & workspace health)
+        |
 /map-codebase-agent      → Run per project (generates AI context)
         ↓
 /system-architecture-agent → Run once (aggregates all projects)
