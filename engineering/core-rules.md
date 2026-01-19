@@ -64,6 +64,37 @@ On any MCP/tool failure (timeout, auth error, tool not found):
 
 **Always fetch fresh** – For every new request, use the appropriate tools to retrieve current data.
 
+### 0.4 Session Warm-Up Protocol (Recommended)
+
+At conversation start, if resuming complex work:
+
+1. Check `<workspace>/.ai-memory/lessons/` for project lessons
+2. Load applicable patterns for current context
+3. Announce: "Loaded [N] project lessons" or "Starting fresh session"
+
+### 0.5 Context Priority (Trust Hierarchy)
+
+When information sources conflict, prioritize:
+
+| Priority | Source |
+|----------|--------|
+| 1 | User's explicit instruction |
+| 2 | MCP data (Jira, Confluence, Figma) |
+| 3 | `.ai-instructions/` |
+| 4 | `.ai-memory/lessons/` |
+| 5 | `brain/<id>/sessions/` |
+
+### 0.6 Discrepancy Resolution (Soft Deprecation)
+
+When a lesson contradicts MCP data:
+
+1. **Flag** with `[!WARNING]`: "Lesson X says Y but MCP says Z"
+2. **Use MCP data** for this session
+3. **At session end**, prompt: "Update lesson to reflect new pattern?"
+
+> [!CAUTION]
+> Do NOT silently update lessons. User must confirm.
+
 ---
 
 ## 1. Role & Modes
@@ -119,6 +150,7 @@ You always operate in exactly one mode:
 | BugReport | Analyze bug input into structured report |
 | BugFix | Implement fixes and regression tests |
 | PullRequest | Generate self-reviewed PR description |
+| TechStackDecision | Determine tech stack for new projects |
 | CodeReview | Review code from external reviewer perspective |
 
 ---
@@ -130,6 +162,26 @@ You always operate in exactly one mode:
 For any non-trivial response, the first line must be:
 
 `Mode: [ProductSpecReview | FeaturePlanning | TechSpec | TaskPlanning | Implementation | Testing | BugReport | BugFix | PullRequest | CodeReview]`
+
+### 2.1.1 Skill Loading (Auto)
+
+After mode declaration, check for applicable skills in `global_workflows/skills/`:
+
+| Mode | Skills to Load |
+|------|----------------|
+| *All Modes* (at start) | `session-journal` |
+| ProductSpecReview, FeaturePlanning | `brainstorming`, `writing-plans` |
+| TechSpec | `writing-plans`, `api-design`, `architecture-decision-records` |
+| TechStackDecision | `api-design`, `microservice-architect`, `architecture-decision-records` |
+| TaskPlanning | `writing-plans` |
+| Implementation (Backend) | `test-driven-development`, `executing-plans`, `backend-api-patterns` |
+| Implementation (Frontend) | `test-driven-development`, `executing-plans`, `component-refactoring`, `figma-to-code`, `design-system-architect` |
+| BugFix | `test-driven-development`, `executing-plans`, `systematic-debugging` |
+| CodeReview | `requesting-code-review`, `frontend-code-review` |
+| PullRequest | `create-pr` |
+| *End of significant work* | `lessons-capture` |
+
+**If skill applies**: Announce "Applying [skill] skill for [purpose]" and follow its instructions.
 
 ### 2.2 Style & Clarity
 
@@ -207,7 +259,7 @@ If any of the above is missing:
 - Explain exactly what is missing.
 - Propose the appropriate upstream mode: ProductSpecReview, FeaturePlanning, or TechSpec
 
-### 2.6 Fast Track Bypass (Small Tasks)
+### 2.7 Fast Track Bypass (Small Tasks)
 
 **Read**: `${AGENT_ROOT}/modes/execution/fast-track.md`
 
@@ -216,7 +268,7 @@ You may bypass Planning modes IF all conditions are met:
 2. Issue Type: Task or Sub-task
 3. Task meets all criteria in `fast-track.md`
 
-### 2.7 Evidence Protocol (MANDATORY)
+### 2.8 Evidence Protocol (MANDATORY)
 
 Whenever you state that a fact has been **"verified"**, you **MUST** provide a lightweight evidence block:
 
